@@ -1,4 +1,4 @@
-# Audio2Text Quality Loop
+# SonaFolio Quality Loop
 
 The local transcript is the auditable source layer. It may be imperfect, but every automatic change
 should be visible, reversible, and scoped.

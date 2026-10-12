@@ -49,8 +49,8 @@ def _required_files(staging: Path) -> set[str]:
         with path.open('rb') as handle:
             magic = handle.read(4)
         native = magic in _NATIVE_MAGICS or magic[:2] in _NATIVE_MAGICS
-        # Audio2Text's own executable is covered by the root MIT license.
-        own_binary = path.name in {'Audio2TextQt', 'Audio2TextQt.exe'}
+        # SonaFolio's own executable is covered by the root MIT license.
+        own_binary = path.name in {'SonaFolioQt', 'SonaFolioQt.exe'}
         python_payload = 'python' in path.relative_to(staging).parts
         vendor_asset = path.suffix.lower() in {'.qml', '.js', '.rcc', '.pak', '.qm'}
         if (native and not own_binary) or python_payload or vendor_asset:

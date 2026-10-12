@@ -250,7 +250,7 @@ extension JobController {
 
     private func downloadMedia(from url: URL, to destination: URL) async throws {
         var request = URLRequest(url: url)
-        request.setValue("Audio2Text/1.0", forHTTPHeaderField: "User-Agent")
+        request.setValue("SonaFolio/1.0", forHTTPHeaderField: "User-Agent")
         let (temporaryURL, response) = try await URLSession.shared.download(for: request)
         guard let http = response as? HTTPURLResponse, (200 ..< 400).contains(http.statusCode) else {
             throw AppError.fileCopyFailed("Audio download failed.")

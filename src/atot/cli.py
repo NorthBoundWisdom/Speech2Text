@@ -35,13 +35,13 @@ app = typer.Typer(
     no_args_is_help=False,
     context_settings={"help_option_names": ["-h", "--help"]},
 )
-exec_app = typer.Typer(add_completion=False, help="Run Audio2Text non-interactively.")
+exec_app = typer.Typer(add_completion=False, help="Run SonaFolio non-interactively.")
 cloud_app = typer.Typer(add_completion=False, help="Run text-only cloud stages.")
 config_app = typer.Typer(add_completion=False, help="Read and edit config.toml.")
 subscriptions_app = typer.Typer(add_completion=False, help="Manage podcast subscriptions.")
-library_app = typer.Typer(add_completion=False, help="Manage the unified Audio2Text Library.")
+library_app = typer.Typer(add_completion=False, help="Manage the unified SonaFolio Library.")
 library_episode_app = typer.Typer(
-    add_completion=False, help="Manage episodes in the unified Audio2Text library."
+    add_completion=False, help="Manage episodes in the unified SonaFolio library."
 )
 
 

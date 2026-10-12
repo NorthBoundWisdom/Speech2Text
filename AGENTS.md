@@ -1,4 +1,4 @@
-# Audio2Text Agent Guide
+# SonaFolio Agent Guide
 
 ## Owner-Managed FreeCM Latest Policy
 
@@ -23,7 +23,7 @@ paths, local usernames, machine-specific assumptions, and episode-specific tunin
 
 ## Project Contract
 
-- Audio2Text is a local Chinese podcast transcription CLI. The stable production path is
+- SonaFolio is a local Chinese podcast transcription CLI. The stable production path is
   macOS/Apple Silicon with MLX Whisper; Windows is a CLI-only path using faster-whisper/CUDA.
 - The stable production path is `atot exec transcribe` / `atot exec import` with the
   `large-v3-turbo` model alias. Old top-level command aliases such as `atot transcribe` and

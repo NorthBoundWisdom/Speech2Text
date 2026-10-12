@@ -1,6 +1,12 @@
-# Audio2Text
+# SonaFolio
 
-Audio2Text 是一个本地中文播客转录工具。当前稳定生产路径是 macOS / Apple Silicon +
+Local-first podcast transcription and knowledge library for macOS, iOS, and Windows.
+
+产品名称为 **SonaFolio**，GitHub 仓库为 [sonafolio](https://github.com/NorthBoundWisdom/sonafolio)。
+CLI 暂时保留 `atot`；现有 `Audio2TextCli` 入口、Python 包名 `audio2text-local`、资料库目录、
+数据路径和设置标识继续沿用，已有数据无需迁移。Swift/CMake 内部模块和构建 target 名称也保持不变。
+
+SonaFolio 是一个本地中文播客转录工具。当前稳定生产路径是 macOS / Apple Silicon +
 MLX Whisper；Windows 是 CLI-only 路径，目标后端是 `faster-whisper` / CUDA。
 v2 CLI 默认进入交互式 TUI；脚本化入口统一放在 `atot exec ...`，App bundle 内的
 `Audio2TextCli` 使用同一套入口。默认模型别名为 `large-v3-turbo`。
@@ -11,7 +17,7 @@ v2 CLI 默认进入交互式 TUI；脚本化入口统一放在 `atot exec ...`�
 - 小宇宙导入会下载音频、保存节目元信息，并可直接转录。
 - 输出包含可读稿、字幕、原始 JSON、QA 报告和可审计的修正规则记录。
 - 云端摘要是可选的文本阶段；音频、视频、模型权重不会被打包发送。
-- MCP 总结流程无需在 Audio2Text 配置 API Key：Codex 读取本地转录，用当前模型总结并回写资料库。
+- MCP 总结流程无需在 SonaFolio 配置 API Key：Codex 读取本地转录，用当前模型总结并回写资料库。
 - macOS SwiftUI App 通过同一套 Python workflow service 执行导入、转录、QA、云端摘要和字幕流程。
 
 ## 运行数据
@@ -51,13 +57,13 @@ brew install ffmpeg
 ```bash
 python3 configs/setup_local_app.py
 python3 configs/ios_workflow.py build --platform mac --scheme Audio2TextApp
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli doctor
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli models
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli doctor
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli models
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli
 ```
 
 `~/Documents/SpeechToTextData/env/` 是 App/CLI 使用的 Python 运行环境，不是公开 CLI
-入口。DMG/App 内的公开命令是 `Audio2Text.app/Contents/MacOS/Audio2TextCli`。
+入口。DMG/App 内的公开命令是 `SonaFolio.app/Contents/MacOS/Audio2TextCli`。
 本地开发时也可以用 `~/Documents/SpeechToTextData/env/bin/atot`；无子命令时会打开 TUI，
 非交互流程使用 `exec`。
 
@@ -210,7 +216,7 @@ atot serve --stdio
 ## 转录本地音频
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec transcribe path/to/episode.m4a \
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec transcribe path/to/episode.m4a \
   --model large-v3-turbo \
   --language zh
 ```
@@ -220,7 +226,7 @@ build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec transcribe path/to/ep
 `--silence-threshold -30`，或用 `--chunking fixed` 强制固定切块。
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec transcribe path/to/episode.m4a \
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec transcribe path/to/episode.m4a \
   --chunking smart \
   --chunk-length 900 \
   --max-chunk-length 1200 \
@@ -230,9 +236,9 @@ build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec transcribe path/to/ep
 只想给本地音频或视频生成字幕、不导入资料库时，使用 `srt`：
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec srt path/to/video.mp4
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec srt path/to/video.mp4 --language zh --language en
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec srt path/to/video.mp4 --language auto
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec srt path/to/video.mp4
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec srt path/to/video.mp4 --language zh --language en
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec srt path/to/video.mp4 --language auto
 ```
 
 默认会在源文件同目录写入 `video.srt`，并把可复用中间产物保存在数据根的
@@ -250,9 +256,9 @@ hf download facebook/nllb-200-distilled-600M \
 常用后处理命令：
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec qa ~/Documents/SpeechToTextData/work/<batch>/<episode>
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec repair ~/Documents/SpeechToTextData/work/<batch>/<episode> --plan-only
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli status --task-id <task-id>
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec qa ~/Documents/SpeechToTextData/work/<batch>/<episode>
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec repair ~/Documents/SpeechToTextData/work/<batch>/<episode> --plan-only
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli status --task-id <task-id>
 ~/Documents/SpeechToTextData/env/bin/python src/scripts/validate_output_bundle.py ~/Documents/SpeechToTextData/work/<batch>/<episode>
 ```
 
@@ -301,7 +307,7 @@ work/<episode_id>/
 ## 导入小宇宙
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec import "https://www.xiaoyuzhoufm.com/episode/<episode-id>"
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec import "https://www.xiaoyuzhoufm.com/episode/<episode-id>"
 ```
 
 导入会写入权威 Library 元信息，并把下载的音频留在本机素材目录：
@@ -328,9 +334,9 @@ work/<episode_id>/
 订阅索引只导入近期节目元信息，不自动下载或转录：
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec subscriptions add "https://www.xiaoyuzhoufm.com/podcast/<podcast-id>" --group-name Default
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec subscriptions list
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec subscriptions refresh --all
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec subscriptions add "https://www.xiaoyuzhoufm.com/podcast/<podcast-id>" --group-name Default
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec subscriptions list
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec subscriptions refresh --all
 ```
 
 ## iCloud / 本地 Library
@@ -341,8 +347,8 @@ iOS 首次使用时在 Settings 里选择 iCloud Drive 的 `Audio2Text` 或 `Aud
 元信息、阅读已处理文档，并管理已读、星标、归档、分组和删除节目，但不会下载音频或转录。
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec library status --json
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec library episode delete <episode_id> --json
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec library status --json
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec library episode delete <episode_id> --json
 ```
 
 `episode.json` 是节目简介和状态的唯一元信息文件；最终可读内容只放在
@@ -366,7 +372,7 @@ python3 configs/installhooks.py
 python3 configs/ios_workflow.py test --level precommit
 python3 configs/ios_workflow.py build --platform mac --scheme Audio2TextApp --configuration debug --distribution local
 python3 configs/ios_workflow.py run --platform mac --scheme Audio2TextApp
-python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --configuration release --distribution developer-id --notary-profile "Audio2Text Release"
+python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --configuration release --distribution developer-id --notary-profile "SonaFolio Release"
 ```
 
 `configs/installhooks.py` 会把 Git 的 `core.hooksPath` 指向仓库内的 `configs/githooks/`。
@@ -377,8 +383,8 @@ python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --
 
 ```text
 Audio2Text.xcodeproj/
-build/app/Audio2Text.app
-build/package/Audio2Text_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg
+build/app/SonaFolio.app
+build/package/SonaFolio_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg
 ```
 
 ## 打包 DMG
@@ -387,7 +393,7 @@ build/package/Audio2Text_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg
 `Developer ID Application` 证书，并用 `notarytool` 把 Apple 凭据保存为 Keychain profile：
 
 ```bash
-xcrun notarytool store-credentials "Audio2Text Release"
+xcrun notarytool store-credentials "SonaFolio Release"
 ```
 
 Developer ID 打包会启用 hardened runtime 和安全时间戳，随后依次执行 notarization、
@@ -396,13 +402,13 @@ staple、stapler validation 和 Gatekeeper assessment；任一步失败都会以
 命令行发布包：
 
 ```bash
-python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --configuration release --distribution developer-id --notary-profile "Audio2Text Release"
+python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --configuration release --distribution developer-id --notary-profile "SonaFolio Release"
 ```
 
-该命令先构建 `build/app/Audio2Text.app`，再用 `hdiutil` 生成：
+该命令先构建 `build/app/SonaFolio.app`，再用 `hdiutil` 生成：
 
 ```text
-build/package/Audio2Text_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg
+build/package/SonaFolio_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg
 ```
 
 `MARKETING_VERSION` 和 `ARCHIVE_ID` 来自仓库根目录的 active `source_roots.lock.jsonc`。
@@ -421,7 +427,7 @@ build/package/Audio2Text_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg
 
 ```bash
 # 官网分发包；需要本机安装证书并配置 notarytool Keychain profile
-python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --configuration release --distribution developer-id --notary-profile "Audio2Text Release"
+python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --configuration release --distribution developer-id --notary-profile "SonaFolio Release"
 
 # 本机验包；开发机没有 Developer ID 证书时使用
 python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --configuration release --distribution development
@@ -452,7 +458,7 @@ python configs/qt_workflow.py run --configuration Release
 ```
 
 如果 Qt 6 不能被 CMake 自动发现，设置 `AUDIO2TEXTQT_QT_PREFIX` 或 `CMAKE_PREFIX_PATH`
-到 Qt 6 安装前缀。macOS 构建输出为 `build/Audio2TextQt/Audio2TextQt.app`，客户端默认从
+到 Qt 6 安装前缀。macOS 构建输出为 `build/Audio2TextQt/SonaFolioQt.app`，客户端默认从
 `~/Documents/SpeechToTextData/env/bin/atot` 发现 CLI；Windows 默认从
 `%USERPROFILE%\Documents\SpeechToTextData\env\Scripts\atot.exe` 发现 CLI。
 
@@ -465,10 +471,10 @@ python3 configs/qt_workflow.py package --configuration Release
 输出位置：
 
 ```text
-build/package/Audio2TextQt_v<version>_macOS.zip
+build/package/SonaFolioQt_v<version>_macOS.zip
 ```
 
-这个包包含 `Audio2TextQt.app`、部署后的 Qt 运行时，以及 bundle 内的 `ffmpeg` / `ffprobe`。
+这个包包含 `SonaFolioQt.app`、部署后的 Qt 运行时，以及 bundle 内的 `ffmpeg` / `ffprobe`。
 
 ## Windows Qt Client 打包
 
@@ -482,10 +488,10 @@ python configs/qt_workflow.py package --configuration Release --third-party-mate
 输出位置：
 
 ```text
-build/package/Audio2TextQt_v<version>_Windows.zip
+build/package/SonaFolioQt_v<version>_Windows.zip
 ```
 
-这个包包含 `Audio2TextQt` 客户端、Qt 运行时，以及和 `Audio2TextQt.exe` 同目录的
+这个包包含 SonaFolio Qt 客户端、Qt 运行时，以及和 `SonaFolioQt.exe` 同目录的
 `ffmpeg.exe` / `ffprobe.exe`。打包脚本会从 `--ffmpeg-dir`、`AUDIO2TEXTQT_FFMPEG_DIR`、
 `FFMPEG_DIR`、`VCPKG_ROOT` 或 PATH 中寻找这两个工具；找不到时会明确失败。
 
@@ -502,10 +508,10 @@ python configs/qt_workflow.py package --configuration Release --include-python-r
 输出位置：
 
 ```text
-build/package/Audio2TextQt_v<version>_Windows_Runtime.zip
+build/package/SonaFolioQt_v<version>_Windows_Runtime.zip
 ```
 
-这个变体要求干净的 Python 发行安装目录，并复制其中的运行时并安装 Audio2Text CLI 运行依赖到包内 `python/`，
+这个变体要求干净的 Python 发行安装目录，并复制其中的运行时并安装 SonaFolio CLI 运行依赖到包内 `python/`，
 客户端会自动通过 `python\python.exe -m atot.cli` 启动 CLI。模型、转录结果、下载音频和
 运行时数据仍保留在 `~/Documents/SpeechToTextData/`。
 
@@ -522,7 +528,7 @@ swift run --scratch-path ../build/swiftpm Audio2TextApp
 ## 使用 Codex 总结与回写（无需 API Key）
 
 App 默认处理动作和 `Command-Return` 只运行本地转录与 QA。完成后，可以把总结交给 Codex。
-Audio2Text 提供标准 MCP stdio 服务，旧的 `atot serve --stdio` 是内部 JSON 服务，两者协议不同。
+SonaFolio 提供标准 MCP stdio 服务，旧的 `atot serve --stdio` 是内部 JSON 服务，两者协议不同。
 
 先准备运行环境，再注册 MCP：
 
@@ -569,8 +575,8 @@ MCP 服务不会自行调用模型；总结由 Codex 当前模型完成，所读
 云端阶段只处理文本包，默认不调用 API：
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec cloud prepare ~/Documents/SpeechToTextData/work/<batch>/<episode>
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec cloud summarize ~/Documents/SpeechToTextData/work/<batch>/<episode>
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec cloud prepare ~/Documents/SpeechToTextData/work/<batch>/<episode>
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec cloud summarize ~/Documents/SpeechToTextData/work/<batch>/<episode>
 ```
 
 调用 OpenAI-compatible 接口前，在 App 设置中配置 Cloud Model，或用 CLI 设置。
@@ -587,12 +593,12 @@ model_options = ["gpt-5.4-mini", "gpt-5.4", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-t
 ```
 
 ```bash
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli config set cloud.api_base '"https://api.example.com/v1"'
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli config set cloud.api_base '"https://api.example.com/v1"'
 # 通过隐藏输入交给 stdin，避免 key 进入 shell 历史
 read -s "ATOT_KEY?Cloud API key: "
 printf '%s' "$ATOT_KEY" | atot config set cloud.api_key --stdin
 unset ATOT_KEY
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli exec cloud summarize ~/Documents/SpeechToTextData/work/<batch>/<episode> --call-api
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli exec cloud summarize ~/Documents/SpeechToTextData/work/<batch>/<episode> --call-api
 ```
 
 App 默认不检查云端 API；`workflow.default_cloud_summary=true` 且 `workflow.local_only=false`
@@ -616,7 +622,7 @@ HTTP token 独立于云端 API key；HTTP 接口包含删除和配置操作，�
 
 以下对比覆盖通用转录软件、播客处理工具和自托管知识库，便于判断不同场景的适用性。
 核对日期为 **2026-10-12**；功能依据各项目默认分支的 README、相关文档及少量入口代码，
-AtoT 依据本仓库当前实现。未对这些项目运行同一套中文播客测试，因此不对识别准确率、
+SonaFolio 依据本仓库当前实现。未对这些项目运行同一套中文播客测试，因此不对识别准确率、
 转录速度或摘要质量做数值排名。**“未说明”表示所查文档未明确承诺该能力，不等于确认不支持。**
 
 ### 项目与维护快照
@@ -640,12 +646,12 @@ Stars 和最近推送来自 GitHub API 的 `stargazers_count` / `pushed_at`，�
 ### 转录、播客与总结
 
 项目名链接至对应功能文档。表中“本地”指相应处理阶段的位置；启用云 ASR、云 LLM 或
-外部 Agent 后，音频或文本的数据路径随之改变。AtoT 的 Codex MCP 路径无需在 AtoT 填写
+外部 Agent 后，音频或文本的数据路径随之改变。SonaFolio 的 Codex MCP 路径无需在 SonaFolio 填写
 模型 API Key，但总结文本会进入 Codex 对话，不代表模型在本机推理。
 
 | 项目 | 界面 / 部署 | ASR / 输入处理 | RSS 与新节目发现 | 总结执行方式 | 字幕与主要导出 |
 |---|---|---|---|---|---|
-| **AtoT** | macOS 原生 App + CLI/TUI；Windows CLI | 本地 MLX Whisper / faster-whisper | 小宇宙导入、RSS 订阅与手动刷新 | Codex MCP；可选云 API | SRT/VTT、Markdown、JSON |
+| **SonaFolio** | macOS 原生 App + CLI/TUI；Windows CLI | 本地 MLX Whisper / faster-whisper | 小宇宙导入、RSS 订阅与手动刷新 | Codex MCP；可选云 API | SRT/VTT、Markdown、JSON |
 | [Buzz][compare-buzz] | macOS / Windows / Linux 桌面 | 本地多种 Whisper 后端；麦克风实时转录 | RSS 未说明；支持目录监听 | AI 摘要插件 | TXT、SRT、VTT |
 | [Vibe][compare-vibe] | macOS / Windows / Linux 桌面 | 本地 Whisper、Nemotron、Parakeet；系统音频/麦克风 | RSS 未说明；支持媒体网站链接 | Ollama 本地分析；Claude API | SRT/VTT、TXT、DOCX/PDF 等 |
 | [Speakr][compare-speakr] | 自托管 Web/PWA；Docker | 自托管 WhisperX 或多种云 ASR | RSS 未说明；目录自动导入 | 本地 Ollama 或模型 API；可定制提示词 | 模板化文件导出 |
@@ -660,7 +666,7 @@ Stars 和最近推送来自 GitHub API 的 `stargazers_count` / `pushed_at`，�
 
 | 项目 | CLI / API / Agent 接入 | 批处理与调度 | 检索、知识管理与协作 | 说话人分离 | 审校、质量或恢复机制 |
 |---|---|---|---|---|---|
-| **AtoT** | CLI、内部 JSON 服务；MCP 分页读取与版本化总结回写 | App 批处理；调度由外部工具执行 | 标题查询、分组、阅读/收藏、iCloud；无内置跨节目语义问答 | 稳定 ASR 后端不支持；实验模块未晋升 | QA 门禁、修正规则审计、定向 repair、回写版本检查 |
+| **SonaFolio** | CLI、内部 JSON 服务；MCP 分页读取与版本化总结回写 | App 批处理；调度由外部工具执行 | 标题查询、分组、阅读/收藏、iCloud；无内置跨节目语义问答 | 稳定 ASR 后端不支持；实验模块未晋升 | QA 门禁、修正规则审计、定向 repair、回写版本检查 |
 | [Buzz][compare-buzz] | CLI 与插件；MCP 未说明 | 任务队列、目录监听 | 稿件内搜索与播放；跨节目知识问答未说明 | 支持 | 语音分离、转录查看器；统一 QA 门禁未说明 |
 | [Vibe][compare-vibe] | CLI、HTTP API、Agent skills；MCP 未说明 | 多文件批转录 | 稿件分析；跨节目语义库未说明 | 支持 | VAD 稳定时间戳模式；统一 QA 门禁未说明 |
 | [Speakr][compare-speakr] | REST API、Webhooks；内部研究 Agent；MCP 未说明 | 自动导入、作业队列、批量操作 | 跨库语义搜索/问答、标签、SSO 与多人共享 | 支持；后端相关 | 词表/热词、说话人管理、编辑与保留策略 |
@@ -685,7 +691,7 @@ Stars 和最近推送来自 GitHub API 的 `stargazers_count` / `pushed_at`，�
 
 | 使用场景 | 优先考察的项目 | 主要取舍 |
 |---|---|---|
-| 中文播客、本机 ASR、可审计修复、交给 Codex 总结回写 | AtoT | 需准备本地模型；稳定 GUI 以 Mac 为主，内置语义问答与多人协作仍是缺口 |
+| 中文播客、本机 ASR、可审计修复、交给 Codex 总结回写 | SonaFolio | 需准备本地模型；稳定 GUI 以 Mac 为主，内置语义问答与多人协作仍是缺口 |
 | 多平台日常音视频转录、实时音频与字幕制作 | Buzz、Vibe | 桌面输入与模型选择更广；RSS 播客资料库能力应另行核对 |
 | 自托管知识问答或团队共享 | Speakr、Lumina | Speakr 偏跨库问答与协作，Lumina 偏多种内容分析；需部署服务及配置模型 |
 | 自动去广告并继续在播客播放器收听 | MinusPod | 广告识别与重发布是核心；不适合作为纯摘要工具的等价替代 |

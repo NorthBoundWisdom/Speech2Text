@@ -34,7 +34,7 @@ def test_status_reports_cloud_prepare_after_qa_pass(tmp_path):
     assert report["state"]["disk_usage"]["text"] > 0
     assert any(item["action"] == "cloud_prepare" for item in report["next_actions"])
     assert (details / "status.md").exists()
-    assert "AtoT Output Status" in status_to_markdown(report)
+    assert "SonaFolio Output Status" in status_to_markdown(report)
     assert "Quality State" in status_to_markdown(report)
 
 

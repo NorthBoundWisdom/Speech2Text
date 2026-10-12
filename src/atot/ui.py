@@ -26,7 +26,7 @@ HTML = """<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AtoT</title>
+  <title>SonaFolio</title>
   <style>
     :root { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     body { margin: 0; background: Canvas; color: CanvasText; }
@@ -55,7 +55,7 @@ HTML = """<!doctype html>
 </head>
 <body>
   <main>
-    <header><h1>AtoT</h1><button id="refresh">↻</button></header>
+    <header><h1>SonaFolio</h1><button id="refresh">↻</button></header>
     <section class="grid">
       <label>Input <input id="input" placeholder="process/0528/episode/episode.m4a"></label>
       <label>Output <input id="output" placeholder="process/0528/episode/output"></label>
@@ -294,5 +294,5 @@ def make_handler() -> type[BaseHTTPRequestHandler]:
 
 def serve_ui(options: UiOptions) -> None:
     server = ThreadingHTTPServer((options.host, options.port), make_handler())
-    print(f"AtoT UI: http://{options.host}:{options.port}", file=sys.stderr)
+    print(f"SonaFolio UI: http://{options.host}:{options.port}", file=sys.stderr)
     server.serve_forever()

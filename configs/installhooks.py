@@ -78,7 +78,7 @@ def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     python_cmd = find_python()
 
-    print(colorize("Installing Audio2Text hooks...", CYAN))
+    print(colorize("Installing SonaFolio hooks...", CYAN))
     try:
         ensure_git_repo(repo_root)
         manager_script = repo_root / "Utils" / "githooks_manager.py"

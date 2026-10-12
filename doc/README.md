@@ -1,6 +1,6 @@
-# Audio2Text 文档索引
+# SonaFolio 文档索引
 
-欢迎查阅 Audio2Text 项目文档。
+欢迎查阅 SonaFolio 项目文档。
 
 ---
 
@@ -298,4 +298,4 @@ A: 请报告问题，我们会尽快修复。代码为准，但文档应及时�
 
 **文档索引版本:** 2.0  
 **最后更新:** 2026-06-10  
-**维护者:** Audio2Text Team
+**维护者:** SonaFolio Team

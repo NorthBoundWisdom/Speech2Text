@@ -22,7 +22,7 @@ from freecm.source_root_workflow import SourceRootWorkflowScript  # noqa: E402
 
 SCRIPT = SourceRootWorkflowScript(
     WORKFLOW,
-    repo_display_name="Audio2Text",
+    repo_display_name="SonaFolio",
     update_callback=setup_local_app_main,
 )
 

@@ -43,10 +43,10 @@ def test_license_extractor_does_not_extract_code_or_follow_links(tmp_path):
 def test_release_verification_requires_all_platforms_and_same_commit(tmp_path, monkeypatch):
     monkeypatch.setattr(ci_release.subprocess, "check_output", lambda *args, **kwargs: "a" * 40)
     names = [
-        "Audio2TextQt-v1.2.3-Windows-x64-Setup.exe",
-        "Audio2TextQt-v1.2.3-Linux-x86_64.AppImage",
-        "Audio2TextQt-v1.2.3-macOS-arm64.dmg",
-        "Audio2TextSwift-v1.2.3-macOS-arm64.dmg",
+        "SonaFolioQt-v1.2.3-Windows-x64-Setup.exe",
+        "SonaFolioQt-v1.2.3-Linux-x86_64.AppImage",
+        "SonaFolioQt-v1.2.3-macOS-arm64.dmg",
+        "SonaFolioSwift-v1.2.3-macOS-arm64.dmg",
     ]
     for name in names:
         file = tmp_path / name

@@ -48,19 +48,19 @@ def test_qt_workflow_package_command_defaults_to_release_zip() -> None:
 def test_qt_package_archive_path_includes_version(tmp_path) -> None:
     archive = qt_workflow._package_archive_path(tmp_path, "1.2.3")
 
-    assert archive.name == "Audio2TextQt_v1.2.3_Windows.zip"
+    assert archive.name == "SonaFolioQt_v1.2.3_Windows.zip"
 
 
 def test_qt_runtime_package_archive_path_has_distinct_name(tmp_path) -> None:
     archive = qt_workflow._package_archive_path(tmp_path, "1.2.3", include_python_runtime=True)
 
-    assert archive.name == "Audio2TextQt_v1.2.3_Windows_Runtime.zip"
+    assert archive.name == "SonaFolioQt_v1.2.3_Windows_Runtime.zip"
 
 
 def test_qt_macos_package_archive_path_has_platform_name(tmp_path) -> None:
     archive = qt_workflow._package_archive_path(tmp_path, "1.2.3", platform="macOS")
 
-    assert archive.name == "Audio2TextQt_v1.2.3_macOS.zip"
+    assert archive.name == "SonaFolioQt_v1.2.3_macOS.zip"
 
 
 def test_qt_workflow_macos_executable_candidates_include_app_bundle(monkeypatch, tmp_path) -> None:
@@ -72,13 +72,13 @@ def test_qt_workflow_macos_executable_candidates_include_app_bundle(monkeypatch,
     candidates = qt_workflow._executable_candidates(tmp_path, "Release")
 
     assert (
-        tmp_path / "Release" / "Audio2TextQt.app" / "Contents" / "MacOS" / "Audio2TextQt"
+        tmp_path / "Release" / "SonaFolioQt.app" / "Contents" / "MacOS" / "SonaFolioQt"
         in candidates
     )
-    assert tmp_path / "Audio2TextQt.app" / "Contents" / "MacOS" / "Audio2TextQt" in candidates
+    assert tmp_path / "SonaFolioQt.app" / "Contents" / "MacOS" / "SonaFolioQt" in candidates
     suffix = ".exe" if qt_workflow.os.name == "nt" else ""
-    assert tmp_path / "Release" / ("Audio2TextQt" + suffix) in candidates
-    assert tmp_path / ("Audio2TextQt" + suffix) in candidates
+    assert tmp_path / "Release" / ("SonaFolioQt" + suffix) in candidates
+    assert tmp_path / ("SonaFolioQt" + suffix) in candidates
 
 
 def test_qt_workflow_macos_qt_prefix_accepts_macdeployqt(monkeypatch, tmp_path) -> None:
@@ -163,10 +163,10 @@ def test_qt_workflow_source_roots_ffmpeg_dirs_include_prefix_tools(monkeypatch, 
 
 
 def test_qt_workflow_finds_macos_app_bundle_from_executable(tmp_path) -> None:
-    executable = tmp_path / "Audio2TextQt.app" / "Contents" / "MacOS" / "Audio2TextQt"
+    executable = tmp_path / "SonaFolioQt.app" / "Contents" / "MacOS" / "SonaFolioQt"
 
     assert (
-        qt_workflow._macos_app_bundle_from_executable(executable) == tmp_path / "Audio2TextQt.app"
+        qt_workflow._macos_app_bundle_from_executable(executable) == tmp_path / "SonaFolioQt.app"
     )
 
 
@@ -177,7 +177,7 @@ def test_qt_project_version_matches_cmake_project() -> None:
 def test_qt_stage_runtime_excludes_debug_sidecars(tmp_path) -> None:
     runtime_dir = tmp_path / "runtime"
     runtime_dir.mkdir()
-    (runtime_dir / "Audio2TextQt.exe").write_text("", encoding="utf-8")
+    (runtime_dir / "SonaFolioQt.exe").write_text("", encoding="utf-8")
     (runtime_dir / "Qt6Core.dll").write_text("", encoding="utf-8")
     (runtime_dir / "Audio2TextQt.pdb").write_text("", encoding="utf-8")
     (runtime_dir / "Audio2TextQt.ilk").write_text("", encoding="utf-8")
@@ -185,7 +185,7 @@ def test_qt_stage_runtime_excludes_debug_sidecars(tmp_path) -> None:
     staging_dir = tmp_path / "staging" / "Audio2TextQt"
     qt_workflow._stage_runtime(runtime_dir, staging_dir)
 
-    assert (staging_dir / "Audio2TextQt.exe").exists()
+    assert (staging_dir / "SonaFolioQt.exe").exists()
     assert (staging_dir / "Qt6Core.dll").exists()
     assert not (staging_dir / "Audio2TextQt.pdb").exists()
     assert not (staging_dir / "Audio2TextQt.ilk").exists()

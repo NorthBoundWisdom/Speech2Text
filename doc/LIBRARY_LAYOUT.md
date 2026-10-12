@@ -1,6 +1,6 @@
-# Audio2Text Library Layout
+# SonaFolio Library Layout
 
-Audio2Text now treats `Audio2TextLibrary/` as the only authoritative user-facing data store.
+SonaFolio now treats `Audio2TextLibrary/` as the only authoritative user-facing data store.
 App startup and normal CLI workflows read Library records from this layout only.
 
 ## Layout

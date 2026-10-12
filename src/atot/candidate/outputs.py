@@ -249,7 +249,7 @@ def comparison_markdown(
         "",
         "| Run | Status | Return code | Runtime s | Peak RSS MB | Corrected chars | Baseline ratio | Empty segments | Review issues | Segment issues | Corrections | Max repeated token run | Top token ratio | SRT/VTT timestamps |",
         "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|",
-        "| Audio2Text baseline | "
+        "| SonaFolio baseline | "
         + " | ".join(
             [
                 "ok",

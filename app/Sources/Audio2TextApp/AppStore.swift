@@ -51,7 +51,7 @@ final class AppStore: ObservableObject {
             .info,
             category: "app",
             event: "app_start",
-            message: "Audio2Text app store initialized",
+            message: "SonaFolio app store initialized",
             fields: ["data_root": dataRoot.path],
             dataRoot: dataRoot
         )

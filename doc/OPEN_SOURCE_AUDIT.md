@@ -25,7 +25,7 @@ are not release source. This records fixes and the release boundary; it is not a
 - Wheel SPDX/license contents and Swift app license resources inspected.
 - Current source plus FreeCM public-path/secret scan; no history scanned.
 - `pip-audit` found no known third-party vulnerabilities in the maintained macOS environment;
-  the unpublished local Audio2Text distribution itself is outside PyPI audit coverage.
+  the unpublished local SonaFolio distribution itself is outside PyPI audit coverage.
 - No real cloud API-key tests or cloud API calls. No model weights downloaded.
 
 ## Release boundary

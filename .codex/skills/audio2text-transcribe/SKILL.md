@@ -1,11 +1,11 @@
 ---
 name: audio2text-transcribe
-description: Import and locally transcribe podcast or audio sources with this repository's Audio2Text CLI, then report QA and optionally create an agent-authored summary.md. Use when a user provides a Xiaoyuzhou episode URL, Apple Podcasts episode URL, direct audio URL, or local audio/video file and wants an imported episode, transcript, subtitles, or concise transcription summary.
+description: Import and locally transcribe podcast or audio sources with this repository's SonaFolio CLI, then report QA and optionally create an agent-authored summary.md. Use when a user provides a Xiaoyuzhou episode URL, Apple Podcasts episode URL, direct audio URL, or local audio/video file and wants an imported episode, transcript, subtitles, or concise transcription summary.
 ---
 
-# Audio2Text Transcribe
+# SonaFolio Transcribe
 
-Use this skill inside the Audio2Text repository. Prefer the installed CLI from the configured data
+Use this skill inside the SonaFolio repository. Prefer the installed CLI from the configured data
 root; fall back to `python -m atot.cli` only when the installed script is unavailable. Use only CLI
 v2 commands under `atot exec`; do not use removed top-level aliases.
 
@@ -94,7 +94,7 @@ the `country` query for non-China links or inspect the page HTML only when neede
 
 2. Download the audio to `$ATOT_DATA_ROOT/materials/apple-<trackId>/episode.<ext>`.
 
-3. Let Audio2Text select the configured platform backend:
+3. Let SonaFolio select the configured platform backend:
 
 ```bash
 atot exec transcribe "$ATOT_DATA_ROOT/materials/apple-<trackId>/episode.<ext>" \

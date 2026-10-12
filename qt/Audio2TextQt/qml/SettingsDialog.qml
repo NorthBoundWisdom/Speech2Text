@@ -494,7 +494,7 @@ Dialog {
 
                     SectionHeader {
                         title: "Library"
-                        subtitle: "Choose the authoritative Audio2Text library and data locations."
+                        subtitle: "Choose the authoritative SonaFolio library and data locations."
                     }
 
                     GridLayout {

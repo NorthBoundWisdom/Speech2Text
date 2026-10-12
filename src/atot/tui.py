@@ -113,7 +113,7 @@ def run_tui(prompt: str | None = None, *, config_overrides: list[str] | None = N
 
         def on_mount(self) -> None:
             self.query_one("#timeline_log", RichLog).write(
-                "Audio2Text 交互模式已启动。输入 /help 查看命令。"
+                "SonaFolio 交互模式已启动。输入 /help 查看命令。"
             )
             self.refresh_sessions()
             if self.initial_prompt:

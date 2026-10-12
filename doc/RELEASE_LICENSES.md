@@ -1,6 +1,6 @@
 # Native release licenses
 
-The root MIT license covers Audio2Text's original source. It does not cover bundled dependencies.
+The root MIT license covers SonaFolio's original source. It does not cover bundled dependencies.
 Python wheels include LICENSE and THIRD_PARTY_NOTICES.md; dependencies are installed separately.
 Swift macOS bundles include those files and FreeCM's license under Contents/Resources/licenses.
 

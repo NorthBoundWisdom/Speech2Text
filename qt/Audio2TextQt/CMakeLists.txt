@@ -67,6 +67,8 @@ qt_add_qml_module(Audio2TextQt
         qml/JobLogPane.qml
 )
 
+set_target_properties(Audio2TextQt PROPERTIES OUTPUT_NAME "SonaFolioQt")
+
 target_include_directories(Audio2TextQt PRIVATE src)
 
 if(MSVC)
@@ -120,7 +122,7 @@ if(WIN32)
 elseif(APPLE)
     set_target_properties(Audio2TextQt PROPERTIES
         MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_BUNDLE_NAME "Audio2TextQt"
+        MACOSX_BUNDLE_BUNDLE_NAME "SonaFolio"
         MACOSX_BUNDLE_GUI_IDENTIFIER "local.audio2text.Audio2TextQt"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
@@ -130,7 +132,7 @@ endif()
 install(TARGETS Audio2TextQt BUNDLE DESTINATION . RUNTIME DESTINATION bin)
 # Deployed headless smoke checks must use bundled platform plugins, not the SDK.
 if(APPLE)
-    set(AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR "Audio2TextQt.app/Contents/PlugIns/platforms")
+    set(AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR "SonaFolioQt.app/Contents/PlugIns/platforms")
 else()
     set(AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR "plugins/platforms")
 endif()

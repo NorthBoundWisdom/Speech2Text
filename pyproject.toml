@@ -5,13 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "audio2text-local"
 version = "0.1.0"
-description = "Local long-form audio-to-text workflow for Chinese podcasts on Apple Silicon"
+description = "Local-first podcast transcription and knowledge library for macOS, iOS, and Windows."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 authors = [
-  { name = "AtoT" }
+  { name = "SonaFolio" }
 ]
 keywords = ["audio", "transcription", "whisper", "mlx", "apple-silicon", "chinese"]
 dependencies = [
@@ -35,6 +35,10 @@ dependencies = [
   "tomli>=2.0; python_version < '3.11'",
   "tzdata>=2025.2; platform_system == 'Windows'"
 ]
+
+[project.urls]
+Repository = "https://github.com/NorthBoundWisdom/sonafolio"
+Issues = "https://github.com/NorthBoundWisdom/sonafolio/issues"
 
 [project.scripts]
 atot = "atot.cli:main"

@@ -23,9 +23,9 @@ enum AppError: LocalizedError, Equatable {
         case let .cliNotFound(url):
             return "Missing CLI executable: \(url.path)"
         case .bundledRuntimeNotFound:
-            return "Audio2Text runtime package is missing from the app bundle."
+            return "SonaFolio runtime package is missing from the app bundle."
         case let .runtimeInstallFailed(output):
-            return "Could not install Audio2Text runtime:\n\(output)"
+            return "Could not install SonaFolio runtime:\n\(output)"
         case .missingURL:
             return "Enter a Xiaoyuzhou episode URL."
         case let .unsupportedURL(value):

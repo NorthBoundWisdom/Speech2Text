@@ -52,7 +52,7 @@ final class AppLogger {
             resetCurrentLog(dataRoot: dataRoot)
             cleanup(dataRoot: dataRoot)
         } catch {
-            NSLog("Audio2Text AppLogger configure failed: \(error.localizedDescription)")
+            NSLog("SonaFolio AppLogger configure failed: \(error.localizedDescription)")
         }
     }
 
@@ -87,7 +87,7 @@ final class AppLogger {
             append(line, to: logsRoot.appendingPathComponent("app-current.log"))
             append(line, to: logsRoot.appendingPathComponent("app-\(dayStamp(timestamp)).log"))
         } catch {
-            NSLog("Audio2Text AppLogger write failed: \(error.localizedDescription)")
+            NSLog("SonaFolio AppLogger write failed: \(error.localizedDescription)")
         }
     }
 
@@ -165,7 +165,7 @@ final class AppLogger {
                 try fileManager.removeItem(at: url)
                 deletedFiles += 1
             } catch {
-                NSLog("Audio2Text AppLogger log cleanup failed: \(error.localizedDescription)")
+                NSLog("SonaFolio AppLogger log cleanup failed: \(error.localizedDescription)")
             }
         }
 
@@ -176,7 +176,7 @@ final class AppLogger {
                     try fileManager.removeItem(at: directory)
                     deletedDirectories += 1
                 } catch {
-                    NSLog("Audio2Text AppLogger directory cleanup failed: \(error.localizedDescription)")
+                    NSLog("SonaFolio AppLogger directory cleanup failed: \(error.localizedDescription)")
                 }
             }
         }
@@ -433,7 +433,7 @@ enum CrashReportScanner {
             let data = try JSONEncoder.sortedPretty.encode(index)
             try data.write(to: url, options: .atomic)
         } catch {
-            NSLog("Audio2Text crash report index write failed: \(error.localizedDescription)")
+            NSLog("SonaFolio crash report index write failed: \(error.localizedDescription)")
         }
     }
 

@@ -25,7 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_: Notification) {
-        AppLogger.shared.log(.info, category: "app", event: "app_exit", message: "Audio2Text app is terminating")
+        AppLogger.shared.log(.info, category: "app", event: "app_exit", message: "SonaFolio app is terminating")
     }
 
     private func activateExistingApplication() {
@@ -52,7 +52,7 @@ struct Audio2TextApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup("SonaFolio") {
             ContentView(store: store)
                 .frame(minWidth: 980, minHeight: 680)
                 .onAppear {
@@ -143,7 +143,7 @@ struct Audio2TextCommands: Commands {
                     let prompt = """
                     使用 audio2text MCP 为 episode_id="\(item.id)" 生成中文 Markdown 总结并回写。
                     先 get_episode 获取版本和 QA 信息，再通过 read_document 分页读完全部转录，保留有用的时间标记。
-                    使用你当前的模型总结，不调用 Audio2Text 云 API。
+                    使用你当前的模型总结，不调用 SonaFolio 云 API。
                     write_summary 时传入 transcript_sha256 和 summary_sha256，generator 填 Codex。
                     如果已有非空总结，先确认用户是否要求重新生成；不要自行设置 overwrite=true。
                     """

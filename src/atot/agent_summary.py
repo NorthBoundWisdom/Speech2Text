@@ -25,7 +25,7 @@ AGENT_SUMMARY_INSTRUCTIONS = """通过 list_episodes 找到节目，get_episode 
 保留有用的转录时间标记；QA 未通过或未提供时如实说明，不编造缺失内容。
 write_summary 回写时传入 get_episode 返回的 transcript_sha256、summary_sha256。
 已有非空总结只有在用户明确要求重新生成时才传 overwrite=true；版本冲突时重新读取，不盲目重试。
-Audio2Text MCP 不调用模型 API，不生成替代总结，也不提供 API Key 或模型权重。"""
+SonaFolio MCP 不调用模型 API，不生成替代总结，也不提供 API Key 或模型权重。"""
 
 
 class AgentSummaryService:

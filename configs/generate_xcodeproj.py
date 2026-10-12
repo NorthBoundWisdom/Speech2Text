@@ -21,10 +21,10 @@ IOS_INFO_PLIST = "app/Audio2TextiOS-Info.plist"
 APP_PRIVACY_MANIFEST = "app/PrivacyInfo.xcprivacy"
 IOS_ASSET_CATALOG = "app/Resources/Audio2Text.xcassets"
 MODEL_INVENTORY = "src/atot/data/model_inventory.json"
-PRODUCT_NAME = "Audio2Text"
+PRODUCT_NAME = "SonaFolio"
 CLI_NAME = "Audio2TextCli"
 TARGET_NAME = "Audio2TextApp"
-IOS_PRODUCT_NAME = "Audio2Text-iOS"
+IOS_PRODUCT_NAME = "SonaFolio"
 IOS_TARGET_NAME = "Audio2Text-iOS"
 TEST_TARGET_NAME = "Audio2TextAppTests"
 BUNDLE_IDENTIFIER = "com.audio2text.local"
@@ -961,7 +961,7 @@ def _test_build_settings(app_configs: dict[str, str], *, configuration: str) -> 
         "PRODUCT_NAME": "$(TARGET_NAME)",
         "SUPPORTED_PLATFORMS": "macosx",
         "SWIFT_VERSION": "5.0",
-        "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/Audio2Text.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Audio2Text",
+        "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/SonaFolio.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SonaFolio",
     }
     _apply_development_team(settings, app_configs)
     if configuration == "debug":

@@ -1,12 +1,12 @@
 # ASR 后端研究笔记
 
-记录 Audio2Text 后端系统的演进和候选后端评估。
+记录 SonaFolio 后端系统的演进和候选后端评估。
 
 ---
 
 ## 背景
 
-Audio2Text 最初仅支持 MLX Whisper。为了支持更多后端（如 Qwen ASR、WhisperLiveKit 等），我们建立了后端抽象层并定义了候选晋级流程。
+SonaFolio 最初仅支持 MLX Whisper。为了支持更多后端（如 Qwen ASR、WhisperLiveKit 等），我们建立了后端抽象层并定义了候选晋级流程。
 
 本文档记录已完成的后端集成工作和当前候选结论。
 
@@ -244,7 +244,7 @@ $ATOT_DATA_ROOT/cache/tools/
 
 ### 未采用 (保持简洁)
 
-- 实时流式转录 - Audio2Text 专注批处理
+- 实时流式转录 - SonaFolio 专注批处理
 - WebSocket 服务器 - CLI 优先
 - 浏览器 UI - 原生 macOS App 更合适
 - LocalAgreement 流式策略 - 当前固定切块已满足需求

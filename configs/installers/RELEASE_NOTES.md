@@ -1,3 +1,5 @@
+SonaFolio provides local-first podcast transcription and a knowledge library.
+
 Four native client installers are provided: Windows Qt (x64), Linux Qt AppImage (x86_64),
 macOS Qt (Apple Silicon) and macOS Swift (Apple Silicon). SHA256SUMS and per-asset build records
 identify the exact tag commit and package bytes. All four builds must succeed before publication.

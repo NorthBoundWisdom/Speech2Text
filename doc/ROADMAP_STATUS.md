@@ -1,4 +1,4 @@
-# AtoT Roadmap Status
+# SonaFolio Roadmap Status
 
 This file records completed roadmap implementation evidence. It separates repo-verifiable work from
 acceptance items that require local audio, model weights, or cloud credentials.
@@ -13,7 +13,7 @@ acceptance items that require local audio, model weights, or cloud credentials.
 | P0 readable outputs | Implemented and tested | `transcript.readable.md`, `transcript.timestamped.md`, enforced by `validate_run_json.py` and `validate_output_bundle.py` |
 | P0 cloud/local separation | Implemented and tested | `output/cloud/`, `atot exec cloud prepare` |
 | Agent-authored summaries through MCP | Implemented and protocol-tested | `atot mcp`, versioned/paged library reads, explicit summary write-back, `src/tests/test_agent_summary.py`, `src/tests/test_mcp_server.py`; default App processing requires no cloud key |
-| P0 project naming | Implemented | README title uses `AtoT`; Python package and CLI remain `atot` |
+| P0 project naming | Implemented | README title uses `SonaFolio`; distribution remains `audio2text-local`, Python module and CLI remain `atot`; existing data paths and bundle identifiers are preserved |
 | P1 smart chunking | Implemented and unit-tested | `--chunking smart`, `src/atot/vad.py` |
 | P1 repair | Implemented and unit-tested | `atot exec repair`, `output/repair/`, per-window raw/corrected JSON, `validate_repair_artifacts.py`, `src/atot/repair.py` |
 | P1 fingerprints | Implemented and tested | `input_file`, `prepared_audio`, ASR fingerprint fields in `run.json` |

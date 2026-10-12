@@ -1,16 +1,16 @@
 # Privacy
 
-AtoT is designed for local podcast transcription. Audio and video files are processed on the user's
-Mac by default, and local runtime data stays under the configured AtoT data root.
+SonaFolio is designed for local podcast transcription. Audio and video files are processed on the user's
+Mac by default, and local runtime data stays under the configured SonaFolio data root.
 
 ## Local Data
 
-AtoT stores imported media, prepared audio, transcripts, QA reports, logs, model files, and job
+SonaFolio stores imported media, prepared audio, transcripts, QA reports, logs, model files, and job
 metadata locally. These files are not uploaded by the local ASR pipeline.
 
 ## Cloud Summaries
 
-Cloud summaries are optional. When enabled in the app Settings, AtoT sends transcript text and
+Cloud summaries are optional. When enabled in the app Settings, SonaFolio sends transcript text and
 supporting text metadata to the user-configured OpenAI-compatible API endpoint to generate a
 summary. Audio files, video files, model files, raw chunk WAV files, and local redaction maps are
 not sent by the cloud-summary path.

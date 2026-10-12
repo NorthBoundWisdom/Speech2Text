@@ -302,7 +302,7 @@ struct SettingsView: View {
     private var libraryPane: some View {
         SettingsSectionPane(
             title: "Library",
-            subtitle: "Choose the authoritative Audio2Text library location."
+            subtitle: "Choose the authoritative SonaFolio library location."
         ) {
             settingsGroup {
                 libraryLocationRow
@@ -842,7 +842,7 @@ struct SettingsView: View {
 
     private func chooseLibraryFolder() {
         let panel = NSOpenPanel()
-        panel.title = "Choose Audio2Text Library Folder"
+        panel.title = "Choose SonaFolio Library Folder"
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true

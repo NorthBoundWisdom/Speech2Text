@@ -68,7 +68,7 @@ struct MobileSourcePanel: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Color.mobilePanelBackground)
-        .navigationTitle(titleDisplayMode == .system ? "Audio2Text" : "")
+        .navigationTitle(titleDisplayMode == .system ? "SonaFolio" : "")
         .navigationBarTitleDisplayMode(titleDisplayMode == .system ? .large : .inline)
         .toolbar {
             if titleDisplayMode == .system {
@@ -95,7 +95,7 @@ private struct MobileSourceHeader: View {
         VStack(alignment: .leading, spacing: titleDisplayMode == .system ? 0 : 14) {
             if titleDisplayMode != .system {
                 HStack(alignment: .center, spacing: 12) {
-                    Text("Audio2Text")
+                    Text("SonaFolio")
                         .font(titleDisplayMode == .large ? .largeTitle.bold() : .title2.bold())
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)

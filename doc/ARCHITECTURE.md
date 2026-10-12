@@ -1,6 +1,6 @@
-# Audio2Text Architecture
+# SonaFolio Architecture
 
-Audio2Text 是一个模块化的本地音频转录系统，专为 Apple Silicon 和中文播客优化。
+SonaFolio 是一个模块化的本地音频转录系统，专为 Apple Silicon 和中文播客优化。
 
 ---
 
@@ -425,7 +425,7 @@ Audio2TextCli exec transcribe --json --watch
 
 ## 指纹系统
 
-Audio2Text 使用 SHA256 指纹实现智能缓存复用。
+SonaFolio 使用 SHA256 指纹实现智能缓存复用。
 
 ### 指纹类型
 

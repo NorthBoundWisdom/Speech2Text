@@ -73,6 +73,9 @@ def test_generate_xcodeproj_writes_root_project(tmp_path, monkeypatch):
     assert (project_path / "xcshareddata" / "xcschemes" / "Audio2TextApp.xcscheme").is_file()
     project_text = (project_path / "project.pbxproj").read_text(encoding="utf-8")
     assert "PBXNativeTarget" in project_text
+    assert "PRODUCT_NAME = SonaFolio;" in project_text
+    assert "INFOPLIST_KEY_CFBundleDisplayName = SonaFolio;" in project_text
+    assert "$(BUILT_PRODUCTS_DIR)/SonaFolio.app/" in project_text
     assert "com.apple.product-type.application" in project_text
     assert "Audio2Text-iOS" in project_text
     assert "app/Audio2TextiOS.entitlements" in project_text
@@ -152,6 +155,7 @@ def test_ios_info_plist_declares_background_audio():
     plist_path = generate_xcodeproj.REPO_ROOT / generate_xcodeproj.IOS_INFO_PLIST
     payload = plistlib.loads(plist_path.read_bytes())
 
+    assert payload["CFBundleDisplayName"] == "SonaFolio"
     assert payload["UIBackgroundModes"] == ["audio"], (
         "The iOS reader declares background audio for playback continuity."
     )

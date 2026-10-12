@@ -20,10 +20,10 @@ Native release builds four installers from that exact tag commit:
 
 | Client | Runner / architecture | Asset |
 |---|---|---|
-| Qt Windows | windows-2022 / x64 | `Audio2TextQt-v<version>-Windows-x64-Setup.exe` |
-| Qt Linux | ubuntu-24.04 / x86_64 | `Audio2TextQt-v<version>-Linux-x86_64.AppImage` |
-| Qt macOS | macos-26 / arm64 | `Audio2TextQt-v<version>-macOS-arm64.dmg` |
-| Swift macOS | macos-26 / arm64 | `Audio2TextSwift-v<version>-macOS-arm64.dmg` |
+| Qt Windows | windows-2022 / x64 | `SonaFolioQt-v<version>-Windows-x64-Setup.exe` |
+| Qt Linux | ubuntu-24.04 / x86_64 | `SonaFolioQt-v<version>-Linux-x86_64.AppImage` |
+| Qt macOS | macos-26 / arm64 | `SonaFolioQt-v<version>-macOS-arm64.dmg` |
+| Swift macOS | macos-26 / arm64 | `SonaFolioSwift-v<version>-macOS-arm64.dmg` |
 
 Windows setup is built with Inno Setup, installs Qt/QML files and the official Microsoft Visual C++
 Redistributable, and creates a Start-menu shortcut. It does not copy arbitrary developer CRT DLLs.

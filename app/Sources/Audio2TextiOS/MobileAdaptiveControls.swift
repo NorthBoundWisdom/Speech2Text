@@ -152,7 +152,7 @@ func mobileEmptyStateMessage(for store: MobileLibraryViewModel) -> String {
     if store.libraryRoot == nil {
         return "Choose your Audio2TextLibrary folder in Settings."
     }
-    return store.statusMessage.isEmpty ? "No synced Audio2Text library was found." : store.statusMessage
+    return store.statusMessage.isEmpty ? "No synced SonaFolio library was found." : store.statusMessage
 }
 
 @MainActor

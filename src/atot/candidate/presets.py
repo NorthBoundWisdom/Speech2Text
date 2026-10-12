@@ -215,7 +215,7 @@ def presets() -> dict[str, CandidatePreset]:
                 "--output {output} "
                 "{audio}"
             ),
-            note="Uses WhisperLiveKit offline JSON output so Audio2Text can evaluate segments and timestamps.",
+            note="Uses WhisperLiveKit offline JSON output so SonaFolio can evaluate segments and timestamps.",
             executable=_tool_path(".tools", "whisperlivekit-venv", "bin", "wlk"),
             doctor_command=(_tool_path(".tools", "whisperlivekit-venv", "bin", "wlk"), "check"),
             required_paths=(
@@ -339,7 +339,7 @@ def _gate_command(preset: CandidatePreset, timeout: int) -> str:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Print vetted ASR candidate command presets for Audio2Text gates."
+        description="Print vetted ASR candidate command presets for SonaFolio gates."
     )
     parser.add_argument("--list", action="store_true", help="List preset names and exit.")
     parser.add_argument("--preset", choices=sorted(presets()), help="Preset to print.")

@@ -96,7 +96,7 @@ def create_http_server(host: str, port: int, *, token: str) -> ThreadingHTTPServ
 
 def serve_http(host: str, port: int) -> None:
     server = create_http_server(host, port, token=os.environ.get("ATOT_HTTP_TOKEN", ""))
-    print(f"Audio2Text service: http://{host}:{port}", file=sys.stderr)
+    print(f"SonaFolio service: http://{host}:{port}", file=sys.stderr)
     try:
         server.serve_forever()
     finally:

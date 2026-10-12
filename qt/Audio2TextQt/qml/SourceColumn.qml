@@ -65,7 +65,7 @@ Pane {
                 spacing: 1
                 Layout.fillWidth: true
                 Label {
-                    text: "Audio2Text"
+                    text: "SonaFolio"
                     font.pixelSize: 15
                     font.weight: Font.DemiBold
                     color: themeController.text

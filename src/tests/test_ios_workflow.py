@@ -25,7 +25,7 @@ def test_app_build_settings_read_active_source_roots_lock(tmp_path, monkeypatch)
 
 
 def test_package_dmg_path_includes_version():
-    assert ios_workflow._package_dmg_path("1.2.3", "45").name == "Audio2Text_v1.2.3_45.dmg"
+    assert ios_workflow._package_dmg_path("1.2.3", "45").name == "SonaFolio_v1.2.3_45.dmg"
 
 
 def test_package_uses_audio2textcli_name():
@@ -200,7 +200,7 @@ def test_developer_id_package_preflights_and_notarizes(monkeypatch, tmp_path):
 
 def test_quit_running_app_uses_bundle_quit_then_waits(monkeypatch):
     executable_path = (
-        ios_workflow.REPO_ROOT / "build/app/Audio2Text.app/Contents/MacOS/Audio2TextApp"
+        ios_workflow.REPO_ROOT / "build/app/SonaFolio.app/Contents/MacOS/Audio2TextApp"
     )
     calls = []
     monkeypatch.setattr(
@@ -224,7 +224,7 @@ def test_quit_running_app_uses_bundle_quit_then_waits(monkeypatch):
 
 def test_quit_running_app_force_kills_when_process_remains(monkeypatch):
     executable_path = (
-        ios_workflow.REPO_ROOT / "build/app/Audio2Text.app/Contents/MacOS/Audio2TextApp"
+        ios_workflow.REPO_ROOT / "build/app/SonaFolio.app/Contents/MacOS/Audio2TextApp"
     )
     calls = []
     monkeypatch.setattr(

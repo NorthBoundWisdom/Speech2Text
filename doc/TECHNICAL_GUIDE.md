@@ -1,4 +1,4 @@
-# Audio2Text 技术指南
+# SonaFolio 技术指南
 
 开发者和高级用户的深入技术参考。
 
@@ -30,7 +30,7 @@
 
 ```bash
 git clone <repository-url>
-cd Audio2Text
+cd SonaFolio
 
 # 初始化子模块 (FreeCM)
 git submodule update --init --recursive

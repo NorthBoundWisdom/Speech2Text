@@ -215,7 +215,7 @@ def inspect_output(output_dir: str | Path, *, write_report: bool = False) -> dic
 def status_to_markdown(report: dict[str, Any]) -> str:
     state = report.get("state", {}) if isinstance(report.get("state"), dict) else {}
     lines = [
-        "# AtoT Output Status",
+        "# SonaFolio Output Status",
         "",
         f"Status: {'OK' if report.get('success') else 'NEEDS ATTENTION'}",
         "",

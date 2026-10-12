@@ -109,14 +109,14 @@ jobs:
         shell: pwsh
         run: |
           $setup = Get-ChildItem build/release/*-Setup.exe | Select-Object -First 1
-          $install = Join-Path $env:RUNNER_TEMP 'Audio2Text-installed'
+          $install = Join-Path $env:RUNNER_TEMP 'SonaFolio-installed'
           $process = Start-Process $setup.FullName -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',"/DIR=$install" -Wait -PassThru
           if ($process.ExitCode -notin @(0,3010)) { throw "Installer failed: $($process.ExitCode)" }
           $env:QT_QPA_PLATFORM = 'offscreen'
           $env:QT_QUICK_BACKEND = 'software'
           Remove-Item Env:QT_PLUGIN_PATH -ErrorAction SilentlyContinue
           Remove-Item Env:QML2_IMPORT_PATH -ErrorAction SilentlyContinue
-          $env:ATOT_INSTALLED_EXE = "$install/bin/Audio2TextQt.exe"
+          $env:ATOT_INSTALLED_EXE = "$install/bin/SonaFolioQt.exe"
           python -c "import os, subprocess; subprocess.run([os.environ['ATOT_INSTALLED_EXE'], '--smoke-quit', '--data-root', os.path.join(os.environ['RUNNER_TEMP'], 'atot-smoke')], check=True, timeout=45)"
           if ($LASTEXITCODE -ne 0) { throw 'Installed QML smoke check failed' }
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

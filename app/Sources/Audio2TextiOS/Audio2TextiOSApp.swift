@@ -137,7 +137,7 @@ final class MobileLibraryViewModel: ObservableObject {
             groupNames = []
             selectedEpisodeID = nil
             lastLoadedManifestSignature = nil
-            statusMessage = "No synced Audio2Text library was found in \(libraryLocationDescription)."
+            statusMessage = "No synced SonaFolio library was found in \(libraryLocationDescription)."
             refreshSyncStatus()
         }
     }
@@ -185,7 +185,7 @@ final class MobileLibraryViewModel: ObservableObject {
     func addSubscription(urlText: String) async {
         let trimmed = urlText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let url = URL(string: trimmed), let libraryRoot else {
-            statusMessage = libraryRoot == nil ? "Audio2Text library folder is unavailable." : "Enter a valid subscription URL."
+            statusMessage = libraryRoot == nil ? "SonaFolio library folder is unavailable." : "Enter a valid subscription URL."
             return
         }
         isRefreshing = true
@@ -202,7 +202,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func refreshSubscriptions() async {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         isRefreshing = true
@@ -236,7 +236,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func refreshSubscription(_ subscription: LibrarySubscription) async {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         guard let url = subscription.refreshURL else {
@@ -262,7 +262,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func fetchSubscriptionHistory(_ subscription: LibrarySubscription) async {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         guard let url = subscription.refreshURL else {
@@ -288,7 +288,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func deleteSubscription(_ subscription: LibrarySubscription) {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         do {
@@ -302,7 +302,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func deleteEpisode(_ episode: LibraryEpisode) {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         do {
@@ -327,7 +327,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func setEpisodeRead(_ isRead: Bool, for episode: LibraryEpisode) {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         do {
@@ -341,7 +341,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func toggleEpisodeStar(_ episode: LibraryEpisode) {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         do {
@@ -360,7 +360,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func setEpisodeArchived(_ isArchived: Bool, for episode: LibraryEpisode) {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         do {
@@ -374,7 +374,7 @@ final class MobileLibraryViewModel: ObservableObject {
 
     func moveEpisode(_ episode: LibraryEpisode, toGroup groupName: String) {
         guard let libraryRoot else {
-            statusMessage = "Audio2Text library folder is unavailable."
+            statusMessage = "SonaFolio library folder is unavailable."
             return
         }
         do {

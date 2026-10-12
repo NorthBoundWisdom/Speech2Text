@@ -69,7 +69,7 @@
       {
         "id": "mac-app",
         "label": "Mac App",
-        "description": "Build a local unsigned debug Audio2Text.app bundle",
+        "description": "Build a local unsigned debug SonaFolio.app bundle",
         "command": "python3",
         "args": [
           "configs/ios_workflow.py",
@@ -90,7 +90,7 @@
       {
         "id": "ios-app",
         "label": "iOS App",
-        "description": "Build the Audio2Text iOS app target for the simulator",
+        "description": "Build the SonaFolio iOS app target for the simulator",
         "command": "python3",
         "args": [
           "configs/ios_workflow.py",
@@ -201,7 +201,7 @@
       {
         "id": "mac-app",
         "label": "Mac App",
-        "description": "Build and run the local Audio2Text app bundle in the current terminal",
+        "description": "Build and run the local SonaFolio app bundle in the current terminal",
         "command": "python3",
         "args": [
           "configs/ios_workflow.py",
@@ -263,7 +263,7 @@
       {
         "id": "mac-app-dmg",
         "label": "Mac App DMG",
-        "description": "Build, development-sign, and package Audio2Text.app into build/package/Audio2Text_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg for local verification",
+        "description": "Build, development-sign, and package SonaFolio.app into build/package/SonaFolio_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg for local verification",
         "command": "python3",
         "args": [
           "configs/ios_workflow.py",
@@ -305,7 +305,7 @@
       {
         "id": "win-qt-client-zip",
         "label": "Windows Qt Client ZIP",
-        "description": "Build and package the Audio2TextQt Windows client into build/package/Audio2TextQt_v<version>_Windows.zip",
+        "description": "Build and package the Audio2TextQt Windows client into build/package/SonaFolioQt_v<version>_Windows.zip",
         "command": "python",
         "args": [
           "configs/qt_workflow.py",
@@ -320,7 +320,7 @@
       {
         "id": "mac-qt-client-zip",
         "label": "Mac Qt Client ZIP",
-        "description": "Build and package the Audio2TextQt macOS client into build/package/Audio2TextQt_v<version>_macOS.zip",
+        "description": "Build and package the Audio2TextQt macOS client into build/package/SonaFolioQt_v<version>_macOS.zip",
         "command": "python3",
         "args": [
           "configs/qt_workflow.py",
@@ -335,7 +335,7 @@
       {
         "id": "win-qt-client-runtime-zip",
         "label": "Windows Qt Client Runtime ZIP",
-        "description": "Build and package the Audio2TextQt Windows client with bundled Python runtime into build/package/Audio2TextQt_v<version>_Windows_Runtime.zip",
+        "description": "Build and package the Audio2TextQt Windows client with bundled Python runtime into build/package/SonaFolioQt_v<version>_Windows_Runtime.zip",
         "command": "python",
         "args": [
           "configs/qt_workflow.py",

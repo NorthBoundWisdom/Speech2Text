@@ -57,7 +57,7 @@ Pane {
 
     function bodyTextForTab(tabId) {
         if (!hasSelection)
-            return "# Audio2Text\n\nSelect an item from the list."
+            return "# SonaFolio\n\nSelect an item from the list."
         if (!snapshot)
             return "Metadata is not available."
         var text = ""

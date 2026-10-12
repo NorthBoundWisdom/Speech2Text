@@ -244,7 +244,7 @@ def _source_file_manifest(output_dir: Path, details: Path) -> list[dict[str, Any
 
 
 def _write_cloud_readme(input_dir: Path, *, qa_status: str) -> str:
-    text = f"""# AtoT Cloud Input Package
+    text = f"""# SonaFolio Cloud Input Package
 
 This directory is a text-only package produced from local ASR outputs.
 

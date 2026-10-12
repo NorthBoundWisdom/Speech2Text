@@ -22,7 +22,7 @@ CLI_NAME = "Audio2TextCli"
 IOS_SCHEME_NAME = "Audio2Text-iOS"
 BUILD_DIR = REPO_ROOT / "build"
 SWIFTPM_BUILD_DIR = BUILD_DIR / "swiftpm"
-APP_BUNDLE = BUILD_DIR / "app" / "Audio2Text.app"
+APP_BUNDLE = BUILD_DIR / "app" / "SonaFolio.app"
 PACKAGE_DIR = BUILD_DIR / "package"
 WHEEL_DIR = BUILD_DIR / "wheelhouse"
 DEFAULT_DATA_ROOT = Path("~/Documents/SpeechToTextData")
@@ -185,7 +185,7 @@ def _app_build_settings() -> dict[str, str]:
 
 
 def _package_dmg_path(marketing_version: str, archive_id: str) -> Path:
-    return PACKAGE_DIR / f"Audio2Text_v{marketing_version}_{archive_id}.dmg"
+    return PACKAGE_DIR / f"SonaFolio_v{marketing_version}_{archive_id}.dmg"
 
 
 def _swift_build(configuration: str) -> Path:
@@ -271,7 +271,8 @@ def _package_app(configuration: str, *, distribution: str = "local") -> Path:
         "CFBundleIconFile": icon.name,
         "CFBundleIdentifier": "com.audio2text.local",
         "CFBundleInfoDictionaryVersion": "6.0",
-        "CFBundleName": "Audio2Text",
+        "CFBundleName": "SonaFolio",
+        "CFBundleDisplayName": "SonaFolio",
         "CFBundlePackageType": "APPL",
         "CFBundleShortVersionString": marketing_version,
         "CFBundleVersion": archive_id,
@@ -358,7 +359,7 @@ def _dmg_app_bundle(app: Path) -> Path:
                 hdiutil,
                 "create",
                 "-volname",
-                f"Audio2Text {marketing_version}_{archive_id}",
+                f"SonaFolio {marketing_version}_{archive_id}",
                 "-srcfolder",
                 str(staging_root),
                 "-ov",
@@ -621,7 +622,7 @@ def _quit_running_app(bundle_identifier: str | None, executable_path: Path) -> N
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Audio2Text local app workflow")
+    parser = argparse.ArgumentParser(description="SonaFolio local app workflow")
     sub = parser.add_subparsers(dest="command", required=True)
     build = sub.add_parser("build")
     build.add_argument("--platform", default="mac", choices=["mac", "ios"])

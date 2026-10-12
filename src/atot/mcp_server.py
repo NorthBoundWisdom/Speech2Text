@@ -13,7 +13,7 @@ from .workflow_service import WorkflowService
 def create_mcp_server(
     *, service: WorkflowService | None = None, config_overrides: tuple[str, ...] = ()
 ) -> MCPServer[Any]:
-    server: MCPServer[Any] = MCPServer("Audio2Text", instructions=AGENT_SUMMARY_INSTRUCTIONS)
+    server: MCPServer[Any] = MCPServer("SonaFolio", instructions=AGENT_SUMMARY_INSTRUCTIONS)
 
     def workflow() -> WorkflowService:
         # Read current library settings on each call; no secret-bearing config tool is exposed.

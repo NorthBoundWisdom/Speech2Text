@@ -58,7 +58,7 @@ def download(url: str, destination: Path, checksum: str | None = None) -> Path:
         return destination
     temporary = destination.with_suffix(destination.suffix + ".download")
     try:
-        request = urllib.request.Request(url, headers={"User-Agent": "Audio2Text-release/1"})
+        request = urllib.request.Request(url, headers={"User-Agent": "SonaFolio-release/1"})
         with (
             urllib.request.urlopen(request, timeout=120) as response,
             temporary.open("wb") as handle,
@@ -229,7 +229,7 @@ def prepare_materials(qt_prefix: Path, materials: Path) -> None:
         "Corresponding module sources are the verified official source archives in this directory.\n"
         "Use the compiler/platform and configure options recorded in qt-sbom to rebuild shared Qt.\n"
         "Libraries remain dynamically linked and replaceable; do not enforce signature checks on replacements.\n"
-        "To relink the client, build the matching Audio2Text tag with CMake and CMAKE_PREFIX_PATH\n"
+        "To relink the client, build the matching SonaFolio tag with CMake and CMAKE_PREFIX_PATH\n"
         "pointing to your rebuilt Qt. Run cmake --install to deploy it. On macOS remove/reapply\n"
         "the ad-hoc signature after replacing a framework: codesign --force --deep --sign - <app>.\n"
         "Linux base-system libraries are provided by the OS, not copied into this client.\n"
@@ -446,21 +446,21 @@ def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
     if sys.platform == "darwin":
         from configs.qt_workflow import _verify_macos_dependency_paths
 
-        app = stage / "Audio2TextQt.app"
+        app = stage / "SonaFolioQt.app"
         _verify_macos_dependency_paths(app)
         adhoc_sign(app)
-        executable = app / "Contents/MacOS/Audio2TextQt"
-        asset = OUTPUT / f"Audio2TextQt-v{version}-macOS-arm64.dmg"
+        executable = app / "Contents/MacOS/SonaFolioQt"
+        asset = OUTPUT / f"SonaFolioQt-v{version}-macOS-arm64.dmg"
         license_stage = app / "Contents/Resources"
         license_stage.mkdir(parents=True, exist_ok=True)
         # Manifest paths use the whole stage, with resources copied into the app after verification.
     else:
-        executable = stage / "bin/Audio2TextQt"
-        asset = OUTPUT / f"Audio2TextQt-v{version}-Linux-x86_64.AppImage"
+        executable = stage / "bin/SonaFolioQt"
+        asset = OUTPUT / f"SonaFolioQt-v{version}-Linux-x86_64.AppImage"
         if os.name == "nt":
             executable = executable.with_suffix(".exe")
             shutil.copy2(materials / "vc_redist.x64.exe", stage / "vc_redist.x64.exe")
-            asset = OUTPUT / f"Audio2TextQt-v{version}-Windows-x64-Setup.exe"
+            asset = OUTPUT / f"SonaFolioQt-v{version}-Windows-x64-Setup.exe"
         else:
             shutil.copy2(materials / "appimage_runtime", stage / "appimage-runtime")
     run(
@@ -502,12 +502,12 @@ def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
         if not asset.is_file():
             raise ValueError("Windows installer compiler produced no expected setup executable.")
     else:
-        (stage / "Audio2TextQt.desktop").write_text(
-            "[Desktop Entry]\nType=Application\nName=Audio2TextQt\nExec=Audio2TextQt\nIcon=Audio2TextQt\nCategories=AudioVideo;Audio;\n"
+        (stage / "SonaFolioQt.desktop").write_text(
+            "[Desktop Entry]\nType=Application\nName=SonaFolio\nExec=SonaFolioQt\nIcon=SonaFolioQt\nCategories=AudioVideo;Audio;\n"
         )
-        shutil.copy2(ROOT / "qt/Audio2TextQt/resources/app-icon.png", stage / "Audio2TextQt.png")
+        shutil.copy2(ROOT / "qt/Audio2TextQt/resources/app-icon.png", stage / "SonaFolioQt.png")
         (stage / "AppRun").write_text(
-            '#!/bin/sh\nset -eu\nATOT_APPDIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)\nexec "$ATOT_APPDIR/bin/Audio2TextQt" "$@"\n'
+            '#!/bin/sh\nset -eu\nATOT_APPDIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)\nexec "$ATOT_APPDIR/bin/SonaFolioQt" "$@"\n'
         )
         (stage / "AppRun").chmod(0o755)
         tool = materials / "appimagetool"
@@ -542,7 +542,7 @@ def package_swift(version: str) -> Path:
     app = ios_workflow._package_app("release", distribution="ad-hoc")
     dmg = ios_workflow._dmg_app_bundle(app)
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    target = OUTPUT / f"Audio2TextSwift-v{version}-macOS-arm64.dmg"
+    target = OUTPUT / f"SonaFolioSwift-v{version}-macOS-arm64.dmg"
     shutil.move(dmg, target)
     write_build_record(target, "swift", version)
     return target
@@ -551,10 +551,10 @@ def package_swift(version: str) -> Path:
 def validate_assets(directory: Path, version: str) -> None:
     version, _ = release_version(version)
     names = [
-        f"Audio2TextQt-v{version}-Windows-x64-Setup.exe",
-        f"Audio2TextQt-v{version}-Linux-x86_64.AppImage",
-        f"Audio2TextQt-v{version}-macOS-arm64.dmg",
-        f"Audio2TextSwift-v{version}-macOS-arm64.dmg",
+        f"SonaFolioQt-v{version}-Windows-x64-Setup.exe",
+        f"SonaFolioQt-v{version}-Linux-x86_64.AppImage",
+        f"SonaFolioQt-v{version}-macOS-arm64.dmg",
+        f"SonaFolioSwift-v{version}-macOS-arm64.dmg",
     ]
     commits = set()
     rows = []

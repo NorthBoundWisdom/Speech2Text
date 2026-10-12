@@ -1,6 +1,6 @@
-# Audio2Text Swift App
+# SonaFolio Swift App
 
-SwiftUI macOS app for the local Audio2Text workflow.
+SwiftUI macOS app for the local SonaFolio workflow.
 
 ## Run
 
@@ -19,10 +19,10 @@ python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --
 FreeCM reads `configs/freecm.commands.jsonc` and exposes the same `config`, `build`, `run`, `test`,
 and `package` actions. The config action regenerates the ignored root `Audio2Text.xcodeproj`. The
 package action uses development signing for local verification and writes
-`build/package/Audio2Text_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg`, using values from the repository
+`build/package/SonaFolio_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg`, using values from the repository
 root `source_roots.lock.jsonc`. Website release builds require a `Developer ID Application`
 certificate plus a `notarytool` Keychain profile, and should pass `--distribution developer-id`
-with `--notary-profile "Audio2Text Release"`. The FreeCM Developer ID action has no profile input,
+with `--notary-profile "SonaFolio Release"`. The FreeCM Developer ID action has no profile input,
 so its release host must set `ATOT_NOTARY_KEYCHAIN_PROFILE` to the saved profile name.
 
 For fast development checks, SwiftPM still works:
@@ -37,7 +37,7 @@ Local builds package the public CLI inside the app bundle. The CLI defaults to t
 the Swift app invokes the same Python workflow service through `serve --stdio`:
 
 ```text
-build/app/Audio2Text.app/Contents/MacOS/Audio2TextCli
+build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli
 ```
 
 `~/Documents/SpeechToTextData/env/` remains the app-managed Python runtime environment, not the

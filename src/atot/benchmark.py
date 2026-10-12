@@ -155,7 +155,7 @@ def _bytes_to_gb(size: int | None) -> str:
 
 def benchmark_markdown(summary: dict[str, Any]) -> str:
     lines = [
-        "# Audio2Text Model Benchmark",
+        "# SonaFolio Model Benchmark",
         "",
         f"- Sample: `{summary.get('sample_path', '')}`",
         f"- Language: `{summary.get('language', '')}`",

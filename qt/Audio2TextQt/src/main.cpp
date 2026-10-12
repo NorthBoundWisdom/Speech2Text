@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QCoreApplication::setOrganizationName("Audio2Text");
     QCoreApplication::setOrganizationDomain("audio2text.local");
-    QCoreApplication::setApplicationName("Audio2TextQt");
+    QCoreApplication::setApplicationName("SonaFolio");
     QCoreApplication::setApplicationVersion(AUDIO2TEXTQT_VERSION);
     QGuiApplication::setFont(applicationFont());
     QGuiApplication::setWindowIcon(QIcon(":/Audio2TextQt/resources/app-icon.png"));

@@ -9,7 +9,7 @@ ApplicationWindow {
     height: 860
     minimumWidth: 980
     minimumHeight: 620
-    title: "Audio2Text"
+    title: "SonaFolio"
     color: themeController.window
 
     palette {

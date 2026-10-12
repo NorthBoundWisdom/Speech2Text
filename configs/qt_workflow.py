@@ -26,6 +26,7 @@ DEFAULT_PACKAGE_DIR = REPO_ROOT / "build" / "package"
 DEFAULT_PACKAGE_STAGING_DIR = REPO_ROOT / "build" / "package-staging"
 DEFAULT_PYTHON_RUNTIME_SOURCE = Path(sys.base_prefix)
 TARGET_NAME = "Audio2TextQt"
+PRODUCT_NAME = "SonaFolioQt"
 PACKAGE_PLATFORM = "Windows"
 SOURCE_ROOTS_LOCK_NAMES = ("source_roots.lock.jsonc", "source_roots.lock.jsonc.in")
 PACKAGE_IGNORE_PATTERNS = (
@@ -141,12 +142,12 @@ def _load_source_roots_lock(path: Path) -> dict[str, object]:
 
         payload = loads_jsonc(path.read_text(encoding="utf-8"), path_label=str(path))
     except json.JSONDecodeError as exc:
-        raise SystemExit(f"Audio2TextQt: invalid JSON in {path}: {exc}") from exc
+        raise SystemExit(f"SonaFolio Qt: invalid JSON in {path}: {exc}") from exc
     except ModuleNotFoundError:
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            raise SystemExit(f"Audio2TextQt: invalid JSON in {path}: {exc}") from exc
+            raise SystemExit(f"SonaFolio Qt: invalid JSON in {path}: {exc}") from exc
     if not isinstance(payload, dict):
         return {}
     return payload
@@ -273,11 +274,11 @@ def _find_qt_prefix(explicit: str | None, build_dir: Path) -> Path | None:
             continue
         seen.add(key)
         if _looks_like_qt_prefix(prefix):
-            print(f"Audio2TextQt: using Qt prefix from {source}: {prefix}", flush=True)
+            print(f"SonaFolio Qt: using Qt prefix from {source}: {prefix}", flush=True)
             return prefix
         if explicit and source == "--qt-prefix":
             raise SystemExit(
-                f"Audio2TextQt: --qt-prefix does not look like a Qt 6 prefix: {prefix}"
+                f"SonaFolio Qt: --qt-prefix does not look like a Qt 6 prefix: {prefix}"
             )
     return None
 
@@ -294,14 +295,14 @@ def _find_qt_deploy_tool(explicit: str | None, build_dir: Path) -> Path:
         seen.add(key)
         searched.append(candidate)
         if candidate.is_file():
-            print(f"Audio2TextQt: using {tool_name} from {source}: {candidate}", flush=True)
+            print(f"SonaFolio Qt: using {tool_name} from {source}: {candidate}", flush=True)
             return candidate
     found = shutil.which(tool_name)
     if found:
         return Path(found).resolve()
     locations = "\n  ".join(str(path) for path in searched) or "<none>"
     raise SystemExit(
-        f"Audio2TextQt: {tool_name} was not found for packaging. "
+        f"SonaFolio Qt: {tool_name} was not found for packaging. "
         "Set --qt-prefix, AUDIO2TEXTQT_QT_PREFIX, CMAKE_PREFIX_PATH, or source_roots terminalPath.\n"
         f"Searched:\n  {locations}"
     )
@@ -333,7 +334,7 @@ def _configure(args: argparse.Namespace, build_dir: Path) -> None:
         )
     else:
         print(
-            "Audio2TextQt: Qt prefix was not auto-detected; relying on CMake search paths. "
+            "SonaFolio Qt: Qt prefix was not auto-detected; relying on CMake search paths. "
             "Set AUDIO2TEXTQT_QT_PREFIX or CMAKE_PREFIX_PATH if configure fails.",
             file=sys.stderr,
             flush=True,
@@ -349,10 +350,10 @@ def _build(args: argparse.Namespace, build_dir: Path, *, configure_if_missing: b
 
 def _executable_candidates(build_dir: Path, configuration: str) -> list[Path]:
     suffix = ".exe" if os.name == "nt" else ""
-    executable = f"{TARGET_NAME}{suffix}"
+    executable = f"{PRODUCT_NAME}{suffix}"
     candidates: list[Path] = []
     if sys.platform == "darwin":
-        bundle_executable = Path(f"{TARGET_NAME}.app") / "Contents" / "MacOS" / TARGET_NAME
+        bundle_executable = Path(f"{PRODUCT_NAME}.app") / "Contents" / "MacOS" / PRODUCT_NAME
         candidates.extend(
             [
                 build_dir / configuration / bundle_executable,
@@ -373,7 +374,7 @@ def _find_executable(build_dir: Path, configuration: str) -> Path:
         if candidate.exists():
             return candidate
     expected = "\n  ".join(str(path) for path in _executable_candidates(build_dir, configuration))
-    raise SystemExit(f"Audio2TextQt: executable was not found. Expected one of:\n  {expected}")
+    raise SystemExit(f"SonaFolio Qt: executable was not found. Expected one of:\n  {expected}")
 
 
 def _candidate_ffmpeg_dirs(explicit: str | None) -> list[tuple[str, Path]]:
@@ -421,11 +422,11 @@ def _find_ffmpeg_tool(tool_name: str, explicit_dir: str | None) -> Path:
         candidate = directory / tool_name
         searched.append(candidate)
         if candidate.is_file():
-            print(f"Audio2TextQt: using {tool_name} from {source}: {candidate}", flush=True)
+            print(f"SonaFolio Qt: using {tool_name} from {source}: {candidate}", flush=True)
             return candidate
     locations = "\n  ".join(str(path) for path in searched) or "<none>"
     raise SystemExit(
-        f"Audio2TextQt: {tool_name} was not found for packaging. "
+        f"SonaFolio Qt: {tool_name} was not found for packaging. "
         "Set --ffmpeg-dir or AUDIO2TEXTQT_FFMPEG_DIR to a directory containing "
         f"{' and '.join(FFMPEG_TOOL_NAMES)}.\nSearched:\n  {locations}"
     )
@@ -533,11 +534,11 @@ def _copy_msvc_runtime(staging_dir: Path, explicit_dir: str | None) -> None:
                 shutil.copy2(dll, target)
                 copied.append(target)
         names = ", ".join(sorted(path.name for path in copied))
-        print(f"Audio2TextQt: copied MSVC runtime from {source}: {directory} ({names})", flush=True)
+        print(f"SonaFolio Qt: copied MSVC runtime from {source}: {directory} ({names})", flush=True)
         return
     locations = "\n  ".join(str(path) for path in searched) or "<none>"
     raise SystemExit(
-        "Audio2TextQt: MSVC runtime DLLs were not found for packaging. "
+        "SonaFolio Qt: MSVC runtime DLLs were not found for packaging. "
         "Set --msvc-runtime-dir or AUDIO2TEXTQT_MSVC_RUNTIME_DIR to a Microsoft.VC*.CRT directory.\n"
         f"Searched:\n  {locations}"
     )
@@ -553,7 +554,7 @@ def _qt_project_version() -> str:
     if match is not None and match[1] == "${AUDIO2TEXTQT_RELEASE_VERSION}":
         match = re.search(r'set\(AUDIO2TEXTQT_RELEASE_VERSION "([0-9.]+)"', content)
     if match is None or not re.fullmatch(r"[0-9]+(?:\.[0-9]+){1,3}", match[1]):
-        raise SystemExit(f"Audio2TextQt: project version was not found in {cmake_lists}")
+        raise SystemExit(f"SonaFolio Qt: project version was not found in {cmake_lists}")
     return match[1]
 
 
@@ -565,21 +566,21 @@ def _package_archive_path(
     platform: str = PACKAGE_PLATFORM,
 ) -> Path:
     suffix = "_Runtime" if include_python_runtime else ""
-    return package_dir / f"{TARGET_NAME}_v{version}_{platform}{suffix}.zip"
+    return package_dir / f"{PRODUCT_NAME}_v{version}_{platform}{suffix}.zip"
 
 
 def _reset_child_directory(path: Path, parent: Path) -> None:
     resolved = path.resolve()
     resolved_parent = parent.resolve()
     if resolved == resolved_parent or resolved.parent != resolved_parent:
-        raise SystemExit(f"Audio2TextQt: refusing to reset unsafe staging directory: {path}")
+        raise SystemExit(f"SonaFolio Qt: refusing to reset unsafe staging directory: {path}")
     if resolved.exists():
         shutil.rmtree(resolved)
 
 
 def _stage_runtime(runtime_dir: Path, staging_dir: Path) -> None:
     if not runtime_dir.is_dir():
-        raise SystemExit(f"Audio2TextQt: runtime directory was not found: {runtime_dir}")
+        raise SystemExit(f"SonaFolio Qt: runtime directory was not found: {runtime_dir}")
     staging_dir.parent.mkdir(parents=True, exist_ok=True)
     _reset_child_directory(staging_dir, staging_dir.parent)
     shutil.copytree(
@@ -609,7 +610,7 @@ def _stage_python_runtime(staging_dir: Path, source_dir: str | None) -> None:
     python = source / "python.exe"
     if not python.is_file():
         raise SystemExit(
-            f"Audio2TextQt: Python runtime source does not contain python.exe: {source}"
+            f"SonaFolio Qt: Python runtime source does not contain python.exe: {source}"
         )
     unexpected = [child.name for child in source.iterdir()
                   if child.name.lower() not in {"lib", "dlls", "libs", "include", "scripts", "doc", "tcl", "tools", "__pycache__"}
@@ -648,7 +649,7 @@ def _write_package_readme(
     if platform == "Windows":
         runtime_lines = (
             [
-                "This package also contains a portable Python runtime with Audio2Text CLI dependencies.",
+                "This package also contains a portable Python runtime with SonaFolio CLI dependencies.",
                 "The Qt client will run python\\python.exe -m atot.cli automatically.",
             ]
             if include_python_runtime
@@ -657,13 +658,13 @@ def _write_package_readme(
                 "%USERPROFILE%\\Documents\\SpeechToTextData\\env\\Scripts\\atot.exe",
             ]
         )
-        title = "Audio2TextQt Windows client"
+        title = "SonaFolio Qt Windows client"
     else:
         runtime_lines = [
             "Configure atot in Settings, or place it under the default data root:",
             "~/Documents/SpeechToTextData/env/bin/atot",
         ]
-        title = f"Audio2TextQt {platform} client"
+        title = f"SonaFolio Qt {platform} client"
     (staging_dir / "README.txt").write_text(
         "\n".join(
             [
@@ -685,7 +686,7 @@ def _macos_app_bundle_from_executable(executable: Path) -> Path:
     for parent in executable.parents:
         if parent.name.endswith(".app"):
             return parent
-    raise SystemExit(f"Audio2TextQt: macOS app bundle was not found for executable: {executable}")
+    raise SystemExit(f"SonaFolio Qt: macOS app bundle was not found for executable: {executable}")
 
 
 def _stage_macos_bundle(app_bundle: Path, staging_dir: Path) -> Path:
@@ -721,7 +722,7 @@ def _package_windows(args: argparse.Namespace, build_dir: Path) -> Path:
     executable = _find_executable(build_dir, args.configuration)
     package_dir = _resolve_repo_path(args.package_dir)
     staging_root = _resolve_repo_path(args.package_staging_dir)
-    staging_dir = staging_root / TARGET_NAME
+    staging_dir = staging_root / PRODUCT_NAME
     _stage_runtime(executable.parent, staging_dir)
     _copy_ffmpeg_tools(staging_dir, args.ffmpeg_dir)
     _copy_msvc_runtime(staging_dir, args.msvc_runtime_dir)
@@ -768,14 +769,14 @@ def _verify_macos_dependency_paths(app: Path) -> None:
 def _package_macos(args: argparse.Namespace, build_dir: Path) -> Path:
     if args.include_python_runtime:
         raise SystemExit(
-            "Audio2TextQt: --include-python-runtime is only supported for Windows packages."
+            "SonaFolio Qt: --include-python-runtime is only supported for Windows packages."
         )
     _build(args, build_dir, configure_if_missing=True)
     executable = _find_executable(build_dir, args.configuration)
     app_bundle = _macos_app_bundle_from_executable(executable)
     package_dir = _resolve_repo_path(args.package_dir)
     staging_root = _resolve_repo_path(args.package_staging_dir)
-    staging_dir = staging_root / TARGET_NAME
+    staging_dir = staging_root / PRODUCT_NAME
     target_app = _stage_macos_bundle(app_bundle, staging_dir)
     deploy_tool = _find_qt_deploy_tool(args.qt_prefix, build_dir)
     _run(
@@ -806,7 +807,7 @@ def _package(args: argparse.Namespace, build_dir: Path) -> Path:
         return _package_windows(args, build_dir)
     if sys.platform == "darwin":
         return _package_macos(args, build_dir)
-    raise SystemExit("Audio2TextQt: client packaging is only supported on Windows and macOS.")
+    raise SystemExit("SonaFolio Qt: client packaging is only supported on Windows and macOS.")
 
 
 def _app_args(values: list[str]) -> list[str]:
@@ -853,7 +854,7 @@ def _add_package_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--include-python-runtime",
         action="store_true",
-        help="Bundle a portable Python runtime and Audio2Text CLI dependencies.",
+        help="Bundle a portable Python runtime and SonaFolio CLI dependencies.",
     )
     parser.add_argument(
         "--python-runtime-source",
@@ -862,7 +863,7 @@ def _add_package_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Audio2TextQt workflow helper.")
+    parser = argparse.ArgumentParser(description="SonaFolio Qt workflow helper.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     for name in ("config", "build", "launch", "run", "smoke", "package"):
