@@ -113,7 +113,7 @@ def peak_rss_mb() -> float | None:
     if resource is None:
         return None
     try:
-        rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        rss = float(getattr(resource, "getrusage")(getattr(resource, "RUSAGE_SELF")).ru_maxrss)
     except (OSError, ValueError):
         return None
     # Darwin returns bytes; Linux returns KiB. Use a simple platform split.

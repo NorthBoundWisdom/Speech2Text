@@ -58,9 +58,12 @@ committed configuration merely to make a test pass.
 ## Redistribution materials
 
 `configs/ci-vendors.json` pins Qt 6.12.0 source archives/checksums, AppImage tooling/runtime and the
-Microsoft runtime license document. Qt binary SDK downloads are verified by aqtinstall; source
+Microsoft runtime license document. The Windows SDK uses the official architecture-specific repository and SHA-256 archive checks
+(the current aqt release does not support that new Windows repository layout). Other Qt SDK
+downloads are verified by aqtinstall; source
 archives are verified against the committed SHA-256 values. The release script confirms that SDK
-and source versions match. SDK SPDX build records, copyright/license notices, corresponding
+and source versions match. Linux builds the ICU 73.2 ABI required by the vendor Qt SDK from its
+verified source, deploys its shared libraries, and includes its Unicode license/source materials. SDK SPDX build records, copyright/license notices, corresponding
 sources and rebuild/relink instructions are included in each Qt package. The existing
 [release license gate](RELEASE_LICENSES.md) validates the actual deployed file/material hashes
 before generating an installer. Windows uses the vendor-signed official redist installer;

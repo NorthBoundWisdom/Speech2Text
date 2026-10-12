@@ -25,7 +25,7 @@ def credential_backend() -> CredentialBackend:
         return cast(CredentialBackend, Keyring())  # type: ignore[no-untyped-call]
     if sys.platform == "win32":
         from keyring.backends.Windows import WinVaultKeyring
-        return cast(CredentialBackend, WinVaultKeyring())
+        return cast(CredentialBackend, WinVaultKeyring())  # type: ignore[no-untyped-call]
     raise RuntimeError("Cloud credential storage requires macOS Keychain or Windows Credential Manager.")
 
 

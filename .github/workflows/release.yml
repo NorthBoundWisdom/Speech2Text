@@ -77,7 +77,14 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1
         if: runner.os == 'Windows'
       - run: python -m pip install cmake ninja
+      - name: Build Qt Linux ICU ABI dependency
+        if: runner.os == 'Linux'
+        run: python configs/ci_release.py icu
+      - name: Install verified Windows Qt SDK
+        if: runner.os == 'Windows'
+        run: python configs/ci_release.py windows-sdk
       - uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
+        if: runner.os != 'Windows'
         with:
           version: '6.12.0'
           host: ${{ matrix.host }}

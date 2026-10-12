@@ -170,6 +170,8 @@ def test_audio_filename_defaults_to_m4a_when_audio_url_has_no_suffix():
 
 
 def test_import_xiaoyuzhou_default_runs_transcription(monkeypatch, tmp_path, capsys):
+    from atot.config_v2 import set_config_value
+    set_config_value("library.storage", "local")
     audio_path = tmp_path / "process" / "0527" / "episode" / "episode.m4a"
     audio_path.parent.mkdir(parents=True)
     audio_path.write_bytes(b"audio")

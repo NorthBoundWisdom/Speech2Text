@@ -271,14 +271,16 @@ def test_service_module_keeps_compat_reexports():
     assert service._read_json_request is service_http.read_json_request
 
 
-def test_force_and_overwrite_help_text_keeps_public_semantics(capsys):
+def test_force_and_overwrite_help_text_keeps_public_semantics(capsys, monkeypatch):
+    monkeypatch.setenv("NO_COLOR", "1")
     assert cli.main(["exec", "transcribe", "--help"]) == 0
-    transcribe_help = capsys.readouterr().out
+    from rich.text import Text
+    transcribe_help = Text.from_ansi(capsys.readouterr().out).plain
     assert "--force" in transcribe_help
     assert "Rebuild existing transcribe artifacts" in transcribe_help
 
     assert cli.main(["exec", "srt", "--help"]) == 0
-    srt_help = capsys.readouterr().out
+    srt_help = Text.from_ansi(capsys.readouterr().out).plain
     assert "--overwrite" in srt_help
     assert "Replace existing SRT files" in srt_help
 

@@ -72,7 +72,7 @@ def _cloud_summary_lock(output_dir: Path) -> Iterator[None]:
         return
     with lock_path.open("a+", encoding="utf-8") as lock_file:
         try:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            getattr(fcntl, "flock")(lock_file.fileno(), getattr(fcntl, "LOCK_EX") | getattr(fcntl, "LOCK_NB"))
         except BlockingIOError as exc:
             raise RuntimeError(f"Cloud summary is already running for: {output_dir}") from exc
         lock_file.seek(0)
@@ -82,7 +82,7 @@ def _cloud_summary_lock(output_dir: Path) -> Iterator[None]:
         try:
             yield
         finally:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            getattr(fcntl, "flock")(lock_file.fileno(), getattr(fcntl, "LOCK_UN"))
 
 
 @contextmanager

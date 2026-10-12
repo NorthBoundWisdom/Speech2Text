@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -99,6 +100,81 @@ def extract_license_texts(archive: Path, destination: Path) -> list[Path]:
     return result
 
 
+def build_icu(materials: Path) -> None:
+    if sys.platform != "linux":
+        raise ValueError("ICU preparation is a Linux build step.")
+    vendor = json.loads(VENDORS.read_text())["icu"]
+    archive = download(vendor["url"], materials / "icu4c-73_2-src.tgz", vendor["sha256"])
+    source = ROOT / "build/icu-source"
+    source.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(archive) as package:
+        package.extractall(source, filter="data")
+    prefix = ROOT / "build/icu-install"
+    configure = source / "icu/source/configure"
+    run(
+        configure,
+        f"--prefix={prefix}",
+        "--disable-tests",
+        "--disable-samples",
+        cwd=configure.parent,
+    )
+    run("make", "-j3", cwd=configure.parent)
+    run("make", "install", cwd=configure.parent)
+    if os.environ.get("GITHUB_ENV"):
+        with Path(os.environ["GITHUB_ENV"]).open("a") as handle:
+            handle.write(f"LD_LIBRARY_PATH={prefix / 'lib'}\n")
+
+
+def install_windows_qt() -> None:
+    if os.name != "nt":
+        raise ValueError("The Windows SDK installer requires Windows.")
+    version = json.loads(VENDORS.read_text())["qt_version"]
+    compact = version.replace(".", "")
+    base = f"https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_{compact}/qt6_{compact}_msvc2022_64/"
+    cache = ROOT / "build/qt-downloads"
+    metadata = download(base + "Updates.xml", cache / "Updates.xml")
+    document = ElementTree.fromstring(metadata.read_bytes())
+    selected = {"qtbase", "qtdeclarative", "qtsvg", "qtshadertools"}
+    found = set()
+    output = ROOT / "build/qt-sdk"
+    extractor = shutil.which("7z") or str(Path(os.environ.get("ProgramFiles", "")) / "7-Zip/7z.exe")
+    for package in document.findall("PackageUpdate"):
+        name = package.findtext("Name") or ""
+        release = package.findtext("Version") or ""
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+", name + release):
+            raise ValueError("Invalid vendor package metadata.")
+        if ".debug_info." in name:
+            continue
+        for raw in (package.findtext("DownloadableArchives") or "").split(","):
+            archive_name = raw.strip()
+            module = archive_name.split("-", 1)[0]
+            if module not in selected:
+                continue
+            if not re.fullmatch(r"[A-Za-z0-9_.-]+\.7z", archive_name):
+                raise ValueError("Invalid vendor archive name.")
+            url = base + name + "/" + release + archive_name
+            checksum_file = download(url + ".sha256", cache / (archive_name + ".sha256"))
+            expected = checksum_file.read_text().strip().split()[0]
+            archive = download(url, cache / archive_name)
+            with archive.open("rb") as handle:
+                digest = hashlib.sha256()
+                for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            if digest.hexdigest() != expected:
+                raise ValueError("Official Qt SDK archive checksum mismatch.")
+            run(extractor, "x", archive, f"-o{output}", "-y")
+            found.add(module)
+    if found != selected:
+        raise ValueError("The official Windows SDK is missing required modules.")
+    prefix = output / version / "msvc2022_64"
+    if not (prefix / "bin/qmake.exe").is_file():
+        raise ValueError("Installed Windows SDK has no qmake.exe.")
+    with Path(os.environ["GITHUB_ENV"]).open("a") as handle:
+        handle.write(f"QT_ROOT_DIR={prefix}\nCMAKE_PREFIX_PATH={prefix}\n")
+    with Path(os.environ["GITHUB_PATH"]).open("a") as handle:
+        handle.write(str(prefix / "bin") + "\n")
+
+
 def prepare_materials(qt_prefix: Path, materials: Path) -> None:
     vendors = json.loads(VENDORS.read_text())
     version = vendors["qt_version"]
@@ -175,6 +251,21 @@ def prepare_materials(qt_prefix: Path, materials: Path) -> None:
             f"Upstream {item['repo']} commit {item['revision']}.\n"
             "Build scripts and dependency definitions are in the included source archive.\n"
         )
+        icu = vendors["icu"]
+        icu_archive = materials / "icu4c-73_2-src.tgz"
+        icu_licenses = extract_license_texts(icu_archive, materials / "icu-licenses")
+        icu_instructions = materials / "icu-build.txt"
+        icu_instructions.write_text(
+            "ICU 73.2: configure --prefix=<install> --disable-tests --disable-samples; make -j3; make install.\nShared libraries, replaceable independently of Qt.\n"
+        )
+        payload["icu"] = {
+            "name": "icu",
+            "version": icu["version"],
+            "license": icu["license"],
+            "license_files": [record(p, materials) for p in icu_licenses],
+            "source_archives": [record(icu_archive, materials)],
+            "build_files": [record(icu_instructions, materials)],
+        }
         payload["appimage_runtime"] = {
             "name": "appimage-runtime",
             "version": item["revision"],
@@ -218,10 +309,12 @@ def prepare_materials(qt_prefix: Path, materials: Path) -> None:
 
 def write_material_manifest(stage: Path, materials: Path) -> Path:
     prepared = json.loads((materials / "prepared.json").read_text())
-    qt_files, own_files, runtime_files, vc_files = [], [], [], []
+    qt_files, own_files, runtime_files, vc_files, icu_files = [], [], [], [], []
     for name in sorted(_required_files(stage)):
         row = record(stage / name, stage)
-        if name.endswith("vc_redist.x64.exe"):
+        if Path(name).name.startswith("libicu"):
+            icu_files.append(row)
+        elif name.endswith("vc_redist.x64.exe"):
             vc_files.append(row)
         elif name == "appimage-runtime":
             runtime_files.append(row)
@@ -244,6 +337,8 @@ def write_material_manifest(stage: Path, materials: Path) -> Path:
         )
     if runtime_files:
         components.append({**prepared["appimage_runtime"], "files": runtime_files})
+    if icu_files:
+        components.append({**prepared["icu"], "files": icu_files})
     if vc_files:
         components.append({**prepared["vc_runtime"], "files": vc_files})
     path = materials / "manifest.json"
@@ -470,12 +565,20 @@ def validate_assets(directory: Path, version: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["metadata", "prepare", "qt", "swift", "verify"])
+    parser.add_argument(
+        "command", choices=["metadata", "prepare", "qt", "swift", "verify", "icu", "windows-sdk"]
+    )
     parser.add_argument("--version", default=os.environ.get("RELEASE_VERSION", ""))
     parser.add_argument("--qt-prefix", type=Path)
     parser.add_argument("--materials", type=Path, default=ROOT / "build/release-materials")
     parser.add_argument("--directory", type=Path, default=OUTPUT)
     args = parser.parse_args()
+    if args.command == "icu":
+        build_icu(args.materials)
+        return
+    if args.command == "windows-sdk":
+        install_windows_qt()
+        return
     if args.command == "prepare":
         if args.qt_prefix is None:
             parser.error("--qt-prefix is required")

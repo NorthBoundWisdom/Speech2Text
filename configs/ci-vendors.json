@@ -32,5 +32,11 @@
   "vc_runtime_license": {
     "url": "https://visualstudio.microsoft.com/wp-content/uploads/2021/09/Visual-C-Runtime-2015-2022-License-1.docx",
     "sha256": "f1e3d56ceb2ad68aae0711b910375009e651ac5530fa0760f0dea6e81e54fae1"
+  },
+  "icu": {
+    "version": "73.2",
+    "url": "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz",
+    "sha256": "818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1",
+    "license": "Unicode-DFS-2016"
   }
 }

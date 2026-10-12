@@ -133,6 +133,6 @@ def _terminate_process_tree(process: subprocess.Popen[str]) -> None:
             process.kill()
         return
     try:
-        os.killpg(process.pid, signal.SIGKILL)
+        getattr(os, "killpg")(process.pid, getattr(signal, "SIGKILL"))
     except OSError:
         process.kill()
