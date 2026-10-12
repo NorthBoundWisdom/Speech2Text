@@ -19,7 +19,7 @@ def validate_output_bundle(output_dir: Path) -> list[str]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Validate an AtoT local transcription output bundle."
+        description="Validate an SonaFolio local transcription output bundle."
     )
     parser.add_argument("output_dir", type=Path, help="Transcription output directory.")
     return parser

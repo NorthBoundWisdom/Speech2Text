@@ -11,7 +11,7 @@ __all__ = ["validate_cloud_input", "validate_cloud_outputs", "validate_cloud_pac
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Validate AtoT cloud text-only package manifests.")
+    parser = argparse.ArgumentParser(description="Validate SonaFolio cloud text-only package manifests.")
     parser.add_argument(
         "path", type=Path, help="Output directory, cloud directory, or cloud input directory."
     )

@@ -20,7 +20,7 @@ from atot.paths import DEFAULT_OUTPUT_DIR
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Summarize historical Audio2Text output quality across the local library."
+        description="Summarize historical SonaFolio output quality across the local library."
     )
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument(

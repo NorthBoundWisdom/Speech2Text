@@ -4,6 +4,10 @@ SonaFolio Qt is the cross-platform Qt/QML client for SonaFolio. It mirrors the
 Swift client boundary: the UI reads `Audio2TextLibrary` directly for browsing,
 and runs workflow commands through `atot serve --stdio --request-json ... --unwrap-result`.
 
+Qt clients are built for macOS, Windows and Linux. The Linux client does not promote a stable
+Linux ASR backend. Qt 6.8+ is required; current CI validates Qt 6.12.0. Internal CMake/QML names
+remain compatible; see [brand identifiers](../../doc/BRANDING.md).
+
 ## Build
 
 ```powershell
@@ -61,3 +65,12 @@ library root itself. Runtime command execution also receives the same value via
 --smoke-quit            Load QML and quit.
 --library-probe         Scan the configured library and quit.
 ```
+
+## Automatic installer releases
+
+Tag builds produce Windows EXE, Linux AppImage and macOS DMG clients. These installers include
+Qt libraries but do not bundle the Python CLI, FFmpeg, CUDA or model weights. This differs from
+the manual FreeCM ZIP package above, which explicitly copies FFmpeg and may optionally bundle
+a clean Windows Python runtime. Both paths require third-party license/source materials.
+
+See [release workflow](../../doc/CI_RELEASES.md) and the [online installation guide](https://northboundwisdom.github.io/sonafolio/install/).

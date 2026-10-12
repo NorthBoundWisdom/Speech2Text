@@ -133,7 +133,7 @@ def build_report(process_dir: Path, *, reference_dir: Path) -> str:
             "",
             "## Notes",
             "",
-            "- `speed_factor` is Audio2Text's inverse of WhisperLiveKit-style RTF: audio duration divided by wall time.",
+            "- `speed_factor` is SonaFolio's inverse of WhisperLiveKit-style RTF: audio duration divided by wall time.",
             "- `correction_kind_counts` separates glossary, ASR artifact, contextual title, and runaway repetition corrections.",
             "- `Chunk status` is valid only when both the ASR fingerprint and chunk layout manifest match the current run.",
             "- `run.json` records separate transcription and post-processing fingerprints, so correction-only glossary changes can refresh outputs while reusing ASR chunks.",
@@ -146,7 +146,7 @@ def build_report(process_dir: Path, *, reference_dir: Path) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Summarize Audio2Text process/ experiment runs.")
+    parser = argparse.ArgumentParser(description="Summarize SonaFolio process/ experiment runs.")
     parser.add_argument("--process-dir", type=Path, default=Path("process"))
     parser.add_argument("--reference-dir", type=Path, default=Path("reference/whisperlivekit"))
     parser.add_argument(

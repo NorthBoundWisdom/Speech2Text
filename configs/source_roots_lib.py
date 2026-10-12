@@ -34,7 +34,7 @@ WORKFLOW = DependencyRootWorkflow(
         dependency_root_specs=SOURCE_ROOT_SPECS,
         known_dependency_root_specs=KNOWN_SOURCE_ROOT_SPECS,
         app_config_keys=(*BUILD_SETTING_KEYS, DEV_MODE_KEY),
-        repo_display_name="Audio2Text",
+        repo_display_name="SonaFolio",
         xcode_manual_sync_command="`python3 configs/source_root_workflow.py --update`",
     ),
 )

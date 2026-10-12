@@ -214,7 +214,7 @@ def validate_runtime_evidence(options: RuntimeEvidenceOptions) -> list[str]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Validate real runtime evidence for the AtoT roadmap."
+        description="Validate real runtime evidence for the SonaFolio roadmap."
     )
     parser.add_argument(
         "--long-output",

@@ -21,7 +21,7 @@ def validate_run_json_file(path: Path) -> list[str]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Validate Audio2Text work/run.json schema invariants."
+        description="Validate SonaFolio work/run.json schema invariants."
     )
     parser.add_argument("run_json", nargs="+", type=Path)
     return parser

@@ -1,0 +1,70 @@
+site_name: SonaFolio
+site_description: Local-first podcast transcription and knowledge library for macOS, iOS, and Windows.
+site_url: https://northboundwisdom.github.io/sonafolio/
+repo_url: https://github.com/NorthBoundWisdom/sonafolio
+repo_name: NorthBoundWisdom/sonafolio
+docs_dir: docs
+site_dir: ../build/website
+strict: true
+use_directory_urls: true
+hooks:
+  - hooks/build_metadata.py
+theme:
+  name: material
+  language: zh
+  font: false
+  logo: assets/icon.png
+  favicon: assets/icon.png
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: 切换深色模式
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: 切换浅色模式
+plugins:
+  - search:
+      lang: [zh, en]
+extra_css:
+  - stylesheets/sonafolio.css
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
+nav:
+  - 首页: index.md
+  - 开始使用:
+      - 下载与安装: install.md
+      - 第一次转录: quick-start.md
+  - 使用手册:
+      - 资料库与订阅: guides/library.md
+      - Codex 总结与回写: guides/agent-summary.md
+      - CLI 与自动化: guides/cli.md
+      - QA 与修复: guides/quality.md
+      - 隐私与数据: guides/privacy.md
+      - 常见问题: faq.md
+  - 项目:
+      - 品牌与兼容名称: naming.md
+      - 开发与贡献: development.md

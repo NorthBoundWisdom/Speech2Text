@@ -141,7 +141,7 @@ struct Audio2TextCommands: Commands {
             Button("复制 Codex 总结回写指令") {
                 if let item = store.selectedLibraryItem {
                     let prompt = """
-                    使用 audio2text MCP 为 episode_id="\(item.id)" 生成中文 Markdown 总结并回写。
+                    使用已连接的 SonaFolio MCP 为 episode_id="\(item.id)" 生成中文 Markdown 总结并回写。
                     先 get_episode 获取版本和 QA 信息，再通过 read_document 分页读完全部转录，保留有用的时间标记。
                     使用你当前的模型总结，不调用 SonaFolio 云 API。
                     write_summary 时传入 transcript_sha256 和 summary_sha256，generator 填 Codex。

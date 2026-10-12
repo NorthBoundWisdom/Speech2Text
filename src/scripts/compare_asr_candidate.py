@@ -101,7 +101,7 @@ __all__ = [
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Compare Audio2Text baseline with an external ASR candidate command."
+        description="Compare SonaFolio baseline with an external ASR candidate command."
     )
     parser.add_argument("audio", type=Path)
     parser.add_argument(

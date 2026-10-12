@@ -1,6 +1,8 @@
-# Audio2Text 实验记录
+# SonaFolio 历史实验索引
 
-本目录保存历史实验快照和基准测试结果。
+本目录保存历史实验快照和基准测试结果。记录中的 Audio2Text / AtoT 是 SonaFolio 的早期名称。
+原始命令、数字与测量结果保留原样；这些文件不是当前安装或支持说明。
+当前状态见 [后端研究](../BACKEND_RESEARCH.md)、[功能状态](../ROADMAP_STATUS.md)和[品牌说明](../BRANDING.md)。
 
 ---
 
@@ -28,7 +30,7 @@
 
 ---
 
-## 当前实验
+## 已记录实验
 
 ### 基准测试
 
@@ -298,5 +300,5 @@ python src/scripts/asr_candidate_matrix.py
 
 ---
 
-**维护者:** Audio2Text 团队  
-**最后更新:** 2026-06-10
+**维护者:** SonaFolio 贡献者
+**索引维护:** 2026-10-13（不修改实验测量日期）

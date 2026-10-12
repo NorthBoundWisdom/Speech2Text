@@ -331,11 +331,11 @@ def write_material_manifest(stage: Path, materials: Path) -> Path:
             qt_files.append(row)
     components = [{**prepared["qt"], "files": qt_files}]
     if own_files:
-        license_file = materials / "Audio2Text-LICENSE"
+        license_file = materials / "SonaFolio-LICENSE"
         shutil.copy2(ROOT / "LICENSE", license_file)
         components.append(
             {
-                "name": "audio2text-qml",
+                "name": "sonafolio-qml",
                 "version": "source",
                 "license": "MIT",
                 "files": own_files,

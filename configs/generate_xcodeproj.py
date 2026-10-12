@@ -419,7 +419,7 @@ if [ -x "$python_bin" ]; then
   wheel="$(ls -t "$SRCROOT"/build/wheelhouse/audio2text_local-*.whl | head -n 1)"
   cp "$wheel" "$resources/"
 else
-  echo "warning: Audio2Text Python runtime env is missing; run python3 configs/setup_local_app.py" >&2
+  echo "warning: SonaFolio Python runtime env is missing; run python3 configs/setup_local_app.py" >&2
 fi
 """
 

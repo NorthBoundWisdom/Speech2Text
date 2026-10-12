@@ -142,12 +142,12 @@ int main(int argc, char *argv[])
 #endif
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("Audio2Text Qt/QML client");
+    parser.setApplicationDescription("SonaFolio Qt/QML client");
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOption({{"s", "smoke-quit"}, "Load QML, refresh once, and quit."});
     parser.addOption({"library-probe", "Scan the configured library once, print a summary, and quit."});
-    parser.addOption({"data-root", "Override the Audio2Text data root for this run.", "path"});
+    parser.addOption({"data-root", "Override the SonaFolio data root for this run.", "path"});
     parser.addOption({"library-root", "Override the Audio2TextLibrary root for this run.", "path"});
     parser.addOption({"atot", "Path to atot, atot.exe, or Audio2TextCli.", "path"});
     parser.addOption({"vcpkg-root", "Path to a local vcpkg root for ffmpeg discovery.", "path"});
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
         library.refresh();
         std::fprintf(
             stderr,
-            "Audio2TextQt library probe: %d episodes, %d groups, %d subscriptions, root=%s\n",
+            "SonaFolio Qt library probe: %d episodes, %d groups, %d subscriptions, root=%s\n",
             static_cast<int>(library.items().size()),
             static_cast<int>(library.groups().size()),
             static_cast<int>(library.subscriptions().size()),
@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
 
     if (engine.rootObjects().isEmpty())
     {
-        std::fprintf(stderr, "Audio2TextQt: failed to load qrc:/Audio2TextQt/qml/Main.qml\n");
+        std::fprintf(stderr, "SonaFolio Qt: failed to load qrc:/Audio2TextQt/qml/Main.qml\n");
         std::fflush(stderr);
         return 1;
     }
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
     }
     if (smokeQuit)
     {
-        std::fprintf(stderr, "Audio2TextQt: QML smoke loaded.\n");
+        std::fprintf(stderr, "SonaFolio Qt: QML smoke loaded.\n");
         std::fflush(stderr);
         QTimer::singleShot(700, &app, &QCoreApplication::quit);
     }

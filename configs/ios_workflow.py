@@ -322,12 +322,12 @@ def _build_runtime_wheel() -> Path:
 
 
 def _build_app_icon() -> Path:
-    iconset = BUILD_DIR / "Audio2Text.iconset"
+    iconset = BUILD_DIR / "SonaFolio.iconset"
     if iconset.exists():
         shutil.rmtree(iconset)
     iconset.mkdir(parents=True, exist_ok=True)
     _run(["swift", "configs/render_app_icon.swift", str(iconset)], env=_swift_env())
-    icon = BUILD_DIR / "Audio2Text.icns"
+    icon = BUILD_DIR / "SonaFolio.icns"
     if icon.exists():
         icon.unlink()
     _run(["iconutil", "-c", "icns", str(iconset), "-o", str(icon)])

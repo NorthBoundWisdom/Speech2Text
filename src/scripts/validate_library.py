@@ -16,7 +16,7 @@ from atot.library_validation import validate_library
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Validate an Audio2Text Library directory.")
+    parser = argparse.ArgumentParser(description="Validate an SonaFolio Library directory.")
     parser.add_argument(
         "library_root", type=Path, help="Audio2TextLibrary path or its parent directory."
     )

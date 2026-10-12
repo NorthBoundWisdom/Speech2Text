@@ -110,3 +110,14 @@ python src/scripts/benchmark_quality_hotspots.py output/<batch>/<episode>
 ```
 
 It reports median timings for correction application and QA report construction.
+
+## Current CI and documentation baseline
+
+The subsequent SonaFolio branding pass passed 587 Python tests, 198 Swift tests and the
+Windows/Linux/macOS Qt build and smoke matrix. All four installer builds, including Windows
+silent installation and installed-app launch, passed the build-only release workflow. These checks
+validate packaging and software behavior; they do not claim real ASR accuracy, CUDA execution or
+cloud API acceptance on every runner. Earlier dated dependency measurements above remain historical.
+
+The website uses its own `website/requirements.txt`, independent of ASR dependencies. Its workflow
+performs documentation-link checks, metadata tests and a strict MkDocs build before Pages deployment.

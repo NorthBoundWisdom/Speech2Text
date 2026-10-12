@@ -66,7 +66,7 @@ func makeCGImage(size: Int, roundedMask: Bool, hasAlpha: Bool) throws -> CGImage
         space: colorSpace,
         bitmapInfo: alphaInfo.rawValue
     ) else {
-        throw NSError(domain: "Audio2TextIcon", code: 1)
+        throw NSError(domain: "SonaFolioIcon", code: 1)
     }
 
     let graphicsContext = NSGraphicsContext(cgContext: context, flipped: false)
@@ -77,7 +77,7 @@ func makeCGImage(size: Int, roundedMask: Bool, hasAlpha: Bool) throws -> CGImage
     NSGraphicsContext.restoreGraphicsState()
 
     guard let image = context.makeImage() else {
-        throw NSError(domain: "Audio2TextIcon", code: 2)
+        throw NSError(domain: "SonaFolioIcon", code: 2)
     }
     return image
 }
@@ -85,11 +85,11 @@ func makeCGImage(size: Int, roundedMask: Bool, hasAlpha: Bool) throws -> CGImage
 func writePNG(size: Int, roundedMask: Bool, to url: URL, hasAlpha: Bool) throws {
     let image = try makeCGImage(size: size, roundedMask: roundedMask, hasAlpha: hasAlpha)
     guard let destination = CGImageDestinationCreateWithURL(url as CFURL, "public.png" as CFString, 1, nil) else {
-        throw NSError(domain: "Audio2TextIcon", code: 3)
+        throw NSError(domain: "SonaFolioIcon", code: 3)
     }
     CGImageDestinationAddImage(destination, image, nil)
     if !CGImageDestinationFinalize(destination) {
-        throw NSError(domain: "Audio2TextIcon", code: 4)
+        throw NSError(domain: "SonaFolioIcon", code: 4)
     }
 }
 

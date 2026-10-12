@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compatibility baseline script for the initial Audio2Text MLX Whisper experiment.
+"""Compatibility baseline script for the initial SonaFolio MLX Whisper experiment.
 
 The main repo CLI is `atot exec transcribe`, but this script preserves the command
 shape from the earlier demo folder. Prefer `atot exec transcribe` for new work.

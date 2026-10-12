@@ -51,7 +51,7 @@ final class LogStore {
 
     private func writeHeader(to url: URL?) {
         guard let url else { return }
-        let header = "Audio2TextApp log started at \(ISO8601DateFormatter().string(from: Date()))\n\n"
+        let header = "SonaFolio log started at \(ISO8601DateFormatter().string(from: Date()))\n\n"
         try? header.write(to: url, atomically: true, encoding: .utf8)
     }
 

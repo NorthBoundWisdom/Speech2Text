@@ -13,6 +13,7 @@ acceptance items that require local audio, model weights, or cloud credentials.
 | P0 readable outputs | Implemented and tested | `transcript.readable.md`, `transcript.timestamped.md`, enforced by `validate_run_json.py` and `validate_output_bundle.py` |
 | P0 cloud/local separation | Implemented and tested | `output/cloud/`, `atot exec cloud prepare` |
 | Agent-authored summaries through MCP | Implemented and protocol-tested | `atot mcp`, versioned/paged library reads, explicit summary write-back, `src/tests/test_agent_summary.py`, `src/tests/test_mcp_server.py`; default App processing requires no cloud key |
+| SonaFolio brand and public website | Implemented | `doc/BRANDING.md`, MkDocs Material `website/`, Pages workflow and documentation/link checks |
 | P0 project naming | Implemented | README title uses `SonaFolio`; distribution remains `audio2text-local`, Python module and CLI remain `atot`; existing data paths and bundle identifiers are preserved |
 | P1 smart chunking | Implemented and unit-tested | `--chunking smart`, `src/atot/vad.py` |
 | P1 repair | Implemented and unit-tested | `atot exec repair`, `output/repair/`, per-window raw/corrected JSON, `validate_repair_artifacts.py`, `src/atot/repair.py` |
@@ -66,17 +67,17 @@ acceptance items that require local audio, model weights, or cloud credentials.
 ## Current Verification Commands
 
 ```bash
-.venv/bin/python -m pytest
-.venv/bin/python -m ruff check .
-.venv/bin/python src/scripts/check_public_paths.py
-.venv/bin/python src/scripts/validate_model_inventory.py
-.venv/bin/python src/scripts/validate_run_json.py src/tests/fixtures/run.sample.json
-.venv/bin/python src/scripts/validate_gold_set.py
-.venv/bin/python src/scripts/validate_output_bundle.py process/<batch>/<episode>/output
-.venv/bin/python src/scripts/validate_cloud_package.py process/<batch>/<episode>/output --mode both
-.venv/bin/python src/scripts/validate_repair_artifacts.py process/<batch>/<episode>/output
-.venv/bin/python src/scripts/validate_library.py Audio2TextLibrary
-.venv/bin/python src/scripts/validate_runtime_evidence.py \
+python -m pytest
+python -m ruff check .
+python src/scripts/check_public_paths.py
+python src/scripts/validate_model_inventory.py
+python src/scripts/validate_run_json.py src/tests/fixtures/run.sample.json
+python src/scripts/validate_gold_set.py
+python src/scripts/validate_output_bundle.py process/<batch>/<episode>/output
+python src/scripts/validate_cloud_package.py process/<batch>/<episode>/output --mode both
+python src/scripts/validate_repair_artifacts.py process/<batch>/<episode>/output
+python src/scripts/validate_library.py Audio2TextLibrary
+python src/scripts/validate_runtime_evidence.py \
   --long-output process/<batch>/<episode>/output \
   --gold-report output/benchmark/gold/<timestamp>/report.json \
   --repair-output process/<batch>/<episode>/output \

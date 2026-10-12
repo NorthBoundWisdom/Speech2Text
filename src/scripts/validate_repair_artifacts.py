@@ -9,7 +9,7 @@ from atot.validators import validate_repair_artifacts
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Validate AtoT repair audit artifacts.")
+    parser = argparse.ArgumentParser(description="Validate SonaFolio repair audit artifacts.")
     parser.add_argument("path", type=Path, help="Output directory or output/repair directory.")
     return parser
 
