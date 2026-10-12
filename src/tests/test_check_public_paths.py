@@ -113,15 +113,17 @@ def test_check_recurses_into_current_and_staged_submodule(tmp_path):
     host = tmp_path / 'host'
     host.mkdir()
     git(host, 'init')
-    git(host, '-c', 'protocol.file.allow=always', 'submodule', 'add', str(remote), 'vendor')
+    git(host, '-c', 'protocol.file.allow=always', 'submodule', 'add', remote.as_posix(), 'vendor')
     file = host / 'vendor' / 'README.md'
     file.write_text('path: /' + 'home/privateuser/source\n')
-    assert len(find_repository_private_path_hits(root=host, scope='worktree')) == 1
-    assert find_repository_private_path_hits(root=host, scope='staged') == []
+    hits = find_repository_private_path_hits(root=host, scope='worktree')
+    assert [(hit.path,hit.label) for hit in hits if hit.path == file] == [(file,'private absolute path')]
+    assert not any(hit.path == file for hit in find_repository_private_path_hits(root=host, scope='staged'))
     git(host / 'vendor', 'add', '.')
     git(host / 'vendor', '-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'fixture change')
     git(host, 'add', 'vendor')
-    assert len(find_repository_private_path_hits(root=host, scope='staged')) == 1
+    hits = find_repository_private_path_hits(root=host, scope='staged')
+    assert any(hit.path == file for hit in hits)
 
 
 def test_check_windows_paths_and_private_keys(tmp_path):

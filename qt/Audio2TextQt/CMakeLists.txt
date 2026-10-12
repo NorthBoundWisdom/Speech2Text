@@ -53,6 +53,7 @@ qt_add_qml_module(Audio2TextQt
     URI Audio2TextQt
     VERSION 1.0
     RESOURCE_PREFIX "/"
+    OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml/Audio2TextQt"
     NO_CACHEGEN
     QML_FILES
         qml/Main.qml

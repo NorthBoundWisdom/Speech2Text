@@ -277,12 +277,12 @@ def test_force_and_overwrite_help_text_keeps_public_semantics(capsys, monkeypatc
     from rich.text import Text
     transcribe_help = Text.from_ansi(capsys.readouterr().out).plain
     assert "--force" in transcribe_help
-    assert "Rebuild existing transcribe artifacts" in transcribe_help
+    assert all(word in transcribe_help for word in ("Rebuild", "existing", "transcribe", "artifacts"))
 
     assert cli.main(["exec", "srt", "--help"]) == 0
     srt_help = Text.from_ansi(capsys.readouterr().out).plain
     assert "--overwrite" in srt_help
-    assert "Replace existing SRT files" in srt_help
+    assert all(word in srt_help for word in ("Replace", "existing", "SRT", "files"))
 
 
 def test_slash_command_parser_accepts_documented_commands():

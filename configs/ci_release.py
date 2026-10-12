@@ -166,9 +166,13 @@ def install_windows_qt() -> None:
             found.add(module)
     if found != selected:
         raise ValueError("The official Windows SDK is missing required modules.")
-    prefix = output / version / "msvc2022_64"
-    if not (prefix / "bin/qmake.exe").is_file():
-        raise ValueError("Installed Windows SDK has no qmake.exe.")
+    candidates = list(output.glob("**/bin/qmake.exe"))
+    if len(candidates) != 1:
+        raise ValueError(
+            "Installed Windows SDK must contain exactly one qmake.exe; found "
+            + str(len(candidates))
+        )
+    prefix = candidates[0].parent.parent
     with Path(os.environ["GITHUB_ENV"]).open("a") as handle:
         handle.write(f"QT_ROOT_DIR={prefix}\nCMAKE_PREFIX_PATH={prefix}\n")
     with Path(os.environ["GITHUB_PATH"]).open("a") as handle:

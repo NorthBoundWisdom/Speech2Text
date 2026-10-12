@@ -64,6 +64,9 @@ def test_qt_macos_package_archive_path_has_platform_name(tmp_path) -> None:
 
 
 def test_qt_workflow_macos_executable_candidates_include_app_bundle(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(qt_workflow, "_source_roots_platform_key", lambda: "mac")
+    monkeypatch.setattr(qt_workflow, "_qt_deploy_tool_name", lambda: "macdeployqt")
+    monkeypatch.setattr(qt_workflow, "_qt_qmake_names", lambda: ("qmake6", "qmake"))
     monkeypatch.setattr(qt_workflow.sys, "platform", "darwin")
 
     candidates = qt_workflow._executable_candidates(tmp_path, "Release")
@@ -73,11 +76,15 @@ def test_qt_workflow_macos_executable_candidates_include_app_bundle(monkeypatch,
         in candidates
     )
     assert tmp_path / "Audio2TextQt.app" / "Contents" / "MacOS" / "Audio2TextQt" in candidates
-    assert tmp_path / "Release" / "Audio2TextQt" in candidates
-    assert tmp_path / "Audio2TextQt" in candidates
+    suffix = ".exe" if qt_workflow.os.name == "nt" else ""
+    assert tmp_path / "Release" / ("Audio2TextQt" + suffix) in candidates
+    assert tmp_path / ("Audio2TextQt" + suffix) in candidates
 
 
 def test_qt_workflow_macos_qt_prefix_accepts_macdeployqt(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(qt_workflow, "_source_roots_platform_key", lambda: "mac")
+    monkeypatch.setattr(qt_workflow, "_qt_deploy_tool_name", lambda: "macdeployqt")
+    monkeypatch.setattr(qt_workflow, "_qt_qmake_names", lambda: ("qmake6", "qmake"))
     monkeypatch.setattr(qt_workflow.sys, "platform", "darwin")
     qt_prefix = tmp_path / "Qt"
     (qt_prefix / "lib" / "cmake" / "Qt6").mkdir(parents=True)
@@ -89,6 +96,9 @@ def test_qt_workflow_macos_qt_prefix_accepts_macdeployqt(monkeypatch, tmp_path) 
 
 
 def test_qt_workflow_qt_prefix_accepts_qmake6(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(qt_workflow, "_source_roots_platform_key", lambda: "mac")
+    monkeypatch.setattr(qt_workflow, "_qt_deploy_tool_name", lambda: "macdeployqt")
+    monkeypatch.setattr(qt_workflow, "_qt_qmake_names", lambda: ("qmake6", "qmake"))
     monkeypatch.setattr(qt_workflow.sys, "platform", "darwin")
     qt_prefix = tmp_path / "Qt"
     (qt_prefix / "lib" / "cmake" / "Qt6").mkdir(parents=True)
@@ -101,6 +111,9 @@ def test_qt_workflow_qt_prefix_accepts_qmake6(monkeypatch, tmp_path) -> None:
 
 def test_qt_workflow_reads_qt_prefix_from_source_roots(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(qt_workflow, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(qt_workflow, "_source_roots_platform_key", lambda: "mac")
+    monkeypatch.setattr(qt_workflow, "_qt_deploy_tool_name", lambda: "macdeployqt")
+    monkeypatch.setattr(qt_workflow, "_qt_qmake_names", lambda: ("qmake6", "qmake"))
     monkeypatch.setattr(qt_workflow.sys, "platform", "darwin")
     qt_prefix = tmp_path / "Qt" / "6.11.1" / "macos"
     (qt_prefix / "lib" / "cmake" / "Qt6").mkdir(parents=True)
@@ -122,6 +135,9 @@ def test_qt_workflow_reads_qt_prefix_from_source_roots(monkeypatch, tmp_path) ->
 
 def test_qt_workflow_source_roots_ffmpeg_dirs_include_prefix_tools(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(qt_workflow, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(qt_workflow, "_source_roots_platform_key", lambda: "mac")
+    monkeypatch.setattr(qt_workflow, "_qt_deploy_tool_name", lambda: "macdeployqt")
+    monkeypatch.setattr(qt_workflow, "_qt_qmake_names", lambda: ("qmake6", "qmake"))
     monkeypatch.setattr(qt_workflow.sys, "platform", "darwin")
     vcpkg_prefix = tmp_path / "vcpkg" / "installed" / "arm64-osx"
     (tmp_path / "source_roots.lock.jsonc").write_text(
