@@ -125,8 +125,8 @@ final class AppLoggingTests: XCTestCase {
         let dataRoot = root.appendingPathComponent("data")
         let diagnosticRoot = root.appendingPathComponent("DiagnosticReports")
         try FileManager.default.createDirectory(at: diagnosticRoot, withIntermediateDirectories: true)
-        let crash = diagnosticRoot.appendingPathComponent("Audio2TextApp_2026-05-27.crash")
-        let ips = diagnosticRoot.appendingPathComponent("Audio2TextApp_2026-05-28.ips")
+        let crash = diagnosticRoot.appendingPathComponent("SonaFolio_2026-05-27.crash")
+        let ips = diagnosticRoot.appendingPathComponent("SonaFolio-2026-05-28.ips")
         let hyphenatedIPS = diagnosticRoot.appendingPathComponent("Audio2TextApp-2026-05-29-234749.ips")
         let ignored = diagnosticRoot.appendingPathComponent("OtherApp_2026-05-28.crash")
         try "crash".write(to: crash, atomically: true, encoding: .utf8)
@@ -150,13 +150,13 @@ final class AppLoggingTests: XCTestCase {
 
         XCTAssertEqual(
             first.map(\.fileName).sorted(),
-            ["Audio2TextApp-2026-05-29-234749.ips", "Audio2TextApp_2026-05-27.crash", "Audio2TextApp_2026-05-28.ips"]
+            ["Audio2TextApp-2026-05-29-234749.ips", "SonaFolio-2026-05-28.ips", "SonaFolio_2026-05-27.crash"]
         )
         XCTAssertTrue(second.isEmpty)
         XCTAssertTrue(FileManager.default.fileExists(atPath: first[0].cachedPath))
         XCTAssertTrue(FileManager.default.fileExists(atPath: first[1].cachedPath))
         let index = try readText(CrashReportScanner.indexURL(dataRoot: dataRoot))
-        XCTAssertTrue(index.contains("Audio2TextApp_2026-05-27.crash"))
+        XCTAssertTrue(index.contains("SonaFolio_2026-05-27.crash"))
         XCTAssertTrue(index.contains("Audio2TextApp-2026-05-29-234749.ips"))
         let appLog = try readText(AppPaths.logsRoot(dataRoot: dataRoot).appendingPathComponent("app-current.log"))
         XCTAssertEqual(appLog.components(separatedBy: "crash_report_found").count - 1, 3)

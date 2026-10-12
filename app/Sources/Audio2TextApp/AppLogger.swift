@@ -400,7 +400,10 @@ enum CrashReportScanner {
             .filter { url in
                 let ext = url.pathExtension.lowercased()
                 let fileName = url.lastPathComponent
-                return (fileName.hasPrefix("Audio2TextApp_") || fileName.hasPrefix("Audio2TextApp-"))
+                let knownExecutables = ["SonaFolio", "Audio2TextApp"]
+                return knownExecutables.contains { name in
+                    fileName.hasPrefix("\(name)_") || fileName.hasPrefix("\(name)-")
+                }
                     && (ext == "crash" || ext == "ips")
             }
             .sorted { lhs, rhs in
