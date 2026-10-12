@@ -43,8 +43,11 @@ def release_version(value: str) -> tuple[str, str]:
     return numeric + ("-" + match[4] if match[4] else ""), numeric
 
 
-def run(*args: str | Path, env: dict[str, str] | None = None, cwd: Path = ROOT) -> None:
-    subprocess.run([str(arg) for arg in args], check=True, cwd=cwd, env=env)
+def run(
+    *args: str | Path, env: dict[str, str] | None = None, cwd: Path = ROOT, timeout: int = 1200
+) -> None:
+    print("Release step:", subprocess.list2cmdline([str(arg) for arg in args]), flush=True)
+    subprocess.run([str(arg) for arg in args], check=True, cwd=cwd, env=env, timeout=timeout)
 
 
 def download(url: str, destination: Path, checksum: str | None = None) -> Path:
@@ -466,6 +469,7 @@ def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
         "--data-root",
         ROOT / "build/ci-smoke-data",
         env=clean_qt_environment(),
+        timeout=45,
     )
     manifest = write_material_manifest(stage, materials)
     stage_release_licenses(stage, manifest)

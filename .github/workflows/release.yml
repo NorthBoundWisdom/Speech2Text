@@ -103,7 +103,7 @@ jobs:
         run: python configs/ci_release.py prepare --qt-prefix "$QT_ROOT_DIR"
       - name: Build, deploy, verify and package Qt client
         shell: bash
-        run: python configs/ci_release.py qt --qt-prefix "$QT_ROOT_DIR"
+        run: python -u configs/ci_release.py qt --qt-prefix "$QT_ROOT_DIR"
       - name: Verify installed Windows package
         if: runner.os == 'Windows'
         shell: pwsh
