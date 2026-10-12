@@ -89,6 +89,11 @@ def _extract_organizations(text: str) -> list[str]:
 
 def _extract_titles(text: str) -> list[str]:
     titles: list[str] = []
+    titles.extend(re.findall(
+        r"(?:^|\n)\s*(?:-\s*)?(?:Podcast|Show|Series):\s*([^\n]{2,96})",
+        text,
+        flags=re.IGNORECASE,
+    ))
     titles.extend(re.findall(r"(?:节目|播客|栏目)[：:]\s*([^\n，。,；;]{2,24})", text))
     titles.extend(re.findall(r"《([^》]{2,24})》", text))
     return _unique(titles)

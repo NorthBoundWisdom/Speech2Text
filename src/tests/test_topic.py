@@ -17,6 +17,18 @@ PODCAST_TOPIC = """
 """
 
 
+def test_english_metadata_preserves_podcast_context_and_excludes_media_noise():
+    glossary = extract_episode_glossary(
+        "- Podcast: Science conversations\n"
+        "- Original link: https://episodes.example/show\n"
+        "- Duration: PT67M\n"
+        "Discussing ChatGPT and AGI.\n"
+    )
+    assert "Science conversations" in glossary["titles"]
+    assert {"ChatGPT", "AGI"} <= set(glossary["technical_terms"])
+    assert "PT67M" not in glossary["technical_terms"]
+
+
 def test_extract_episode_glossary_from_topic():
     glossary = extract_episode_glossary(TOPIC)
 
