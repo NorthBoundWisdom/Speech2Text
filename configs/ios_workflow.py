@@ -39,6 +39,8 @@ def data_root() -> Path:
 
 
 def _env_python() -> Path:
+    if os.environ.get("ATOT_BUILD_PYTHON"):
+        return Path(os.environ["ATOT_BUILD_PYTHON"])
     return data_root() / "env" / "bin" / "python"
 
 
@@ -154,6 +156,11 @@ def _require_app_config_string(payload: dict[str, object], key: str, *, path: Pa
 
 
 def _app_build_settings() -> dict[str, str]:
+    release_version = os.environ.get("ATOT_RELEASE_VERSION", "")
+    if release_version:
+        if not re.fullmatch(r"\d+\.\d+\.\d+", release_version):
+            raise RuntimeError("ATOT_RELEASE_VERSION must be a numeric major.minor.patch version.")
+        return {"MARKETING_VERSION": release_version, "ARCHIVE_ID": "1"}
     path = SOURCE_ROOTS_ACTIVE_LOCK
     if not path.is_file():
         raise RuntimeError(
@@ -274,7 +281,10 @@ def _package_app(configuration: str, *, distribution: str = "local") -> Path:
     with (contents / "Info.plist").open("wb") as handle:
         plistlib.dump(plist, handle)
     (contents / "PkgInfo").write_text("APPL????", encoding="ascii")
-    if distribution == "development":
+    if distribution == "ad-hoc":
+        _run(["codesign", "--force", "--deep", "--sign", "-", str(APP_BUNDLE)])
+        _run(["codesign", "--verify", "--deep", "--strict", str(APP_BUNDLE)])
+    elif distribution == "development":
         _codesign_for_development(APP_BUNDLE)
     elif distribution == "developer-id":
         _codesign_for_developer_id(APP_BUNDLE)
@@ -620,7 +630,7 @@ def build_parser() -> argparse.ArgumentParser:
     build.add_argument(
         "--distribution",
         default="local",
-        choices=["local", "development", "developer-id", "app-store"],
+        choices=["local", "ad-hoc", "development", "developer-id", "app-store"],
     )
     run = sub.add_parser("run")
     run.add_argument("--platform", default="mac", choices=["mac", "ios"])
@@ -629,7 +639,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--distribution",
         default="local",
-        choices=["local", "development", "developer-id", "app-store"],
+        choices=["local", "ad-hoc", "development", "developer-id", "app-store"],
     )
     test = sub.add_parser("test")
     test.add_argument(
@@ -643,7 +653,7 @@ def build_parser() -> argparse.ArgumentParser:
     package.add_argument(
         "--distribution",
         default="development",
-        choices=["local", "development", "developer-id", "app-store"],
+        choices=["local", "ad-hoc", "development", "developer-id", "app-store"],
     )
     package.add_argument(
         "--notary-profile",

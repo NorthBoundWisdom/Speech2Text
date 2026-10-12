@@ -1,14 +1,5 @@
 <RCC>
     <qresource prefix="/Audio2TextQt">
-        <file>qml/Main.qml</file>
-        <file>qml/SourceColumn.qml</file>
-        <file>qml/ItemListColumn.qml</file>
-        <file>qml/DetailPane.qml</file>
-        <file>qml/MarkdownView.qml</file>
-        <file>qml/SubscriptionDetailPane.qml</file>
-        <file>qml/ImportDialog.qml</file>
-        <file>qml/SettingsDialog.qml</file>
-        <file>qml/JobLogPane.qml</file>
         <file>resources/app-icon.png</file>
     </qresource>
 </RCC>

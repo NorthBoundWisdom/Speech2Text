@@ -28,6 +28,7 @@
 
 - **[BACKEND_RESEARCH.md](BACKEND_RESEARCH.md)** - ASR 后端研究和候选评估
 - **[QUALITY_TOOLS.md](QUALITY_TOOLS.md)** - 质量工具基线和架构边界检查
+- **[CI_RELEASES.md](CI_RELEASES.md)** - GitHub Actions、多平台安装包与 tag 发布
 - **[RELEASE_LICENSES.md](RELEASE_LICENSES.md)** - 发布包许可、源码材料和清单检查
 - **[OPEN_SOURCE_AUDIT.md](OPEN_SOURCE_AUDIT.md)** - 当前源码开源审计修复和验证边界
 

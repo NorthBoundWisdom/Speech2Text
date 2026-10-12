@@ -739,6 +739,16 @@ Stars 和最近推送来自 GitHub API 的 `stargazers_count` / `pushed_at`，�
 - `doc/BACKEND_RESEARCH.md`：ASR 后端研究和候选评估。
 - `doc/ROADMAP_STATUS.md`：已实现能力和验证映射。
 
+## CI 与自动发布
+
+main/PR 使用 GitHub Actions 检查 Python、Qt 和 Swift。推送 `vMAJOR.MINOR.PATCH` tag 后，
+自动生成 Windows Qt 安装器、Linux Qt AppImage、macOS Qt DMG 和 macOS Swift DMG；四项均通过
+后发布到 GitHub Releases，附带 SHA-256 校验和与构建记录。也可手动运行 Native release 仅构建，
+不发布。macOS 使用 ad-hoc 签名，无需证书 secrets。
+
+安装包不带模型；Qt 包的 Python CLI、FFmpeg/CUDA 仍需按快速开始配置。Linux 包不改变当前
+macOS/Windows ASR 生产支持范围。平台要求、发布步骤与许可材料见 [CI 与发布](doc/CI_RELEASES.md)。
+
 ## License
 
 本项目原创源码使用 [MIT](LICENSE)。依赖、模型和媒体适用各自的许可，详见

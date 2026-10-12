@@ -547,13 +547,14 @@ def _qt_project_version() -> str:
     cmake_lists = QT_PROJECT_DIR / "CMakeLists.txt"
     content = cmake_lists.read_text(encoding="utf-8")
     match = re.search(
-        rf"project\s*\(\s*{re.escape(TARGET_NAME)}\b.*?\bVERSION\s+([0-9][^\s\)]*)",
-        content,
-        flags=re.DOTALL,
+        rf"project\s*\(\s*{re.escape(TARGET_NAME)}\b[^)]*?\bVERSION\s+([^\s)]+)",
+        content, flags=re.DOTALL,
     )
-    if match is None:
+    if match is not None and match[1] == "${AUDIO2TEXTQT_RELEASE_VERSION}":
+        match = re.search(r'set\(AUDIO2TEXTQT_RELEASE_VERSION "([0-9.]+)"', content)
+    if match is None or not re.fullmatch(r"[0-9]+(?:\.[0-9]+){1,3}", match[1]):
         raise SystemExit(f"Audio2TextQt: project version was not found in {cmake_lists}")
-    return match.group(1)
+    return match[1]
 
 
 def _package_archive_path(

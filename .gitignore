@@ -31,3 +31,5 @@ app/.build/
 !.env.example
 !.env.template
 .mypy_cache/
+
+/aqtinstall.log

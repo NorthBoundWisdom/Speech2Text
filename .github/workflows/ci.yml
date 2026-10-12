@@ -1,0 +1,91 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  python:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            python: '3.10'
+          - os: ubuntu-24.04
+            python: '3.13'
+          - os: windows-2022
+            python: '3.13'
+          - os: macos-26
+            python: '3.13'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: python -m pip install --constraint constraints/runtime.txt -e ".[dev]"
+      - run: python -m pip check
+      - run: python -m ruff check .
+      - run: python -m mypy
+      - run: python src/scripts/check_public_paths.py --scope worktree
+      - run: python src/scripts/validate_model_inventory.py
+      - run: python -m pytest
+  qt:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            host: windows
+            arch: win64_msvc2022_64
+          - os: ubuntu-24.04
+            host: linux
+            arch: linux_gcc_64
+          - os: macos-26
+            host: mac
+            arch: clang_64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1
+        if: runner.os == 'Windows'
+      - run: python -m pip install cmake ninja
+      - uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
+        with:
+          version: '6.12.0'
+          host: ${{ matrix.host }}
+          arch: ${{ matrix.arch }}
+          archives: qtbase qtdeclarative qtsvg qtshadertools
+          cache: true
+      - run: python configs/qt_workflow.py build --generator Ninja --configuration Release
+      - run: ctest --test-dir build/Audio2TextQt -C Release --output-on-failure
+  swift:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - run: swift test --scratch-path ../build/swiftpm
+        working-directory: app
+      - run: swift build -c release --scratch-path ../build/swiftpm --product Audio2TextApp
+        working-directory: app

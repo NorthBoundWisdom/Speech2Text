@@ -1,0 +1,36 @@
+{
+  "qt_version": "6.12.0",
+  "qt_sources": [
+    {
+      "name": "qtbase",
+      "url": "https://download.qt.io/official_releases/qt/6.12/6.12.0/submodules/qtbase-everywhere-src-6.12.0.tar.xz",
+      "sha256": "a951bd163c7b80fc6b8c88d7668fb56abf91c152373e13c10666763238131307"
+    },
+    {
+      "name": "qtdeclarative",
+      "url": "https://download.qt.io/official_releases/qt/6.12/6.12.0/submodules/qtdeclarative-everywhere-src-6.12.0.tar.xz",
+      "sha256": "311f3a2603e1973bb59baef9dfa740a376de713157d4782ee043681e889c9260"
+    },
+    {
+      "name": "qtsvg",
+      "url": "https://download.qt.io/official_releases/qt/6.12/6.12.0/submodules/qtsvg-everywhere-src-6.12.0.tar.xz",
+      "sha256": "e4ab39534ec97987b1b9b60ef7f4d3253d5912a69f8c713a01753174a4029331"
+    }
+  ],
+  "appimagetool": {
+    "url": "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage",
+    "sha256": "95cbe7cce9717fce90c484e34052ee7c7f1d7635b33c12525b4776826a7d29b6",
+    "revision": "854e19e951900cf141245b384d45735942521abe",
+    "repo": "AppImage/appimagetool"
+  },
+  "appimage_runtime": {
+    "url": "https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64",
+    "sha256": "156f4bdbde9c52d01814600013e0a273f0118dc2de98975f3c8c63427ec79074",
+    "revision": "8f39b89e2ac31e1640b3d3f7e9a5108e6ce805fa",
+    "repo": "AppImage/type2-runtime"
+  },
+  "vc_runtime_license": {
+    "url": "https://visualstudio.microsoft.com/wp-content/uploads/2021/09/Visual-C-Runtime-2015-2022-License-1.docx",
+    "sha256": "f1e3d56ceb2ad68aae0711b910375009e651ac5530fa0760f0dea6e81e54fae1"
+  }
+}
