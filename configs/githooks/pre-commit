@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RED=$'\033[31m'
+RESET=$'\033[0m'
+
+print_error() {
+  printf '%s[pre-commit] %s%s\n' "$RED" "$1" "$RESET" >&2
+}
+
+on_err() {
+  local exit_code="$1"
+  local line_no="$2"
+  print_error "Hook failed at line ${line_no} (exit code ${exit_code})."
+  exit "$exit_code"
+}
+
+trap 'on_err $? $LINENO' ERR
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+to_lower() {
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+read_git_local_config() {
+  local key="$1"
+  git config --local --get "$key" 2>/dev/null || true
+}
+
+is_true_value() {
+  local value
+  value="$(to_lower "$1")"
+  case "$value" in
+    1|true|yes|on)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+config_enabled() {
+  local key="$1"
+  local default="$2"
+  local configured
+  configured="$(read_git_local_config "$key")"
+  if [[ -z "$configured" ]]; then
+    configured="$default"
+  fi
+  if is_true_value "$configured"; then
+    echo "1"
+  else
+    echo "0"
+  fi
+}
+
+config_value() {
+  local key="$1"
+  local default="$2"
+  local configured
+  configured="$(read_git_local_config "$key")"
+  if [[ -z "$configured" ]]; then
+    configured="$default"
+  fi
+  printf '%s' "$configured"
+}
+
+normalize_configuration() {
+  local value
+  value="$(to_lower "$1")"
+  case "$value" in
+    debug)
+      echo "Debug"
+      ;;
+    release)
+      echo "Release"
+      ;;
+    *)
+      echo "$1"
+      ;;
+  esac
+}
+
+STAGED_FILES="$(git diff --cached --name-only --diff-filter=ACMR)"
+if [[ -z "${STAGED_FILES}" ]]; then
+  exit 0
+fi
+
+echo "[pre-commit] Checking staged diff..."
+if ! git diff --cached --check --no-color; then
+  print_error "Whitespace or merge marker issue detected."
+  exit 1
+fi
+
+enable_build_gate="$(config_enabled audio2text.hooks.enableBuildGate true)"
+run_logic_tests="$(config_enabled audio2text.hooks.runLogicTests false)"
+
+mac_scheme="$(config_value audio2text.hooks.macScheme Audio2TextApp)"
+ios_scheme="$(config_value audio2text.hooks.iosScheme Audio2Text-iOS)"
+build_configuration="$(normalize_configuration "$(config_value audio2text.hooks.buildConfiguration Debug)")"
+
+python_cmd=()
+if command -v python3 >/dev/null 2>&1; then
+  python_cmd=("python3")
+elif command -v python >/dev/null 2>&1; then
+  python_cmd=("python")
+fi
+
+if [[ ${#python_cmd[@]} -eq 0 ]]; then
+  print_error "Python is required for the public path and secret check."
+  exit 1
+fi
+
+echo "[pre-commit] Checking public paths and secrets..."
+"${python_cmd[@]}" src/scripts/check_public_paths.py --scope staged
+
+if [[ "$enable_build_gate" -eq 1 ]]; then
+  if ! command -v xcodebuild >/dev/null 2>&1; then
+    print_error "xcodebuild is required for the macOS and iOS/iPad compile gate."
+    exit 1
+  fi
+
+  echo "[pre-commit] Generating local Xcode project..."
+  "${python_cmd[@]}" configs/setup_local_app.py
+
+  if [[ "$run_logic_tests" -eq 1 ]]; then
+    echo "[pre-commit] Running logic tests..."
+    "${python_cmd[@]}" configs/ios_workflow.py test --level logic
+  fi
+
+  echo "[pre-commit] Building macOS target ${mac_scheme} (${build_configuration})..."
+  xcodebuild \
+    -project Audio2Text.xcodeproj \
+    -scheme "$mac_scheme" \
+    -configuration "$build_configuration" \
+    -sdk macosx \
+    -destination "generic/platform=macOS" \
+    -quiet \
+    build
+
+  echo "[pre-commit] Building iOS/iPad simulator target ${ios_scheme} (${build_configuration})..."
+  xcodebuild \
+    -project Audio2Text.xcodeproj \
+    -scheme "$ios_scheme" \
+    -configuration "$build_configuration" \
+    -sdk iphonesimulator \
+    -destination "generic/platform=iOS Simulator" \
+    -quiet \
+    build
+fi

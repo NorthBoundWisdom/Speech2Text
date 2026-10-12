@@ -1,0 +1,21 @@
+{
+  "profile": "balanced",
+  "checks": {
+    "max_gap": 60.0,
+    "max_segment_duration": 30.0,
+    "max_subtitle_chars": 80,
+    "max_subtitle_line_chars": 42,
+    "min_chars_per_minute": 10.0,
+    "max_chars_per_minute": 900.0,
+    "max_gap_coverage_ratio": 0.20,
+    "min_short_repeat_blocker_count": 8,
+    "min_long_repeat_blocker_count": 4,
+    "min_repeated_phrase_blocker_chars": 80,
+    "min_repeated_phrase_blocker_duration": 12.0,
+    "min_duplicate_segment_blocker_chars": 12,
+    "min_duplicate_segment_blocker_duration": 1.5,
+    "min_low_confidence_blocker_duration": 1.0,
+    "min_low_confidence_blocker_chars": 4,
+    "max_repair_window_seconds": 300.0
+  }
+}

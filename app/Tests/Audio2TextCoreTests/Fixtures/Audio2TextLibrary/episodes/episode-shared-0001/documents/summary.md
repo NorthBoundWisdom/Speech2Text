@@ -1,0 +1,3 @@
+# Summary
+
+Shared fixture summary.

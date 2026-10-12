@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "request": {
+    "method_key": "method",
+    "params_key": "params"
+  },
+  "methods": [
+    {
+      "name": "transcribe",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "transcribe"],
+      "handler": "WorkflowService.run_transcribe",
+      "params": [
+        {"name": "input", "type": "path", "required": true},
+        {"name": "output_dir", "type": "path"},
+        {"name": "job_dir", "type": "path"},
+        {"name": "name", "type": "string"},
+        {"name": "backend", "type": "string"},
+        {"name": "model", "type": "string"},
+        {"name": "language", "type": "string"},
+        {"name": "profile", "type": "string"},
+        {"name": "prompt_file", "type": "path"},
+        {"name": "glossary_file", "type": "path"},
+        {"name": "rule_packs", "type": "string_array"},
+        {"name": "chunking", "type": "string"},
+        {"name": "chunk_length", "type": "number"},
+        {"name": "max_chunk_length", "type": "number"},
+        {"name": "silence_threshold", "type": "number"},
+        {"name": "min_silence", "type": "number"},
+        {"name": "overlap", "type": "number"},
+        {"name": "force", "type": "boolean"},
+        {"name": "local_only", "type": "boolean"},
+        {"name": "cloud_summary", "type": "boolean"}
+      ]
+    },
+    {
+      "name": "import_xiaoyuzhou",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "import"],
+      "handler": "WorkflowService.run_import_xiaoyuzhou",
+      "params": [
+        {"name": "url", "type": "string", "required": true},
+        {"name": "process_dir", "type": "path"},
+        {"name": "group_name", "type": "string"},
+        {"name": "folder_name", "type": "string"},
+        {"name": "audio_name", "type": "string"},
+        {"name": "download", "type": "boolean"},
+        {"name": "force", "type": "boolean"},
+        {"name": "data_only", "type": "boolean"},
+        {"name": "transcribe", "type": "boolean"},
+        {"name": "backend", "type": "string"},
+        {"name": "model", "type": "string"},
+        {"name": "language", "type": "string"},
+        {"name": "profile", "type": "string"},
+        {"name": "local_only", "type": "boolean"}
+      ]
+    },
+    {
+      "name": "qa",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "qa"],
+      "handler": "WorkflowService.run_qa",
+      "params": [
+        {"name": "output", "type": "path", "required": true},
+        {"name": "profile", "type": "string"}
+      ]
+    },
+    {
+      "name": "repair",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "repair"],
+      "handler": "WorkflowService.run_repair",
+      "params": [
+        {"name": "output", "type": "path", "required": true},
+        {"name": "plan_only", "type": "boolean"},
+        {"name": "local_only", "type": "boolean"}
+      ]
+    },
+    {
+      "name": "cloud_prepare",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "cloud", "prepare"],
+      "handler": "WorkflowService.run_cloud_prepare",
+      "params": [
+        {"name": "output", "type": "path", "required": true},
+        {"name": "redact", "type": "string"},
+        {"name": "chunk_minutes", "type": "number"}
+      ]
+    },
+    {
+      "name": "cloud_summarize",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "cloud", "summarize"],
+      "handler": "WorkflowService.run_cloud_summarize",
+      "params": [
+        {"name": "output", "type": "path", "required": true},
+        {"name": "call_api", "type": "boolean"},
+        {"name": "prompt_file", "type": "path"},
+        {"name": "mode", "type": "string"},
+        {"name": "from_readable", "type": "boolean"},
+        {"name": "stream_summary", "type": "boolean"}
+      ]
+    },
+    {
+      "name": "cloud_title",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "cloud", "title"],
+      "handler": "WorkflowService.run_cloud_title",
+      "params": [
+        {"name": "output", "type": "path", "required": true},
+        {"name": "call_api", "type": "boolean"},
+        {"name": "prompt_file", "type": "path"},
+        {"name": "force", "type": "boolean"}
+      ]
+    },
+    {
+      "name": "cloud_glossary_review",
+      "clients": ["cli", "stdio"],
+      "cli": ["exec", "cloud", "glossary-review"],
+      "handler": "WorkflowService.run_cloud_glossary_review",
+      "params": [
+        {"name": "output", "type": "path", "required": true},
+        {"name": "call_api", "type": "boolean"},
+        {"name": "prompt_file", "type": "path"}
+      ]
+    },
+    {
+      "name": "cloud_polish",
+      "clients": ["cli", "stdio"],
+      "cli": ["exec", "cloud", "polish"],
+      "handler": "WorkflowService.run_cloud_polish",
+      "params": [
+        {"name": "output", "type": "path", "required": true},
+        {"name": "call_api", "type": "boolean"},
+        {"name": "prompt_file", "type": "path"}
+      ]
+    },
+    {
+      "name": "srt",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "srt"],
+      "handler": "WorkflowService.run_srt",
+      "params": [
+        {"name": "inputs", "type": "path_array", "required": true, "min_items": 1},
+        {"name": "languages", "type": "string_array"},
+        {"name": "backend", "type": "string"},
+        {"name": "output", "type": "path"},
+        {"name": "output_dir", "type": "path"},
+        {"name": "overwrite", "type": "boolean"}
+      ]
+    },
+    {
+      "name": "subscriptions",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["exec", "subscriptions"],
+      "handler": "WorkflowService.run_subscriptions",
+      "params": [
+        {"name": "arguments", "type": "argv", "required": true, "min_items": 1}
+      ]
+    },
+    {
+      "name": "library_status",
+      "clients": ["cli", "stdio"],
+      "cli": ["exec", "library", "status"],
+      "handler": "WorkflowService.run_library_status",
+      "params": []
+    },
+    {
+      "name": "library_list_episodes",
+      "clients": [
+        "stdio",
+        "mcp"
+      ],
+      "handler": "WorkflowService.run_library_list_episodes",
+      "params": [
+        {
+          "name": "query",
+          "type": "string"
+        },
+        {
+          "name": "needs_summary",
+          "type": "boolean"
+        },
+        {
+          "name": "offset",
+          "type": "integer"
+        },
+        {
+          "name": "limit",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "name": "library_read_episode",
+      "clients": [
+        "stdio",
+        "mcp"
+      ],
+      "handler": "WorkflowService.run_library_read_episode",
+      "params": [
+        {
+          "name": "episode_id",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "library_read_document",
+      "clients": [
+        "stdio",
+        "mcp"
+      ],
+      "handler": "WorkflowService.run_library_read_document",
+      "params": [
+        {
+          "name": "episode_id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "document",
+          "type": "string"
+        },
+        {
+          "name": "offset",
+          "type": "integer"
+        },
+        {
+          "name": "max_chars",
+          "type": "integer"
+        },
+        {
+          "name": "expected_sha256",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "library_write_summary",
+      "clients": [
+        "stdio",
+        "mcp"
+      ],
+      "handler": "WorkflowService.run_library_write_summary",
+      "params": [
+        {
+          "name": "episode_id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "markdown",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "transcript_sha256",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "summary_sha256",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "overwrite",
+          "type": "boolean"
+        },
+        {
+          "name": "generator",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "library_delete_episode",
+      "clients": ["cli", "stdio"],
+      "cli": ["exec", "library", "episode", "delete"],
+      "handler": "WorkflowService.run_library_delete_episode",
+      "params": [
+        {"name": "episode_id", "type": "string", "required": true}
+      ]
+    },
+    {
+      "name": "status",
+      "clients": ["cli", "stdio"],
+      "cli": ["status"],
+      "handler": "WorkflowService.status",
+      "params": [
+        {"name": "task_id", "type": "string"}
+      ]
+    },
+    {
+      "name": "config_list",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["config", "list"],
+      "handler": "config_as_dict",
+      "params": []
+    },
+    {
+      "name": "config_inspect",
+      "clients": ["stdio", "swift"],
+      "handler": "inspect_config",
+      "params": []
+    },
+    {
+      "name": "config_get",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["config", "get"],
+      "handler": "read_config_value",
+      "params": [
+        {"name": "key", "type": "string", "required": true}
+      ]
+    },
+    {
+      "name": "config_set",
+      "clients": ["cli", "stdio", "swift"],
+      "cli": ["config", "set"],
+      "handler": "set_config_value",
+      "params": [
+        {"name": "key", "type": "string", "required": true},
+        {"name": "value", "type": "any", "required": true}
+      ]
+    },
+    {
+      "name": "models",
+      "clients": ["cli", "stdio"],
+      "cli": ["models"],
+      "handler": "models_payload",
+      "params": []
+    },
+    {
+      "name": "doctor",
+      "clients": ["cli", "stdio"],
+      "cli": ["doctor"],
+      "handler": "doctor_payload",
+      "params": []
+    }
+  ]
+}

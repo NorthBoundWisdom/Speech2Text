@@ -1,0 +1,52 @@
+{
+  "confusions": {
+    "ChatGPT": ["ChiacPT", "CHIACP", "CHIGBT", "CHGBT", "Chigbt", "ChGBT"],
+    "Claude Code": ["Cloud Code", "Clock Code"],
+    "DeepSeek": ["Depseek", "DeepSig", "Deepseek"],
+    "FARS": ["FAS", "Faas", "Fast"],
+    "MOSS": ["MOS", "摩斯"],
+    "顶会": ["定会"],
+    "论文": ["漏文", "诺文"]
+  },
+  "allowed_ascii_tokens": [
+    "ai",
+    "agi",
+    "cs",
+    "gpu",
+    "gpt-3",
+    "idea",
+    "ideas",
+    "innovator",
+    "lab",
+    "language",
+    "learning",
+    "model",
+    "models",
+    "mode",
+    "nlp",
+    "paper",
+    "papers",
+    "post",
+    "pretraining",
+    "research",
+    "researcher",
+    "startup",
+    "system",
+    "taste",
+    "training",
+    "transformer",
+    "verify",
+    "verifier",
+    "work"
+  ],
+  "suspicious_ascii_markers": ["GPT", "GBT", "Gpt", "gpt"],
+  "near_miss_excluded_terms": [
+    "大模型",
+    "智能体",
+    "论文",
+    "顶会"
+  ],
+  "cjk_variant_boundaries": {
+    "定会": "(?<![肯一确定决固])定会"
+  }
+}

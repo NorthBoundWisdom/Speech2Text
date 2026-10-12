@@ -1,0 +1,353 @@
+{
+  "version": 2,
+  "commands": {
+    "config": [
+      {
+        "id": "local-app",
+        "label": "Local App Config",
+        "description": "Prepare the local Python runtime, validate Swift inputs, and regenerate Audio2Text.xcodeproj",
+        "command": "python3",
+        "args": [
+          "configs/setup_local_app.py"
+        ],
+        "platforms": [
+          "darwin"
+        ],
+        "default": true,
+        "defaults": {
+          "build": "mac-app",
+          "test": "precommit",
+          "run": "mac-app",
+          "package": "mac-app-dmg"
+        }
+      },
+      {
+        "id": "mac-qt-client",
+        "label": "Mac Qt Client",
+        "description": "Configure the Audio2TextQt macOS CMake build",
+        "command": "python3",
+        "args": [
+          "configs/qt_workflow.py",
+          "config",
+          "--configuration",
+          "Release"
+        ],
+        "platforms": [
+          "darwin"
+        ],
+        "defaults": {
+          "build": "mac-qt-client",
+          "test": "mac-qt-client-smoke",
+          "run": "mac-qt-client",
+          "package": "mac-qt-client-zip"
+        }
+      },
+      {
+        "id": "win-qt-client",
+        "label": "Windows Qt Client",
+        "description": "Configure the Audio2TextQt Windows CMake build",
+        "command": "python",
+        "args": [
+          "configs/qt_workflow.py",
+          "config",
+          "--configuration",
+          "Release"
+        ],
+        "platforms": [
+          "win32"
+        ],
+        "default": true,
+        "defaults": {
+          "build": "win-qt-client",
+          "test": "win-qt-client-smoke",
+          "run": "win-qt-client",
+          "package": "win-qt-client-zip"
+        }
+      }
+    ],
+    "build": [
+      {
+        "id": "mac-app",
+        "label": "Mac App",
+        "description": "Build a local unsigned debug Audio2Text.app bundle",
+        "command": "python3",
+        "args": [
+          "configs/ios_workflow.py",
+          "build",
+          "--platform",
+          "mac",
+          "--scheme",
+          "Audio2TextApp",
+          "--configuration",
+          "debug",
+          "--distribution",
+          "local"
+        ],
+        "configurations": [
+          "local-app"
+        ]
+      },
+      {
+        "id": "ios-app",
+        "label": "iOS App",
+        "description": "Build the Audio2Text iOS app target for the simulator",
+        "command": "python3",
+        "args": [
+          "configs/ios_workflow.py",
+          "build",
+          "--platform",
+          "ios",
+          "--configuration",
+          "debug"
+        ],
+        "configurations": [
+          "local-app"
+        ]
+      },
+      {
+        "id": "mac-qt-client",
+        "label": "Mac Qt Client",
+        "description": "Build the Audio2TextQt macOS client",
+        "command": "python3",
+        "args": [
+          "configs/qt_workflow.py",
+          "build",
+          "--configuration",
+          "Release"
+        ],
+        "configurations": [
+          "mac-qt-client"
+        ]
+      },
+      {
+        "id": "win-qt-client",
+        "label": "Windows Qt Client",
+        "description": "Build the Audio2TextQt Windows client",
+        "command": "python",
+        "args": [
+          "configs/qt_workflow.py",
+          "build",
+          "--configuration",
+          "Release"
+        ],
+        "configurations": [
+          "win-qt-client"
+        ]
+      }
+    ],
+    "test": [
+      {
+        "id": "precommit",
+        "label": "Precommit",
+        "description": "Run Python checks, Swift tests, and app bundle build validation",
+        "command": "python3",
+        "args": [
+          "configs/ios_workflow.py",
+          "test",
+          "--level",
+          "precommit"
+        ],
+        "configurations": [
+          "local-app"
+        ]
+      },
+      {
+        "id": "logic",
+        "label": "Logic",
+        "description": "Run Python and Swift logic tests without app bundle packaging",
+        "command": "python3",
+        "args": [
+          "configs/ios_workflow.py",
+          "test",
+          "--level",
+          "logic"
+        ],
+        "configurations": [
+          "local-app"
+        ]
+      },
+      {
+        "id": "mac-qt-client-smoke",
+        "label": "Mac Qt Client Smoke",
+        "description": "Build Audio2TextQt and run the offscreen QML smoke check",
+        "command": "python3",
+        "args": [
+          "configs/qt_workflow.py",
+          "smoke",
+          "--configuration",
+          "Release"
+        ],
+        "configurations": [
+          "mac-qt-client"
+        ]
+      },
+      {
+        "id": "win-qt-client-smoke",
+        "label": "Windows Qt Client Smoke",
+        "description": "Build Audio2TextQt and run the offscreen QML smoke check",
+        "command": "python",
+        "args": [
+          "configs/qt_workflow.py",
+          "smoke",
+          "--configuration",
+          "Release"
+        ],
+        "configurations": [
+          "win-qt-client"
+        ]
+      }
+    ],
+    "run": [
+      {
+        "id": "mac-app",
+        "label": "Mac App",
+        "description": "Build and run the local Audio2Text app bundle in the current terminal",
+        "command": "python3",
+        "args": [
+          "configs/ios_workflow.py",
+          "run",
+          "--platform",
+          "mac",
+          "--scheme",
+          "Audio2TextApp"
+        ],
+        "configurations": [
+          "local-app"
+        ]
+      },
+      {
+        "id": "mac-qt-client",
+        "label": "Mac Qt Client",
+        "description": "Build and run the Audio2TextQt macOS client in the current terminal",
+        "command": "python3",
+        "args": [
+          "configs/qt_workflow.py",
+          "run",
+          "--configuration",
+          "Release"
+        ],
+        "configurations": [
+          "mac-qt-client"
+        ]
+      },
+      {
+        "id": "win-qt-client",
+        "label": "Windows Qt Client",
+        "description": "Build and run the Audio2TextQt Windows client in the current terminal",
+        "steps": [
+          {
+            "command": "python",
+            "args": [
+              "configs/qt_workflow.py",
+              "build",
+              "--configuration",
+              "Release"
+            ]
+          },
+          {
+            "command": "python",
+            "args": [
+              "configs/qt_workflow.py",
+              "launch",
+              "--configuration",
+              "Release"
+            ]
+          }
+        ],
+        "configurations": [
+          "win-qt-client"
+        ]
+      }
+    ],
+    "package": [
+      {
+        "id": "mac-app-dmg",
+        "label": "Mac App DMG",
+        "description": "Build, development-sign, and package Audio2Text.app into build/package/Audio2Text_v<MARKETING_VERSION>_<ARCHIVE_ID>.dmg for local verification",
+        "command": "python3",
+        "args": [
+          "configs/ios_workflow.py",
+          "package",
+          "--platform",
+          "mac",
+          "--scheme",
+          "Audio2TextApp",
+          "--configuration",
+          "release",
+          "--distribution",
+          "development"
+        ],
+        "configurations": [
+          "local-app"
+        ]
+      },
+      {
+        "id": "mac-app-dmg-developer-id",
+        "label": "Mac App DMG (Developer ID)",
+        "description": "Build, Developer ID-sign, package, notarize, and staple the website distribution DMG (requires ATOT_NOTARY_KEYCHAIN_PROFILE)",
+        "command": "python3",
+        "args": [
+          "configs/ios_workflow.py",
+          "package",
+          "--platform",
+          "mac",
+          "--scheme",
+          "Audio2TextApp",
+          "--configuration",
+          "release",
+          "--distribution",
+          "developer-id"
+        ],
+        "configurations": [
+          "local-app"
+        ]
+      },
+      {
+        "id": "win-qt-client-zip",
+        "label": "Windows Qt Client ZIP",
+        "description": "Build and package the Audio2TextQt Windows client into build/package/Audio2TextQt_v<version>_Windows.zip",
+        "command": "python",
+        "args": [
+          "configs/qt_workflow.py",
+          "package",
+          "--configuration",
+          "Release"
+        ],
+        "configurations": [
+          "win-qt-client"
+        ]
+      },
+      {
+        "id": "mac-qt-client-zip",
+        "label": "Mac Qt Client ZIP",
+        "description": "Build and package the Audio2TextQt macOS client into build/package/Audio2TextQt_v<version>_macOS.zip",
+        "command": "python3",
+        "args": [
+          "configs/qt_workflow.py",
+          "package",
+          "--configuration",
+          "Release"
+        ],
+        "configurations": [
+          "mac-qt-client"
+        ]
+      },
+      {
+        "id": "win-qt-client-runtime-zip",
+        "label": "Windows Qt Client Runtime ZIP",
+        "description": "Build and package the Audio2TextQt Windows client with bundled Python runtime into build/package/Audio2TextQt_v<version>_Windows_Runtime.zip",
+        "command": "python",
+        "args": [
+          "configs/qt_workflow.py",
+          "package",
+          "--configuration",
+          "Release",
+          "--include-python-runtime"
+        ],
+        "configurations": [
+          "win-qt-client"
+        ]
+      }
+    ]
+  }
+}

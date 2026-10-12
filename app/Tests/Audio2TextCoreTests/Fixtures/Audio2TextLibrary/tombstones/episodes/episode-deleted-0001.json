@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "kind": "audio2text.library.episode_tombstone",
+  "episode_id": "episode-deleted-0001",
+  "title": "Deleted Fixture",
+  "source": "podcast_rss",
+  "source_url": "https://example.com/episodes/deleted",
+  "canonical_url": "https://example.com/episodes/deleted",
+  "audio_url": "https://media.example/deleted.m4a",
+  "guid": "episode-deleted-0001",
+  "subscription_id": "podcast_rss-shared",
+  "deleted_at": "2026-01-01T00:00:00+08:00"
+}

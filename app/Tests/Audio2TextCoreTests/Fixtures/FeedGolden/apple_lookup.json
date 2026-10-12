@@ -1,0 +1,9 @@
+{
+  "resultCount": 1,
+  "results": [
+    {
+      "collectionName": "Golden RSS Show",
+      "feedUrl": "https://podcast.example/golden/rss.xml"
+    }
+  ]
+}

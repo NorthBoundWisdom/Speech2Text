@@ -1,0 +1,46 @@
+{
+  "source": "Mozilla Common Voice 21.0 zh-CN test split via Hugging Face dataset keeve101/common-voice-21.0-2025-03-14-zh-CN-split, rows 0, 3, 4, 12, CC0-1.0",
+  "audio_file": "ai_podcast_2min.wav",
+  "time_range": "00:00:00-00:00:27.684",
+  "category": "ai_podcast",
+  "known_difficulties": [
+    "concatenated human-read public speech clips",
+    "rare fish, road, personal, and place names",
+    "proper noun and geographic term recognition"
+  ],
+  "provenance": {
+    "dataset": "keeve101/common-voice-21.0-2025-03-14-zh-CN-split",
+    "dataset_revision": "03ef725ccccbe73aa1a23972ff8b85f0bc7cb97f",
+    "dataset_url": "https://huggingface.co/datasets/keeve101/common-voice-21.0-2025-03-14-zh-CN-split/tree/03ef725ccccbe73aa1a23972ff8b85f0bc7cb97f",
+    "upstream": "Mozilla Common Voice 21.0",
+    "locale": "zh-CN",
+    "split": "test",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+    "upstream_terms_url": "https://commonvoice.mozilla.org/en/terms",
+    "rows": [
+      {
+        "row_index": 0,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_33411896.mp3",
+        "sentence_sha256": "1ef99ea1179ce9cdfd79901cc1e638823b1213cbcb795a8195961f259855e6ea"
+      },
+      {
+        "row_index": 3,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_33446629.mp3",
+        "sentence_sha256": "2eddb949dacc090189d1b473ca96a2dc74e07ccde5c01d6f249a5c732b00730a"
+      },
+      {
+        "row_index": 4,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_33615736.mp3",
+        "sentence_sha256": "6a65e2c2ab482b41d98156f4f76cb4714c6c2bdf73313358ef6051f20ac8940a"
+      },
+      {
+        "row_index": 12,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_37446718.mp3",
+        "sentence_sha256": "c3d3eac76eb1209f8823d748f38a2fc73f6269ab3650d51bd75dedbca083b337"
+      }
+    ],
+    "reference_sha256": "fa9d33fdd124899bdeeeeb5e03c6904692ccec990cb4ab067c43a1e565f4bdc2",
+    "audio_committed": false
+  }
+}

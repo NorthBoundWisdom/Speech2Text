@@ -1,0 +1,17 @@
+{
+  "confusions": {
+    "播客": ["博客"]
+  },
+  "allowed_ascii_tokens": [
+    "api",
+    "ceo",
+    "ok"
+  ],
+  "suspicious_ascii_markers": [],
+  "near_miss_excluded_terms": [
+    "播客",
+    "字幕",
+    "转写"
+  ],
+  "cjk_variant_boundaries": {}
+}

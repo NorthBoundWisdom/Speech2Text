@@ -1,0 +1,12 @@
+{
+  "ascii_keep_terms": [],
+  "known_phrases": [
+    "播客",
+    "字幕",
+    "转写"
+  ],
+  "known_corrections": {
+    "博客": "播客"
+  },
+  "conditional_corrections": []
+}

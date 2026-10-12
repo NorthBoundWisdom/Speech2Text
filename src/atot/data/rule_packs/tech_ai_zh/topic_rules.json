@@ -1,0 +1,89 @@
+{
+  "ascii_keep_terms": [
+    "ChatGPT",
+    "DeepSeek",
+    "OpenAI",
+    "Claude",
+    "Analemma"
+  ],
+  "known_phrases": [
+    "AI Researcher",
+    "AI researcher",
+    "AI for AI",
+    "Claude Code",
+    "DeepSeek",
+    "Verifier",
+    "verifier",
+    "全自动科研系统",
+    "论文",
+    "顶会论文",
+    "顶会",
+    "大模型",
+    "智能体",
+    "生物竞赛",
+    "生物奥赛",
+    "软件工程",
+    "计算机科学",
+    "生存焦虑",
+    "类ChatGPT"
+  ],
+  "known_corrections": {
+    "日行纪": "日行迹",
+    "日行计": "日行迹",
+    "日行记": "日行迹",
+    "上海创制学院": "上海创智学院",
+    "上海创指学院": "上海创智学院",
+    "上海创治学院": "上海创智学院",
+    "张伟南": "张伟楠",
+    "Analuma": "Analemma",
+    "Anilemma": "Analemma",
+    "Deepseek": "DeepSeek",
+    "DeepSig": "DeepSeek",
+    "MOS": "MOSS",
+    "摩斯": "MOSS",
+    "FAS": "FARS",
+    "Fars": "FARS",
+    "Fast": "FARS",
+    "CHIGBT": "ChatGPT",
+    "CHGBT": "ChatGPT",
+    "Chigbt": "ChatGPT",
+    "ChGBT": "ChatGPT"
+  },
+  "conditional_corrections": [
+    {
+      "when_any": ["顶会", "顶会论文"],
+      "from": "定会",
+      "to": "顶会"
+    },
+    {
+      "when_any": ["论文", "顶会论文"],
+      "from": "漏文",
+      "to": "论文"
+    },
+    {
+      "when_any": ["ChatGPT", "类ChatGPT"],
+      "from": "ChiaGPT",
+      "to": "ChatGPT"
+    },
+    {
+      "when_any": ["ChatGPT", "类ChatGPT"],
+      "from": "GBT3",
+      "to": "GPT-3"
+    },
+    {
+      "when_any": ["ChatGPT", "类ChatGPT"],
+      "from": "GPT3",
+      "to": "GPT-3"
+    },
+    {
+      "when_any": ["Claude Code"],
+      "from": "Cloud Code",
+      "to": "Claude Code"
+    },
+    {
+      "when_any": ["AI", "AGI", "大模型", "智能体", "ChatGPT"],
+      "from": "Deepseek",
+      "to": "DeepSeek"
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "success": true,
+  "created_at": "2026-05-28T00:00:00+08:00",
+  "input_path": "materials/0000/sample/sample.wav",
+  "input_file": {
+    "path": "materials/0000/sample/sample.wav",
+    "size_bytes": 32000,
+    "mtime": 1779897600.0,
+    "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "prepared_audio": {
+    "path": "work/0000/sample/prepared.wav",
+    "size_bytes": 32000,
+    "mtime": 1779897601.0,
+    "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "duration": 1.0,
+    "sample_rate": 16000,
+    "channels": 1,
+    "prepare_tool": "ffmpeg",
+    "prepare_command": "ffmpeg -hide_banner -loglevel error -y -i materials/0000/sample/sample.wav -ac 1 -ar 16000 -c:a pcm_s16le work/0000/sample/prepared.wav",
+    "ffmpeg_command": "ffmpeg -hide_banner -loglevel error -y -i materials/0000/sample/sample.wav -ac 1 -ar 16000 -c:a pcm_s16le work/0000/sample/prepared.wav"
+  },
+  "job_dir": "work/0000/sample",
+  "backend": "mlx-whisper",
+  "backend_capabilities": {
+    "supports_prompt": true,
+    "supports_word_timestamps": true,
+    "supports_diarization": false
+  },
+  "transcription_fingerprint": {
+    "version": 1,
+    "backend": "mlx-whisper",
+    "model": "mlx-community/whisper-large-v3-turbo",
+    "input_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "prepared_audio_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "chunk_layout_sha256": "9e60a41987be2341d7f664aa9ae132c261b92d6acf73394cbff6ca044d859eec",
+    "language": "zh",
+    "prompt_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "word_timestamps": false,
+    "condition_on_previous_text": true,
+    "temperature": 0.0,
+    "no_speech_threshold": 0.6,
+    "logprob_threshold": -1.0,
+    "compression_ratio_threshold": 2.4,
+    "hallucination_silence_threshold": null
+  },
+  "transcription_fingerprint_sha256": "8e0bd99b6bb415629486a12e9b3abf3621a83851ccefb825702d50fd0578174f",
+  "postprocess_fingerprint": {
+    "version": 3,
+    "glossary_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "correction_pipeline": "builtin-corrections-and-review-v3"
+  },
+  "postprocess_fingerprint_sha256": "e29b5cf472d0106cc823ba6ad9cb26908bf1c7f288ceadb7571b7dfead19d14a",
+  "chunk_layout": {
+    "version": 1,
+    "sample_rate": 16000,
+    "audio_duration": 1.0,
+    "chunk_length": 1200.0,
+    "overlap": 10.0,
+    "chunks": [
+      {
+        "index": 0,
+        "source_start": 0.0,
+        "source_end": 1.0,
+        "core_start": 0.0,
+        "core_end": 1.0,
+        "duration": 1.0
+      }
+    ]
+  },
+  "chunk_layout_sha256": "9e60a41987be2341d7f664aa9ae132c261b92d6acf73394cbff6ca044d859eec",
+  "model": "mlx-community/whisper-large-v3-turbo",
+  "model_source": "mlx-community",
+  "model_alias_or_input": "large-v3-turbo",
+  "language": "zh",
+  "prompt_file": "doc/examples/prompt.zh.txt",
+  "prompt_sources": [],
+  "prompt": null,
+  "glossary_file": "doc/examples/glossary.zh.json",
+  "episode_glossary_file": "work/0000/sample/episode_glossary.json",
+  "effective_glossary_file": "work/0000/sample/glossary.effective.json",
+  "audio_duration": 1.0,
+  "chunk_length": 1200.0,
+  "overlap": 10.0,
+  "runtime_seconds": 0.5,
+  "chunk_runtime_seconds": 0.4,
+  "speed_factor": 2.0,
+  "chunk_status_counts": {
+    "transcribed": 1,
+    "transcribed_after_cache_mismatch": 0,
+    "skipped_existing": 0
+  },
+  "peak_rss_mb": 128.0,
+  "machine_info": {
+    "platform": "fixture"
+  },
+  "chunks": [
+    {
+      "index": 0,
+      "wav": "work/0000/sample/chunks/chunk_0000.wav",
+      "json": "work/0000/sample/chunks/chunk_0000.json",
+      "status": "transcribed",
+      "core_start": 0.0,
+      "core_end": 1.0
+    }
+  ],
+  "review": {
+    "issue_count": 0,
+    "segment_issue_count": 0
+  },
+  "qa": {
+    "status": "pass",
+    "issue_count": 0,
+    "blocking_issue_count": 0,
+    "warning_count": 0
+  },
+  "repair": {
+    "applied": false,
+    "repair_run_ids": []
+  },
+  "cloud": {
+    "prepared": false,
+    "audio_uploaded": false,
+    "outputs": []
+  },
+  "quality_metrics": {
+    "raw_segment_count": 1,
+    "corrected_segment_count": 1,
+    "empty_corrected_segment_count": 0,
+    "raw_char_count": 2,
+    "corrected_char_count": 2,
+    "correction_count": 0,
+    "correction_kind_counts": {},
+    "review_issue_count": 0,
+    "review_segment_issue_count": 0,
+    "token_count": 1,
+    "max_repeated_token_run": 1,
+    "top_token_ratio": 1.0,
+    "timing": {
+      "timed_segment_count": 1,
+      "missing_timing_segment_count": 0,
+      "invalid_timing_segment_count": 0,
+      "non_monotonic_timing_segment_count": 0,
+      "overlapping_timing_segment_count": 0,
+      "max_timing_overlap_seconds": 0.0,
+      "srt_vtt_compatible": true
+    }
+  },
+  "output_files": {
+    "chunks_manifest.json": "work/0000/sample/chunks_manifest.json",
+    "corrected.json": "work/0000/sample/corrected.json",
+    "corrections.json": "work/0000/sample/corrections.json",
+    "glossary.effective.json": "work/0000/sample/glossary.effective.json",
+    "prepared.meta.json": "work/0000/sample/prepared.meta.json",
+    "prepared.wav": "work/0000/sample/prepared.wav",
+    "qa.json": "work/0000/sample/qa.json",
+    "qa.md": "work/0000/sample/qa.md",
+    "raw.json": "work/0000/sample/raw.json",
+    "review.json": "work/0000/sample/review.json",
+    "review.md": "work/0000/sample/review.md",
+    "run.json": "work/0000/sample/run.json",
+    "run.log": "work/0000/sample/run.log",
+    "transcript.corrected.txt": "work/0000/sample/transcript.corrected.txt",
+    "transcript.md": "work/0000/sample/transcript.md",
+    "transcript.raw.txt": "work/0000/sample/transcript.raw.txt",
+    "transcript.srt": "work/0000/sample/transcript.srt",
+    "transcript.timestamped.md": "work/0000/sample/transcript.timestamped.md",
+    "transcript.vtt": "work/0000/sample/transcript.vtt",
+    "transcript.readable.md": "work/0000/sample/transcript.readable.md"
+  }
+}

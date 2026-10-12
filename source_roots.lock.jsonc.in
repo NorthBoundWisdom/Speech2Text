@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 5,
+  "cmakeEnvironment": {},
+  "cmakeCacheVariables": {
+    "win": {
+      "CMAKE_TOOLCHAIN_FILE": "C:/OpenSource/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "CMAKE_PREFIX_PATH": "C:/OpenSource/vcpkg/installed/x64-windows;C:/Qt/6.11.2/msvc2022_64"
+    },
+    "mac": {
+      "CMAKE_PREFIX_PATH": "$HOME/vcpkg/installed/arm64-osx;$HOME/vcpkg/installed/arm64-osx/debug;$HOME/Qt/6.12.0/macos;/opt/homebrew",
+      "CMAKE_C_COMPILER_LAUNCHER": "ccache",
+      "CMAKE_CXX_COMPILER_LAUNCHER": "ccache"
+    }
+  },
+  "terminalPath": {
+    "win": [
+      "C:/OpenSource/vcpkg/installed/x64-windows/tools/ffmpeg",
+      "C:/OpenSource/vcpkg/installed/x64-windows/bin"
+    ],
+    "mac": [
+      "/opt/homebrew/bin"
+    ]
+  },
+  "AppConfigs": {
+    "DevMode": false,
+    "XCODE_DEVELOPMENT_TEAM": "",
+    "MARKETING_VERSION": "0.9.0",
+    "ARCHIVE_ID": "1"
+  },
+  "depsMode": "pinned",
+  "depsManualPath": {},
+  "dependencies": {}
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "kind": "audio2text.library.manifest",
+  "updated_at": "2026-01-01T00:00:00+08:00",
+  "episode_count": 1,
+  "subscription_count": 1,
+  "tombstone_count": 1,
+  "episodes": [
+    {
+      "episode_id": "episode-shared-0001",
+      "path": "episodes/episode-shared-0001/episode.json"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "podcast_rss-shared",
+      "path": "subscriptions/podcast_rss-shared.json"
+    }
+  ],
+  "tombstones": [
+    {
+      "episode_id": "episode-deleted-0001",
+      "path": "tombstones/episodes/episode-deleted-0001.json"
+    }
+  ]
+}

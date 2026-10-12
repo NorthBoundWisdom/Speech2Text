@@ -1,0 +1,46 @@
+{
+  "source": "Mozilla Common Voice 21.0 zh-CN test split via Hugging Face dataset keeve101/common-voice-21.0-2025-03-14-zh-CN-split, rows 15, 17, 30, 32, CC0-1.0",
+  "audio_file": "coffee_podcast_2min.wav",
+  "time_range": "00:00:00-00:00:29.796",
+  "category": "coffee_podcast",
+  "known_difficulties": [
+    "concatenated human-read public speech clips",
+    "foreign names and historical terms",
+    "long medical and literary organization phrase"
+  ],
+  "provenance": {
+    "dataset": "keeve101/common-voice-21.0-2025-03-14-zh-CN-split",
+    "dataset_revision": "03ef725ccccbe73aa1a23972ff8b85f0bc7cb97f",
+    "dataset_url": "https://huggingface.co/datasets/keeve101/common-voice-21.0-2025-03-14-zh-CN-split/tree/03ef725ccccbe73aa1a23972ff8b85f0bc7cb97f",
+    "upstream": "Mozilla Common Voice 21.0",
+    "locale": "zh-CN",
+    "split": "test",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+    "upstream_terms_url": "https://commonvoice.mozilla.org/en/terms",
+    "rows": [
+      {
+        "row_index": 15,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_22192798.mp3",
+        "sentence_sha256": "78d4202205eb8749c0d55c6e9397e71d7e865cfbc59295e5b43ddaa8f58f92f9"
+      },
+      {
+        "row_index": 17,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_18840501.mp3",
+        "sentence_sha256": "5796826449177906efa165ae006804b3029e0cb09fe8db59b7c0c97e32dfa54e"
+      },
+      {
+        "row_index": 30,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_33601119.mp3",
+        "sentence_sha256": "f26969e649ce9d4e89898504e791523154f93243c140d479e479e75c22114aa4"
+      },
+      {
+        "row_index": 32,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_33343888.mp3",
+        "sentence_sha256": "01135d7c141e260e698238ab645b0dc4a92fd555386ece10f64b4999359be18b"
+      }
+    ],
+    "reference_sha256": "aea23d0e44245f6d9cc5221bd2363e186a54bd23f6f8c1864e1643180b093ad2",
+    "audio_committed": false
+  }
+}

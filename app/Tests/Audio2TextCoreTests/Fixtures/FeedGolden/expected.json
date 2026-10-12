@@ -1,0 +1,47 @@
+{
+  "rss": {
+    "title": "Golden RSS Show",
+    "source": "podcast_rss",
+    "url": "https://podcast.example/golden/show",
+    "feed_url": "https://podcast.example/golden/rss.xml",
+    "subscription_id": "podcast_rss-b1d729067aa7",
+    "episode_ids": [
+      "9c2549564dd80c21e0774691",
+      "0730525a8cb4d6c629851908",
+      "2721aa4844d05183e50ef068"
+    ]
+  },
+  "atom": {
+    "title": "Golden Atom Show",
+    "source": "podcast_rss",
+    "url": "https://podcast.example/golden/atom-show",
+    "feed_url": "https://podcast.example/golden/atom.xml",
+    "subscription_id": "podcast_rss-f195658e352b",
+    "episode_ids": [
+      "5edf2eb4cc6ecb5ab03d01fe"
+    ]
+  },
+  "apple": {
+    "lookup_feed_url": "https://podcast.example/golden/rss.xml",
+    "source_url": "https://podcasts.apple.com/us/podcast/golden/id123456789"
+  },
+  "xiaoyuzhou": {
+    "title": "Golden Xiaoyuzhou Show",
+    "source": "xiaoyuzhou",
+    "url": "https://www.xiaoyuzhoufm.com/podcast/golden",
+    "feed_url": "",
+    "subscription_id": "xiaoyuzhou-975fde0d69ce",
+    "episode_ids": [
+      "0a58a66185a98f6b28792772"
+    ]
+  },
+  "library_write": {
+    "group_name": "Research",
+    "new_episode_id": "9c2549564dd80c21e0774691",
+    "reused_episode_id": "0730525a8cb4d6c629851908",
+    "tombstone_episode_id": "2721aa4844d05183e50ef068",
+    "imported_count": 1,
+    "reused_count": 1,
+    "skipped_count": 1
+  }
+}

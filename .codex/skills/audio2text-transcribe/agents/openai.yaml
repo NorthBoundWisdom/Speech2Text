@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audio2Text Transcribe"
+  short_description: "Import and transcribe podcast audio locally"
+  default_prompt: "Use $audio2text-transcribe to import this podcast episode, transcribe it locally, create its agent summary, and report QA."

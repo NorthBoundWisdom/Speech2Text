@@ -1,0 +1,46 @@
+{
+  "source": "Mozilla Common Voice 21.0 zh-CN test split via Hugging Face dataset keeve101/common-voice-21.0-2025-03-14-zh-CN-split, rows 33, 35, 37, 45, CC0-1.0",
+  "audio_file": "casual_talk_2min.wav",
+  "time_range": "00:00:00-00:00:35.508",
+  "category": "casual_talk",
+  "known_difficulties": [
+    "concatenated human-read public speech clips",
+    "regional food and military terms",
+    "foreign city and Russian place-name transliteration"
+  ],
+  "provenance": {
+    "dataset": "keeve101/common-voice-21.0-2025-03-14-zh-CN-split",
+    "dataset_revision": "03ef725ccccbe73aa1a23972ff8b85f0bc7cb97f",
+    "dataset_url": "https://huggingface.co/datasets/keeve101/common-voice-21.0-2025-03-14-zh-CN-split/tree/03ef725ccccbe73aa1a23972ff8b85f0bc7cb97f",
+    "upstream": "Mozilla Common Voice 21.0",
+    "locale": "zh-CN",
+    "split": "test",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+    "upstream_terms_url": "https://commonvoice.mozilla.org/en/terms",
+    "rows": [
+      {
+        "row_index": 33,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_22431678.mp3",
+        "sentence_sha256": "7a0478eb9c8b65709fa019828268e651ed35424fe65013c363ba5b009a22a0eb"
+      },
+      {
+        "row_index": 35,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_18990129.mp3",
+        "sentence_sha256": "af91f53f933aacdb9a90cb965caa96836b6c18a87f720d5548a05f40d14c336e"
+      },
+      {
+        "row_index": 37,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_33416875.mp3",
+        "sentence_sha256": "9e3d6611dd5194dfaded0c7824d34807ad8903ba38d1e009b2f375c7d9c79132"
+      },
+      {
+        "row_index": 45,
+        "clip_id": "zh-CN\\clips\\common_voice_zh-CN_22110266.mp3",
+        "sentence_sha256": "85a3dbaf9327466cbae4e500ea2a2f562df923136d4df067baff203e45e45fdd"
+      }
+    ],
+    "reference_sha256": "a2fdedd6d9796368eae2c968caa985db105d0fc8c3c59674f0807a6f0770aa5b",
+    "audio_committed": false
+  }
+}

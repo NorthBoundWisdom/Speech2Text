@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Golden RSS Show</title>
+    <link>https://podcast.example/golden</link>
+    <description>Public deterministic RSS fixture.</description>
+    <itunes:image href="https://cdn.example/golden/show.png"/>
+    <item>
+      <title>001. Golden RSS</title>
+      <link>https://podcast.example/golden/rss/001</link>
+      <guid>golden-rss-001</guid>
+      <pubDate>Thu, 28 May 2026 00:00:00 GMT</pubDate>
+      <description><![CDATA[<p>First public fixture episode.</p>]]></description>
+      <itunes:duration>00:42:00</itunes:duration>
+      <enclosure url="https://media.example/golden/rss-001.m4a" type="audio/mp4" length="123"/>
+    </item>
+    <item>
+      <title>002. Golden RSS Existing</title>
+      <link>https://podcast.example/golden/rss/002</link>
+      <guid>golden-rss-002</guid>
+      <pubDate>Fri, 29 May 2026 00:00:00 GMT</pubDate>
+      <description>Existing metadata-only fixture episode.</description>
+      <itunes:duration>00:24:00</itunes:duration>
+      <enclosure url="https://media.example/golden/rss-002.m4a" type="audio/mp4" length="456"/>
+    </item>
+    <item>
+      <title>003. Golden RSS Deleted</title>
+      <link>https://podcast.example/golden/rss/deleted</link>
+      <guid>golden-rss-deleted</guid>
+      <pubDate>Sat, 30 May 2026 00:00:00 GMT</pubDate>
+      <description>Deleted fixture episode.</description>
+      <itunes:duration>00:18:00</itunes:duration>
+      <enclosure url="https://media.example/golden/rss-deleted.m4a" type="audio/mp4" length="789"/>
+    </item>
+  </channel>
+</rss>

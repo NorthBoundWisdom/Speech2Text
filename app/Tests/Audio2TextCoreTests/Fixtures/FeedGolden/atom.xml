@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Golden Atom Show</title>
+  <id>tag:podcast.example,2026:golden-atom</id>
+  <entry>
+    <title>001. Golden Atom</title>
+    <id>tag:podcast.example,2026:golden-atom-001</id>
+    <link href="https://podcast.example/golden/atom/001"/>
+    <link rel="enclosure" href="https://media.example/golden/atom-001.mp3" type="audio/mpeg"/>
+    <published>2026-05-28T00:00:00Z</published>
+    <summary>Atom public fixture episode.</summary>
+  </entry>
+</feed>

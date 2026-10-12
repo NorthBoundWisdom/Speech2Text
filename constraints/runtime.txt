@@ -1,0 +1,3 @@
+# Cross-platform security floors consumed by configs/setup_local_app.py.
+# Keep product dependency intent in pyproject.toml; do not add machine-specific paths or wheels.
+msgpack>=1.2.1

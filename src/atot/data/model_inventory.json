@@ -1,0 +1,301 @@
+{
+  "models": [
+    {
+      "name": "small-4bit",
+      "aliases": ["small-4bit"],
+      "repo": "mlx-community/whisper-small-mlx-4bit",
+      "local_dir": "whisper-small-mlx-4bit",
+      "note": "current baseline from first experiment; fast and usable, but lower quality",
+      "production": true,
+      "candidate": false,
+      "required_files": [
+        {
+          "path": "model/whisper-small-mlx-4bit/config.json",
+          "url": "https://huggingface.co/mlx-community/whisper-small-mlx-4bit/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/whisper-small-mlx-4bit/weights.npz",
+          "url": "https://huggingface.co/mlx-community/whisper-small-mlx-4bit/resolve/main/weights.npz?download=true"
+        }
+      ]
+    },
+    {
+      "name": "large-v3-turbo",
+      "aliases": ["large-v3-turbo"],
+      "repo": "mlx-community/whisper-large-v3-turbo",
+      "local_dir": "whisper-large-v3-turbo",
+      "note": "recommended first upgrade for Chinese podcasts",
+      "production": true,
+      "candidate": true,
+      "required_files": [
+        {
+          "path": "model/whisper-large-v3-turbo/config.json",
+          "url": "https://huggingface.co/mlx-community/whisper-large-v3-turbo/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/whisper-large-v3-turbo/weights.safetensors",
+          "url": "https://huggingface.co/mlx-community/whisper-large-v3-turbo/resolve/main/weights.safetensors?download=true"
+        }
+      ]
+    },
+    {
+      "name": "large-v3-turbo-q4",
+      "aliases": ["large-v3-turbo-q4"],
+      "repo": "mlx-community/whisper-large-v3-turbo-q4",
+      "local_dir": "whisper-large-v3-turbo-q4",
+      "note": "quantized turbo variant; useful if memory pressure appears",
+      "production": false,
+      "candidate": true,
+      "required_files": [
+        {
+          "path": "model/whisper-large-v3-turbo-q4/config.json",
+          "url": "https://huggingface.co/mlx-community/whisper-large-v3-turbo-q4/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/whisper-large-v3-turbo-q4/weights.npz",
+          "url": "https://huggingface.co/mlx-community/whisper-large-v3-turbo-q4/resolve/main/weights.npz?download=true"
+        }
+      ]
+    },
+    {
+      "name": "large-v3-4bit",
+      "aliases": ["large-v3-4bit"],
+      "repo": "mlx-community/whisper-large-v3-mlx-4bit",
+      "local_dir": "whisper-large-v3-mlx-4bit",
+      "note": "quantized large-v3 archive candidate; recorded gate showed speed and quality regressions",
+      "production": false,
+      "candidate": true,
+      "required_files": [
+        {
+          "path": "model/whisper-large-v3-mlx-4bit/config.json",
+          "url": "https://huggingface.co/mlx-community/whisper-large-v3-mlx-4bit/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/whisper-large-v3-mlx-4bit/weights.npz",
+          "url": "https://huggingface.co/mlx-community/whisper-large-v3-mlx-4bit/resolve/main/weights.npz?download=true"
+        }
+      ]
+    },
+    {
+      "name": "large-v3",
+      "aliases": ["large-v3"],
+      "repo": "mlx-community/whisper-large-v3-mlx",
+      "local_dir": "whisper-large-v3-mlx",
+      "note": "max-quality large-v3 MLX model if resources allow",
+      "production": false,
+      "candidate": true,
+      "required_files": [
+        {
+          "path": "model/whisper-large-v3-mlx/config.json",
+          "url": "https://huggingface.co/mlx-community/whisper-large-v3-mlx/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/whisper-large-v3-mlx/weights.npz",
+          "url": "https://huggingface.co/mlx-community/whisper-large-v3-mlx/resolve/main/weights.npz?download=true"
+        }
+      ]
+    },
+    {
+      "name": "tiny",
+      "aliases": ["tiny"],
+      "repo": "mlx-community/whisper-tiny",
+      "local_dir": "whisper-tiny",
+      "note": "sanity-check only; too inaccurate for target Chinese podcast use",
+      "production": false,
+      "candidate": false,
+      "required_files": [
+        {
+          "path": "model/whisper-tiny/config.json",
+          "url": "https://huggingface.co/mlx-community/whisper-tiny/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/whisper-tiny/weights.npz",
+          "url": "https://huggingface.co/mlx-community/whisper-tiny/resolve/main/weights.npz?download=true"
+        }
+      ]
+    },
+    {
+      "name": "mlx-qwen3-asr-0.6b",
+      "aliases": ["mlx-qwen3-asr-0.6b"],
+      "repo": "Qwen/Qwen3-ASR-0.6B",
+      "local_dir": "Qwen3-ASR-0.6B",
+      "note": "experimental Qwen3 ASR candidate; requires the forced aligner for timestamped output",
+      "production": false,
+      "candidate": true,
+      "required_files": [
+        {
+          "path": "model/Qwen3-ASR-0.6B/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ASR-0.6B/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/Qwen3-ASR-0.6B/merges.txt",
+          "url": "https://huggingface.co/Qwen/Qwen3-ASR-0.6B/resolve/main/merges.txt?download=true"
+        },
+        {
+          "path": "model/Qwen3-ASR-0.6B/model.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen3-ASR-0.6B/resolve/main/model.safetensors?download=true"
+        },
+        {
+          "path": "model/Qwen3-ASR-0.6B/tokenizer_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ASR-0.6B/resolve/main/tokenizer_config.json?download=true"
+        },
+        {
+          "path": "model/Qwen3-ASR-0.6B/vocab.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ASR-0.6B/resolve/main/vocab.json?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/merges.txt",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/merges.txt?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/model.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/model.safetensors?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/tokenizer_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/tokenizer_config.json?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/vocab.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/vocab.json?download=true"
+        }
+      ]
+    },
+    {
+      "name": "faster-whisper-large-v3-turbo",
+      "aliases": ["faster-whisper-large-v3-turbo"],
+      "repo": "h2oai/faster-whisper-large-v3-turbo",
+      "local_dir": "faster-whisper-large-v3-turbo",
+      "note": "Windows CLI target CTranslate2 model for faster-whisper",
+      "production": false,
+      "candidate": true,
+      "required_files": [
+        {
+          "path": "model/faster-whisper-large-v3-turbo/config.json",
+          "url": "https://huggingface.co/h2oai/faster-whisper-large-v3-turbo/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/faster-whisper-large-v3-turbo/model.bin",
+          "url": "https://huggingface.co/h2oai/faster-whisper-large-v3-turbo/resolve/main/model.bin?download=true"
+        },
+        {
+          "path": "model/faster-whisper-large-v3-turbo/preprocessor_config.json",
+          "url": "https://huggingface.co/h2oai/faster-whisper-large-v3-turbo/resolve/main/preprocessor_config.json?download=true"
+        },
+        {
+          "path": "model/faster-whisper-large-v3-turbo/tokenizer.json",
+          "url": "https://huggingface.co/h2oai/faster-whisper-large-v3-turbo/resolve/main/tokenizer.json?download=true"
+        },
+        {
+          "path": "model/faster-whisper-large-v3-turbo/vocabulary.json",
+          "url": "https://huggingface.co/h2oai/faster-whisper-large-v3-turbo/resolve/main/vocabulary.json?download=true"
+        }
+      ]
+    },
+    {
+      "name": "faster-whisper-large-v3",
+      "aliases": ["faster-whisper-large-v3"],
+      "repo": "Systran/faster-whisper-large-v3",
+      "local_dir": "faster-whisper-large-v3",
+      "note": "Windows CLI alternate CTranslate2 model for faster-whisper",
+      "production": false,
+      "candidate": true,
+      "required_files": [
+        {
+          "path": "model/faster-whisper-large-v3/config.json",
+          "url": "https://huggingface.co/Systran/faster-whisper-large-v3/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/faster-whisper-large-v3/model.bin",
+          "url": "https://huggingface.co/Systran/faster-whisper-large-v3/resolve/main/model.bin?download=true"
+        },
+        {
+          "path": "model/faster-whisper-large-v3/preprocessor_config.json",
+          "url": "https://huggingface.co/Systran/faster-whisper-large-v3/resolve/main/preprocessor_config.json?download=true"
+        },
+        {
+          "path": "model/faster-whisper-large-v3/tokenizer.json",
+          "url": "https://huggingface.co/Systran/faster-whisper-large-v3/resolve/main/tokenizer.json?download=true"
+        },
+        {
+          "path": "model/faster-whisper-large-v3/vocabulary.json",
+          "url": "https://huggingface.co/Systran/faster-whisper-large-v3/resolve/main/vocabulary.json?download=true"
+        }
+      ]
+    },
+    {
+      "name": "qwen3-forced-aligner-0.6b",
+      "aliases": ["qwen3-forced-aligner-0.6b"],
+      "repo": "Qwen/Qwen3-ForcedAligner-0.6B",
+      "local_dir": "Qwen3-ForcedAligner-0.6B",
+      "note": "forced aligner sidecar used by the Qwen3 ASR candidate",
+      "production": false,
+      "candidate": true,
+      "required_files": [
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/merges.txt",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/merges.txt?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/model.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/model.safetensors?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/tokenizer_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/tokenizer_config.json?download=true"
+        },
+        {
+          "path": "model/Qwen3-ForcedAligner-0.6B/vocab.json",
+          "url": "https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B/resolve/main/vocab.json?download=true"
+        }
+      ]
+    },
+    {
+      "name": "nllb-200-distilled-600m",
+      "aliases": ["nllb-200-distilled-600m"],
+      "repo": "facebook/nllb-200-distilled-600M",
+      "local_dir": "nllb-200-distilled-600M",
+      "note": "local subtitle translation model for Chinese SRT export",
+      "production": false,
+      "candidate": false,
+      "required_files": [
+        {
+          "path": "model/nllb-200-distilled-600M/config.json",
+          "url": "https://huggingface.co/facebook/nllb-200-distilled-600M/resolve/main/config.json?download=true"
+        },
+        {
+          "path": "model/nllb-200-distilled-600M/generation_config.json",
+          "url": "https://huggingface.co/facebook/nllb-200-distilled-600M/resolve/main/generation_config.json?download=true"
+        },
+        {
+          "path": "model/nllb-200-distilled-600M/pytorch_model.bin",
+          "url": "https://huggingface.co/facebook/nllb-200-distilled-600M/resolve/main/pytorch_model.bin?download=true"
+        },
+        {
+          "path": "model/nllb-200-distilled-600M/sentencepiece.bpe.model",
+          "url": "https://huggingface.co/facebook/nllb-200-distilled-600M/resolve/main/sentencepiece.bpe.model?download=true"
+        },
+        {
+          "path": "model/nllb-200-distilled-600M/special_tokens_map.json",
+          "url": "https://huggingface.co/facebook/nllb-200-distilled-600M/resolve/main/special_tokens_map.json?download=true"
+        },
+        {
+          "path": "model/nllb-200-distilled-600M/tokenizer.json",
+          "url": "https://huggingface.co/facebook/nllb-200-distilled-600M/resolve/main/tokenizer.json?download=true"
+        },
+        {
+          "path": "model/nllb-200-distilled-600M/tokenizer_config.json",
+          "url": "https://huggingface.co/facebook/nllb-200-distilled-600M/resolve/main/tokenizer_config.json?download=true"
+        }
+      ]
+    }
+  ]
+}

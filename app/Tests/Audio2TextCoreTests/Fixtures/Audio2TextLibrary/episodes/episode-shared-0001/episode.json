@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "audio2text.library.episode",
+  "episode_id": "episode-shared-0001",
+  "title": "001. Shared Fixture",
+  "source": "podcast_rss",
+  "source_url": "https://example.com/episodes/1",
+  "canonical_url": "https://example.com/episodes/1",
+  "series_name": "Shared Fixture",
+  "series_url": "https://example.com/feed.xml",
+  "published_at": "2026-01-01T00:00:00Z",
+  "audio_url": "https://media.example/episode-1.m4a",
+  "guid": "episode-shared-0001",
+  "subscription_id": "podcast_rss-shared",
+  "app_group": "Research",
+  "app_status": "link",
+  "app_queue_status": "unread",
+  "app_read": false,
+  "app_star": false,
+  "product_status": "available",
+  "documents": [
+    {
+      "name": "summary.md",
+      "path": "documents/summary.md"
+    },
+    {
+      "name": "transcript.md",
+      "path": "documents/transcript.md"
+    }
+  ]
+}
