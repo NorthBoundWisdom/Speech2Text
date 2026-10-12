@@ -136,10 +136,28 @@ else()
 endif()
 include("${Qt6Gui_DIR}/Qt6QOffscreenIntegrationPluginTargets.cmake")
 include("${Qt6Gui_DIR}/Qt6QMinimalIntegrationPluginTargets.cmake")
-install(IMPORTED_RUNTIME_ARTIFACTS Qt6::QOffscreenIntegrationPlugin Qt6::QMinimalIntegrationPlugin
-    LIBRARY DESTINATION ${AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR}
-    RUNTIME DESTINATION ${AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR}
-)
+if(WIN32)
+    # Explicit filenames avoid Qt's manual plugin targets selecting Debug DLLs
+    # when the SDK publishes its release binaries as RelWithDebInfo.
+    install(FILES
+        "${AUDIO2TEXTQT_QT_PREFIX_DIR}/plugins/platforms/qoffscreen.dll"
+        "${AUDIO2TEXTQT_QT_PREFIX_DIR}/plugins/platforms/qminimal.dll"
+        DESTINATION ${AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR}
+        CONFIGURATIONS Release RelWithDebInfo MinSizeRel
+    )
+    install(FILES
+        "${AUDIO2TEXTQT_QT_PREFIX_DIR}/plugins/platforms/qoffscreend.dll"
+        "${AUDIO2TEXTQT_QT_PREFIX_DIR}/plugins/platforms/qminimald.dll"
+        DESTINATION ${AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR}
+        CONFIGURATIONS Debug
+    )
+else()
+    install(IMPORTED_RUNTIME_ARTIFACTS Qt6::QOffscreenIntegrationPlugin Qt6::QMinimalIntegrationPlugin
+        LIBRARY DESTINATION ${AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR}
+        RUNTIME DESTINATION ${AUDIO2TEXTQT_PLATFORM_PLUGIN_DIR}
+    )
+endif()
+
 set(AUDIO2TEXTQT_DEPLOY_OPTIONS)
 if(WIN32)
     list(APPEND AUDIO2TEXTQT_DEPLOY_OPTIONS --no-opengl-sw --no-system-d3d-compiler)
