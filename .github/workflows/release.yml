@@ -116,7 +116,8 @@ jobs:
           $env:QT_QUICK_BACKEND = 'software'
           Remove-Item Env:QT_PLUGIN_PATH -ErrorAction SilentlyContinue
           Remove-Item Env:QML2_IMPORT_PATH -ErrorAction SilentlyContinue
-          & "$install/bin/Audio2TextQt.exe" --smoke-quit --data-root "$env:RUNNER_TEMP/atot-smoke"
+          $env:ATOT_INSTALLED_EXE = "$install/bin/Audio2TextQt.exe"
+          python -c "import os, subprocess; subprocess.run([os.environ['ATOT_INSTALLED_EXE'], '--smoke-quit', '--data-root', os.path.join(os.environ['RUNNER_TEMP'], 'atot-smoke')], check=True, timeout=45)"
           if ($LASTEXITCODE -ne 0) { throw 'Installed QML smoke check failed' }
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
