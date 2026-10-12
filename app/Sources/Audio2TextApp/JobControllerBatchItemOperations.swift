@@ -157,7 +157,7 @@ extension JobController {
     }
 
     func runAudioDownloadBatch(_ items: [ProcessLibraryItem]) async {
-        beginMarkedBatch(total: items.count, title: "下载音频")
+        beginMarkedBatch(total: items.count, title: "Download audio")
         var reportItems: [ProcessingReportItem] = []
         for (index, item) in items.enumerated() where !Task.isCancelled {
             activeBatchCompleted = index
@@ -194,7 +194,7 @@ extension JobController {
             ? "Stopped after current item. Success \(successCount), failed \(failureCount)."
             : "Success \(successCount), failed \(failureCount)."
         processingReport = ProcessingReport(
-            title: failureCount > 0 ? "批量下载音频完成，有失败" : "批量下载音频完成",
+            title: failureCount > 0 ? "Batch audio download completed with failures" : "Batch audio download completed",
             detail: detail,
             items: reportItems
         )

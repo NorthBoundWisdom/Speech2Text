@@ -149,7 +149,7 @@ private struct MobileSyncStatusIconButton: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("同步状态：\(status.title)")
+        .accessibilityLabel("Sync status: \(status.title)")
         .accessibilityHint(status.detail)
     }
 }
@@ -183,7 +183,7 @@ struct MobileSyncStatusPill: View {
             .background(Color.mobileSearchBackground, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("同步状态：\(status.title)")
+        .accessibilityLabel("Sync status: \(status.title)")
         .accessibilityHint(status.detail)
     }
 }

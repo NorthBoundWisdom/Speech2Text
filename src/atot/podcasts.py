@@ -270,17 +270,17 @@ def episode_topic_markdown(episode: PodcastEpisode) -> str:
     lines = [
         f"# {episode.title}",
         "",
-        f"- 节目：{episode.series_name or ''}",
-        f"- 发布时间：{episode.local_published_at.strftime('%Y-%m-%d %H:%M:%S %z')}",
-        f"- 原链接：{episode.canonical_url or episode.source_url}",
-        f"- 音频：{episode.audio_url}",
+        f"- Podcast: {episode.series_name or ''}",
+        f"- Published at: {episode.local_published_at.strftime('%Y-%m-%d %H:%M:%S %z')}",
+        f"- Original link: {episode.canonical_url or episode.source_url}",
+        f"- Audio: {episode.audio_url}",
     ]
     if episode.duration:
-        lines.append(f"- 时长：{episode.duration}")
+        lines.append(f"- Duration: {episode.duration}")
     if episode.image_url:
-        lines.append(f"- 封面：{episode.image_url}")
+        lines.append(f"- Cover: {episode.image_url}")
     if episode.series_url:
-        lines.append(f"- 节目链接：{episode.series_url}")
+        lines.append(f"- Podcast link: {episode.series_url}")
     lines.extend(["", "## Shownotes", "", episode.description.strip()])
     return "\n".join(lines).strip() + "\n"
 

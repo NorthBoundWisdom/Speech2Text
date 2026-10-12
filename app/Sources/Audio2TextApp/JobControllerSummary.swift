@@ -62,16 +62,16 @@ extension JobController {
 
     func generateSummary(for item: ProcessLibraryItem) {
         guard !stage.isRunning else {
-            setSummaryRequestStatus("当前任务仍在运行", state: .failure, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("The current task is still running", state: .failure, itemID: item.id, clearsAfterDelay: true)
             return
         }
         guard canGenerateSummary(for: item) else {
             message = "Transcript is missing"
-            setSummaryRequestStatus("缺少 transcript，无法生成总结", state: .failure, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("Cannot generate a summary without a transcript", state: .failure, itemID: item.id, clearsAfterDelay: true)
             return
         }
-        setSummaryRequestStatus("准备请求云总结", state: .inProgress, itemID: item.id)
-        beginCloudOnlyTask(itemTitle: compactProgressItemTitle(item.title), detail: "准备请求云总结")
+        setSummaryRequestStatus("Preparing cloud summary request", state: .inProgress, itemID: item.id)
+        beginCloudOnlyTask(itemTitle: compactProgressItemTitle(item.title), detail: "Preparing cloud summary request")
         let cloudSettings: CloudSettings
         do {
             cloudSettings = try validateCloudSummarySettings()
@@ -80,7 +80,7 @@ extension JobController {
             setSummaryRequestStatus(error.localizedDescription, state: .failure, itemID: item.id, clearsAfterDelay: true)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "云任务失败：\(shortStatusMessage(error.localizedDescription))",
+                detail: "Cloud task failed: \(shortStatusMessage(error.localizedDescription))",
                 fraction: 1.0,
                 state: .failure
             )
@@ -205,11 +205,11 @@ extension JobController {
         let itemSnapshot = snapshot(for: item)
         guard item.hasTranscript || !itemSnapshot.transcriptText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             message = "Transcript is missing"
-            setSummaryRequestStatus("缺少 transcript，无法生成总结", state: .failure, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("Cannot generate a summary without a transcript", state: .failure, itemID: item.id, clearsAfterDelay: true)
             return
         }
-        setSummaryRequestStatus("准备请求云总结", state: .inProgress, itemID: item.id)
-        beginCloudOnlyTask(itemTitle: compactProgressItemTitle(item.title), detail: "准备请求云总结")
+        setSummaryRequestStatus("Preparing cloud summary request", state: .inProgress, itemID: item.id)
+        beginCloudOnlyTask(itemTitle: compactProgressItemTitle(item.title), detail: "Preparing cloud summary request")
         do {
             let cloudSettings = try validateCloudSummarySettings()
             if let summaryURL = itemSnapshot.summaryURL, FileManager.default.fileExists(atPath: summaryURL.path) {
@@ -223,7 +223,7 @@ extension JobController {
             setSummaryRequestStatus(error.localizedDescription, state: .failure, itemID: item.id, clearsAfterDelay: true)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "云任务失败：\(shortStatusMessage(error.localizedDescription))",
+                detail: "Cloud task failed: \(shortStatusMessage(error.localizedDescription))",
                 fraction: 1.0,
                 state: .failure
             )
@@ -239,7 +239,7 @@ extension JobController {
             return
         }
         dismissProcessingReport()
-        beginCloudOnlyTask(itemTitle: "", detail: "准备批量生成总结")
+        beginCloudOnlyTask(itemTitle: "", detail: "Preparing batch summaries")
         do {
             _ = try validateCloudSummarySettings()
             let runtime = try runtimeProvider()
@@ -260,7 +260,7 @@ extension JobController {
             message = error.localizedDescription
             setCloudTaskStatus(
                 itemTitle: "",
-                detail: "云任务失败：\(shortStatusMessage(error.localizedDescription))",
+                detail: "Cloud task failed: \(shortStatusMessage(error.localizedDescription))",
                 fraction: 1.0,
                 state: .failure
             )
@@ -270,16 +270,16 @@ extension JobController {
 
     func regenerateTitle(for item: ProcessLibraryItem) {
         guard !stage.isRunning else {
-            setSummaryRequestStatus("当前任务仍在运行", state: .failure, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("The current task is still running", state: .failure, itemID: item.id, clearsAfterDelay: true)
             return
         }
         guard canRegenerateTitle(for: item) else {
             message = "Summary is missing"
-            setSummaryRequestStatus("缺少 summary，无法生成标题", state: .failure, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("Cannot generate a title without a summary", state: .failure, itemID: item.id, clearsAfterDelay: true)
             return
         }
-        setSummaryRequestStatus("准备重新生成标题", state: .inProgress, itemID: item.id)
-        beginCloudOnlyTask(itemTitle: compactProgressItemTitle(item.title), detail: "准备请求云标题")
+        setSummaryRequestStatus("Preparing title regeneration", state: .inProgress, itemID: item.id)
+        beginCloudOnlyTask(itemTitle: compactProgressItemTitle(item.title), detail: "Preparing cloud title request")
         do {
             let cloudSettings = try validateCloudSummarySettings()
             try prepareSummaryForTitleGeneration(for: item)
@@ -290,7 +290,7 @@ extension JobController {
             setSummaryRequestStatus(error.localizedDescription, state: .failure, itemID: item.id, clearsAfterDelay: true)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "云任务失败：\(shortStatusMessage(error.localizedDescription))",
+                detail: "Cloud task failed: \(shortStatusMessage(error.localizedDescription))",
                 fraction: 1.0,
                 state: .failure
             )
@@ -306,7 +306,7 @@ extension JobController {
             return
         }
         dismissProcessingReport()
-        beginCloudOnlyTask(itemTitle: "", detail: "准备批量生成标题")
+        beginCloudOnlyTask(itemTitle: "", detail: "Preparing batch titles")
         do {
             let cloudSettings = try validateCloudSummarySettings()
             logEvent(
@@ -321,7 +321,7 @@ extension JobController {
             message = error.localizedDescription
             setCloudTaskStatus(
                 itemTitle: "",
-                detail: "云任务失败：\(shortStatusMessage(error.localizedDescription))",
+                detail: "Cloud task failed: \(shortStatusMessage(error.localizedDescription))",
                 fraction: 1.0,
                 state: .failure
             )
@@ -330,8 +330,8 @@ extension JobController {
     }
 
     func beginSummaryGeneration(for item: ProcessLibraryItem, cloudSettings: CloudSettings) {
-        setSummaryRequestStatus("准备请求云总结", state: .inProgress, itemID: item.id)
-        beginCloudOnlyTask(itemTitle: compactProgressItemTitle(item.title), detail: "准备请求云总结")
+        setSummaryRequestStatus("Preparing cloud summary request", state: .inProgress, itemID: item.id)
+        beginCloudOnlyTask(itemTitle: compactProgressItemTitle(item.title), detail: "Preparing cloud summary request")
         logEvent(category: "summary", event: "summary_requested", message: "Summary generation requested", fields: ["item_id": item.id])
         currentTask?.cancel()
         currentTask = Task { await runSummaryGeneration(for: item, cloudSettings: cloudSettings) }
@@ -358,7 +358,7 @@ extension JobController {
         }
         let sourceSummary = summaryTextForTitleGeneration(for: item).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !sourceSummary.isEmpty else {
-            throw AppError.cloudTitleFailed("缺少 summary，无法生成标题")
+            throw AppError.cloudTitleFailed("Cannot generate a title without a summary")
         }
         try FileManager.default.createDirectory(at: cloudSummaryURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         try sourceSummary.write(to: cloudSummaryURL, atomically: true, encoding: .utf8)

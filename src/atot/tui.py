@@ -100,20 +100,20 @@ def run_tui(prompt: str | None = None, *, config_overrides: list[str] | None = N
             yield Header(show_clock=True)
             with Horizontal(id="body"):
                 with Vertical(id="library"):
-                    yield Static("资料库 / Sessions", classes="title")
+                    yield Static("Library / Sessions", classes="title")
                     yield ListView(id="sessions")
                 with Vertical(id="timeline"):
-                    yield Static("工作流", classes="title")
+                    yield Static("Workflows", classes="title")
                     yield RichLog(id="timeline_log", wrap=True, markup=True)
                 with Vertical(id="details"):
-                    yield Static("详情", classes="title")
+                    yield Static("Details", classes="title")
                     yield RichLog(id="detail_log", wrap=True, markup=True)
-            yield Input(placeholder="/transcribe path/to/audio.m4a  或 /help", id="composer")
+            yield Input(placeholder="/transcribe path/to/audio.m4a  or /help", id="composer")
             yield Footer()
 
         def on_mount(self) -> None:
             self.query_one("#timeline_log", RichLog).write(
-                "SonaFolio 交互模式已启动。输入 /help 查看命令。"
+                "SonaFolio interactive mode started. Type /help for commands."
             )
             self.refresh_sessions()
             if self.initial_prompt:
@@ -143,7 +143,7 @@ def run_tui(prompt: str | None = None, *, config_overrides: list[str] | None = N
                 details.write(result)
                 self.refresh_sessions()
             except Exception as exc:
-                timeline.write(f"[red]错误:[/] {exc}")
+                timeline.write(f"[red]Error:[/] {exc}")
 
         def run_command(self, command: SlashCommand) -> Any:
             if command.name == "transcribe":

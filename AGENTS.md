@@ -159,3 +159,12 @@ summary path. Replacing a nonempty summary requires an explicit regeneration req
   GitHub Pages. Keep platform, signing and download claims aligned with actual release workflows.
 - Run a strict MkDocs build and `python configs/check_docs.py` when maintaining website/docs links.
 - Use SonaFolio in product prose. Preserve only the compatibility identities in `doc/BRANDING.md`.
+
+## Repository Language
+
+- Use English for documentation, website pages, UI labels, diagnostics, comments, and general examples.
+- Preserve reviewed translations, ASR prompts/rules, multilingual fixtures, and original benchmark
+  input identifiers. `language-assets.json` documents exact resources and embedded-line exceptions.
+- New non-English language data requires an explicit policy entry with a concrete language-processing
+  or translation purpose; do not whitelist whole source directories or ordinary product prose.
+- Run `python configs/check_repository_language.py`; CI and Pages enforce the same policy.

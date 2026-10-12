@@ -276,28 +276,28 @@ private struct MobileEpisodeReader: View {
                     MobileReaderTypographyMenu(style: $readingStyle)
 
                     MobileReaderActionButton(
-                        title: "已读",
+                        title: "Read",
                         systemName: episode.isRead ? "checkmark.circle.fill" : "checkmark.circle"
                     ) {
                         onMarkEpisodeRead(episode)
                     }
 
                     MobileReaderActionButton(
-                        title: "星标",
+                        title: "Star",
                         systemName: episode.isStarred ? "star.fill" : "star"
                     ) {
                         onToggleEpisodeStar(episode)
                     }
 
                     MobileReaderActionButton(
-                        title: "归档",
+                        title: "Archive",
                         systemName: episode.isArchived ? "archivebox.fill" : "archivebox"
                     ) {
                         onArchiveEpisode(episode)
                     }
 
                     MobileReaderActionButton(
-                        title: "删除",
+                        title: "Delete",
                         systemName: "trash",
                         role: .destructive
                     ) {
@@ -351,19 +351,19 @@ private struct MobileEpisodeReader: View {
             Button {
                 onMarkEpisodeRead(episode)
             } label: {
-                Label(episode.isRead ? "标记未读" : "标记已读", systemImage: episode.isRead ? "circle" : "checkmark.circle")
+                Label(episode.isRead ? "Mark unread" : "Mark read", systemImage: episode.isRead ? "circle" : "checkmark.circle")
             }
 
             Button {
                 onToggleEpisodeStar(episode)
             } label: {
-                Label(episode.isStarred ? "取消星标" : "星标", systemImage: episode.isStarred ? "star.slash" : "star")
+                Label(episode.isStarred ? "Unstar" : "Star", systemImage: episode.isStarred ? "star.slash" : "star")
             }
 
             Button {
                 onArchiveEpisode(episode)
             } label: {
-                Label(episode.isArchived ? "取消归档" : "归档", systemImage: episode.isArchived ? "archivebox.fill" : "archivebox")
+                Label(episode.isArchived ? "Unarchive" : "Archive", systemImage: episode.isArchived ? "archivebox.fill" : "archivebox")
             }
 
             Divider()
@@ -371,7 +371,7 @@ private struct MobileEpisodeReader: View {
             Button(role: .destructive) {
                 onDeleteEpisode(episode)
             } label: {
-                Label("删除", systemImage: "trash")
+                Label("Delete", systemImage: "trash")
             }
         } label: {
             Image(systemName: "ellipsis.circle")
@@ -525,25 +525,25 @@ private struct MobileReaderTypographyMenu: View {
 
     var body: some View {
         Menu {
-            Picker("文字大小", selection: textSizeBinding) {
+            Picker("Text size", selection: textSizeBinding) {
                 ForEach(ReadingTextSize.allCases) { size in
                     Text(size.title).tag(size)
                 }
             }
 
-            Picker("行距", selection: lineSpacingBinding) {
+            Picker("Line spacing", selection: lineSpacingBinding) {
                 ForEach(ReadingLineSpacing.allCases) { spacing in
                     Text(spacing.title).tag(spacing)
                 }
             }
 
-            Picker("宽度", selection: contentWidthBinding) {
+            Picker("Width", selection: contentWidthBinding) {
                 ForEach(ReadingContentWidth.allCases) { width in
                     Text(width.title).tag(width)
                 }
             }
 
-            Picker("字体", selection: fontDesignBinding) {
+            Picker("Font", selection: fontDesignBinding) {
                 ForEach(ReadingFontDesign.allCases) { font in
                     Text(font.title).tag(font)
                 }
@@ -554,7 +554,7 @@ private struct MobileReaderTypographyMenu: View {
             Button {
                 style = .default
             } label: {
-                Label("恢复默认", systemImage: "arrow.counterclockwise")
+                Label("Restore defaults", systemImage: "arrow.counterclockwise")
             }
         } label: {
             Image(systemName: "textformat.size")
@@ -597,7 +597,7 @@ private struct MobileDocumentLoadingView: View {
         HStack(alignment: .center, spacing: 10) {
             ProgressView()
                 .controlSize(.small)
-            Text("载入中")
+            Text("Loading")
                 .font(.callout)
         }
         .foregroundStyle(.secondary)
@@ -611,9 +611,9 @@ private struct MobileMissingDocumentView: View {
             Image(systemName: "icloud.and.arrow.down")
                 .font(.body)
             VStack(alignment: .leading, spacing: 3) {
-                Text("需要在 Mac 上处理")
+                Text("Process on Mac first")
                     .font(.callout.weight(.semibold))
-                Text("下载音频并生成摘要或转写后，这里会显示同步内容。")
+                Text("Synced content appears here after downloading audio and generating a summary or transcript.")
                     .font(.caption)
             }
         }

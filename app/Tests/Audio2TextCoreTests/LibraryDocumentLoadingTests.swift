@@ -33,7 +33,7 @@ final class LibraryDocumentLoadingTests: XCTestCase {
         )
 
         XCTAssertEqual(defaultDocuments.map(\.name), ["summary.md", "transcript.md"])
-        XCTAssertEqual(defaultDocuments.map(\.title), ["摘要", "转写"])
+        XCTAssertEqual(defaultDocuments.map(\.title), ["Summary", "Transcript"])
         XCTAssertEqual(customDocuments, [MobileLibraryDocumentContent(name: "notes.md", title: "notes.md", text: "notes\n")])
         XCTAssertNil(MobileLibraryStore.documentText(for: episode, named: "blank.md", libraryRoot: root))
         XCTAssertNil(MobileLibraryStore.documentText(for: episode, named: "missing.md", libraryRoot: root))

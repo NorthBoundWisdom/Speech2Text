@@ -42,11 +42,11 @@ extension JobController {
                 message: "Cloud input package preparation failed",
                 fields: ["output_directory": outputDirectory.path, "exit_code": "\(code)", "output": AppLogger.redacted(output)]
             )
-            throw AppError.cloudSummaryFailed("处理包准备失败：\(cloudSummaryFailureMessage(from: output, outputDirectory: outputDirectory, includeChunkFailures: true))")
+            throw AppError.cloudSummaryFailed("Package preparation failed: \(cloudSummaryFailureMessage(from: output, outputDirectory: outputDirectory, includeChunkFailures: true))")
         }
 
         guard cloudInputPackageIsReady(outputDirectory: outputDirectory) else {
-            throw AppError.cloudSummaryFailed("处理包资源不完整：缺少 manifest、transcript.for_cloud.md 或 text chunk。")
+            throw AppError.cloudSummaryFailed("Incomplete processing package: missing manifest, transcript.for_cloud.md, or text chunks.")
         }
         outputHandler("Cloud input package prepared.\n")
         logEvent(

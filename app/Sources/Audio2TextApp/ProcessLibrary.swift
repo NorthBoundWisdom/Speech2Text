@@ -399,21 +399,21 @@ enum ProcessLibrary {
         sections.append(metadata.isEmpty ? localFileMetadataText(for: item) : metadata)
 
         var statusLines = [
-            "## 处理状态",
+            "## Processing state",
             "",
-            "- 队列：\(item.queueStatus.compactTitle)",
-            "- 当前状态：\(item.status)",
-            "- 音频：\(item.isAudioPresent ? "已就绪" : "待下载或待恢复")",
+            "- Queue: \(item.queueStatus.compactTitle)",
+            "- Current state: \(item.status)",
+            "- Audio: \(item.isAudioPresent ? "ready" : "download or restoration required")",
         ]
         if !item.detail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            statusLines.append("- 详情：\(item.detail)")
+            statusLines.append("- Details: \(item.detail)")
         }
         if item.canDownloadAudio {
-            statusLines.append("- 可操作：可以从来源音频链接下载后处理。")
+            statusLines.append("- Available action: download source audio, then process.")
         } else if item.canRestoreAudio {
-            statusLines.append("- 可操作：可以恢复音频后处理。")
+            statusLines.append("- Available action: restore audio, then process.")
         } else if item.isAudioPresent {
-            statusLines.append("- 可操作：可以标记为 Process 后转写。")
+            statusLines.append("- Available action: mark as Process, then transcribe.")
         }
         sections.append(statusLines.joined(separator: "\n"))
 
@@ -919,24 +919,24 @@ enum ProcessLibrary {
         let title = optionalStringValue(object["title"]) ?? item.title
         lines.append("# \(title)")
         lines.append("")
-        appendMetadataBullet("节目", value: object["series_name"], to: &lines)
-        appendMetadataBullet("来源", value: sourceTitle(from: object), to: &lines)
-        lines.append("- 分组：\(item.groupName)")
-        appendMetadataBullet("原始链接", value: object["canonical_url"] ?? object["source_url"], to: &lines)
-        appendMetadataBullet("节目链接", value: object["series_url"], to: &lines)
-        appendMetadataBullet("发布时间", value: object["local_published_at"] ?? object["published_at"], to: &lines)
-        appendMetadataBullet("时长", value: object["duration"], to: &lines)
-        appendMetadataBullet("音频链接", value: object["audio_url"], to: &lines)
-        appendMetadataBullet("封面", value: object["image_url"], to: &lines)
+        appendMetadataBullet("Podcast", value: object["series_name"], to: &lines)
+        appendMetadataBullet("Source", value: sourceTitle(from: object), to: &lines)
+        lines.append("- Group: \(item.groupName)")
+        appendMetadataBullet("Original link", value: object["canonical_url"] ?? object["source_url"], to: &lines)
+        appendMetadataBullet("Podcast link", value: object["series_url"], to: &lines)
+        appendMetadataBullet("Published at", value: object["local_published_at"] ?? object["published_at"], to: &lines)
+        appendMetadataBullet("Duration", value: object["duration"], to: &lines)
+        appendMetadataBullet("Audio link", value: object["audio_url"], to: &lines)
+        appendMetadataBullet("Cover", value: object["image_url"], to: &lines)
 
         let description = cleanedDescription(object["description"])
         lines.append("")
-        lines.append("## 节目介绍")
+        lines.append("## Episode overview")
         lines.append("")
         if !description.isEmpty {
             lines.append(description)
         } else {
-            lines.append("来源元数据里没有提供节目介绍。")
+            lines.append("The source metadata has no episode description.")
         }
         return lines.joined(separator: "\n")
     }
@@ -945,21 +945,21 @@ enum ProcessLibrary {
         var lines = [
             "# \(item.title)",
             "",
-            "- 分组：\(item.groupName)",
-            "- 文件：\(item.audioURL.lastPathComponent)",
+            "- Group: \(item.groupName)",
+            "- File: \(item.audioURL.lastPathComponent)",
         ]
         let metadata = metadataObject(at: episodeRecordURL(for: item))
-        appendMetadataBullet("导入模式", value: metadata["import_mode"], to: &lines)
+        appendMetadataBullet("Import mode", value: metadata["import_mode"], to: &lines)
         if let dataRoot = dataRoot(for: item) {
             let localMetadata = localMetadataObject(forEpisodeID: item.id, dataRoot: dataRoot)
-            appendMetadataBullet("原始文件", value: localMetadata["original_path"], to: &lines)
+            appendMetadataBullet("Original file", value: localMetadata["original_path"], to: &lines)
         }
         let values = try? item.audioURL.resourceValues(forKeys: [.creationDateKey, .contentModificationDateKey])
         if let createdAt = values?.creationDate {
-            lines.append("- 创建时间：\(displayDate(createdAt))")
+            lines.append("- Created at: \(displayDate(createdAt))")
         }
         if let modifiedAt = values?.contentModificationDate {
-            lines.append("- 修改时间：\(displayDate(modifiedAt))")
+            lines.append("- Modified at: \(displayDate(modifiedAt))")
         }
         return lines.joined(separator: "\n")
     }
@@ -967,13 +967,13 @@ enum ProcessLibrary {
     private static func appendMetadataBullet(_ title: String, value: Any?, to lines: inout [String]) {
         let text = stringValue(value)
         guard !text.isEmpty else { return }
-        lines.append("- \(title)：\(text)")
+        lines.append("- \(title): \(text)")
     }
 
     private static func sourceTitle(from object: [String: Any]) -> String? {
         switch optionalStringValue(object["source"]) {
         case "xiaoyuzhou":
-            return "小宇宙"
+            return "Xiaoyuzhou"
         case "podcast_rss":
             return "Podcast RSS"
         case let source?:

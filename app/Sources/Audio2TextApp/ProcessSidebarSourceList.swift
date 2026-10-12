@@ -65,7 +65,7 @@ extension ProcessSidebarView {
                         Button {
                             controller.processAllMarkedToProcess(workflow: .transcribeAndSummarize)
                         } label: {
-                            Label("转写并总结 \(markedItems.count) 个", systemImage: "play.fill")
+                            Label("Transcribe and summarize \(markedItems.count) items", systemImage: "play.fill")
                         }
                         .disabled(
                             controller.stage.isRunning
@@ -76,7 +76,7 @@ extension ProcessSidebarView {
                         Button {
                             controller.processAllMarkedToProcess(workflow: .localOnly)
                         } label: {
-                            Label("仅本地转写 \(markedItems.count) 个", systemImage: "waveform")
+                            Label("Transcribe \(markedItems.count) items locally", systemImage: "waveform")
                         }
                         .disabled(controller.stage.isRunning || markedItems.isEmpty)
 
@@ -109,7 +109,7 @@ extension ProcessSidebarView {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .help("新增分组")
+                .help("New group")
                 .popover(isPresented: $store.isNewGroupPanelPresented, arrowEdge: .top) {
                     newGroupPanel
                         .padding(14)
@@ -124,7 +124,7 @@ extension ProcessSidebarView {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .help("新增记录")
+                .help("New record")
                 .padding(.trailing, 6)
             }
             librarySourceRow
@@ -144,12 +144,12 @@ extension ProcessSidebarView {
                     createNewGroup()
                 }
             HStack(spacing: 8) {
-                Button("取消") {
+                Button("Cancel") {
                     store.isNewGroupPanelPresented = false
                     newGroupName = ""
                 }
                 Spacer()
-                Button("创建") {
+                Button("Create") {
                     createNewGroup()
                 }
                 .buttonStyle(.borderedProminent)
@@ -228,14 +228,14 @@ extension ProcessSidebarView {
             Button {
                 beginGroupRename(section)
             } label: {
-                Label("重命名分组", systemImage: "pencil")
+                Label("Rename group", systemImage: "pencil")
             }
             .disabled(section.title == ProcessLibrary.defaultGroupName)
 
             Button(role: .destructive) {
                 pendingDeleteGroupName = section.title
             } label: {
-                Label("删除分组", systemImage: "trash")
+                Label("Delete group", systemImage: "trash")
             }
             .disabled(controller.stage.isRunning || section.title == ProcessLibrary.defaultGroupName)
         }

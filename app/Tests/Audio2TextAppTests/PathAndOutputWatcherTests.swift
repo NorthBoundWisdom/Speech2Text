@@ -65,9 +65,9 @@ final class PathAndOutputWatcherTests: XCTestCase {
 
     func testContentTabDisplayOrderShowsReaderTabsOnly() {
         XCTAssertEqual(ContentTab.displayOrder, [.metadata, .summary, .transcript])
-        XCTAssertEqual(ContentTab.metadata.title, "简介")
-        XCTAssertEqual(ContentTab.summary.title, "摘要")
-        XCTAssertEqual(ContentTab.transcript.title, "转写")
+        XCTAssertEqual(ContentTab.metadata.title, "Overview")
+        XCTAssertEqual(ContentTab.summary.title, "Summary")
+        XCTAssertEqual(ContentTab.transcript.title, "Transcript")
     }
 
     func testSnapshotPrefersSummaryOverTranscript() throws {

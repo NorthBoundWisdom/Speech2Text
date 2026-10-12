@@ -39,13 +39,13 @@ enum AppError: LocalizedError, Equatable {
         case let .fileCopyFailed(message):
             return message
         case .missingCloudAPIKey:
-            return "缺少云服务 API Key。请在系统菜单 Settings 中配置 Cloud Model 的 API Key 并保存。"
+            return "Cloud API key is missing. Configure and save the key under Settings > Cloud Model."
         case let .cloudConnectionFailed(status, body):
             return "Cloud API returned HTTP \(status): \(body.prefix(300))"
         case let .cloudSummaryFailed(message):
-            return "云总结生成失败：\(message)"
+            return "Cloud summary generation failed: \(message)"
         case let .cloudTitleFailed(message):
-            return "云标题生成失败：\(message)"
+            return "Cloud title generation failed: \(message)"
         }
     }
 }
@@ -60,8 +60,8 @@ enum InputMode: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .xiaoyuzhou: return "链接模式"
-        case .localFile: return "选择文件"
+        case .xiaoyuzhou: return "Link mode"
+        case .localFile: return "Choose file"
         }
     }
 }
@@ -118,9 +118,9 @@ enum ContentTab: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .metadata: return "简介"
-        case .transcript: return "转写"
-        case .summary: return "摘要"
+        case .metadata: return "Overview"
+        case .transcript: return "Transcript"
+        case .summary: return "Summary"
         case .repair: return "Repair"
         case .glossary: return "Glossary"
         case .log: return "Log"

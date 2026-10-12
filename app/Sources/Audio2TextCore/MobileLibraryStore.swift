@@ -71,9 +71,9 @@ public enum MobileLibraryStore {
     public static func displayTitle(for documentName: String) -> String {
         switch documentName {
         case "summary.md":
-            return "摘要"
+            return "Summary"
         case "transcript.md":
-            return "转写"
+            return "Transcript"
         default:
             return documentName
         }

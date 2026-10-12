@@ -513,24 +513,24 @@ struct SettingsView: View {
 
     private var readingPreviewMarkdown: String {
         """
-        # 播客《0529》结构化总结
+        # A conversation worth keeping
 
-        一、主要内容
+        ## Main ideas
 
-        本期节目是一场围绕通灵者/预言者 Craig Hamilton Parker 的访谈。主持人介绍自己开始关注 Craig，并讨论他的预测方式、公开压力和政治观察。
+        This illustrative transcript discusses learning from conversations and preserving context.
 
-        - Craig 从童年直觉谈到媒体训练，强调公开预测需要承担压力。
-        - 主持人追问政治判断、选民情绪和个人责任之间的关系。
+        - Keep the original transcript available when reviewing a summary.
+        - Use timestamps to return to important passages.
 
         ```text
         Stage: summary
         Progress: 100%
         ```
 
-        | 项目 | 效果 |
+        | Document | State |
         | --- | --- |
-        | Summary | 已生成 |
-        | Transcript | 可阅读 |
+        | Summary | Generated |
+        | Transcript | Readable |
         """
     }
 

@@ -115,7 +115,7 @@ extension JobController {
             return enrichedCloudFailureMessage(String(lastLine.prefix(300)), outputDirectory: outputDirectory, includeChunkFailures: includeChunkFailures)
         }
         return enrichedCloudFailureMessage(
-            "云服务没有返回可用结果，请检查 API Key、模型、Base URL 和网络连接。",
+            "The cloud service returned no usable result. Check the key, model, base URL, and network connection.",
             outputDirectory: outputDirectory,
             includeChunkFailures: includeChunkFailures
         )

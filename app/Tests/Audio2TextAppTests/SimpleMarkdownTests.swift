@@ -36,10 +36,10 @@ final class SimpleMarkdownTests: XCTestCase {
 
     func testSimpleMarkdownParsesPipeTables() {
         let markdown = """
-        | 项目 | 状态 | 说明 |
+        | Document | Status | Notes |
         | --- | :---: | --- |
-        | Summary | **完成** | 支持 Markdown |
-        | Transcript | 待处理 | 保留文本 |
+        | Summary | **Done** | Supports Markdown |
+        | Transcript | Pending | Preserves text |
 
         next paragraph
         """
@@ -49,10 +49,10 @@ final class SimpleMarkdownTests: XCTestCase {
         XCTAssertEqual(blocks.map(\.kind), [
             .table(
                 MarkdownTable(
-                    header: ["项目", "状态", "说明"],
+                    header: ["Document", "Status", "Notes"],
                     rows: [
-                        ["Summary", "**完成**", "支持 Markdown"],
-                        ["Transcript", "待处理", "保留文本"],
+                        ["Summary", "**Done**", "Supports Markdown"],
+                        ["Transcript", "Pending", "Preserves text"],
                     ]
                 )
             ),

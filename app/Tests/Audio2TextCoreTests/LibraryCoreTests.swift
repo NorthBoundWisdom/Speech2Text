@@ -298,9 +298,9 @@ final class LibraryCoreTests: XCTestCase {
         let missingStatus = LibrarySyncStatusProbe.status(for: root.appendingPathComponent("Missing", isDirectory: true))
 
         XCTAssertEqual(localStatus.state, .synced)
-        XCTAssertEqual(localStatus.title, "同步成功")
+        XCTAssertEqual(localStatus.title, "Synced")
         XCTAssertEqual(missingStatus.state, .offline)
-        XCTAssertEqual(missingStatus.title, "网络断开")
+        XCTAssertEqual(missingStatus.title, "Offline")
     }
 
     func testLibrarySyncStatusTreatsPendingUploadsAsSyncingBeforeUploadErrors() throws {
@@ -324,7 +324,7 @@ final class LibraryCoreTests: XCTestCase {
         }
 
         XCTAssertEqual(status.state, .syncing)
-        XCTAssertEqual(status.title, "同步中")
+        XCTAssertEqual(status.title, "Syncing")
         XCTAssertEqual(status.pendingFileCount, 1)
         XCTAssertEqual(status.errorFileCount, 1)
     }
@@ -350,7 +350,7 @@ final class LibraryCoreTests: XCTestCase {
         }
 
         XCTAssertEqual(status.state, .offline)
-        XCTAssertEqual(status.title, "网络断开")
+        XCTAssertEqual(status.title, "Offline")
         XCTAssertEqual(status.pendingFileCount, 0)
         XCTAssertEqual(status.errorFileCount, 1)
     }

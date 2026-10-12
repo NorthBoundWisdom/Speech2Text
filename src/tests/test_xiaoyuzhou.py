@@ -142,8 +142,8 @@ def test_topic_markdown_contains_transcription_context():
     markdown = episode_topic_markdown(episode)
 
     assert "# 咖啡时间" in markdown
-    assert "- 节目：大小电波" in markdown
-    assert "- 发布时间：2026-05-27 00:39:00 +0800" in markdown
+    assert "- Podcast: 大小电波" in markdown
+    assert "- Published at: 2026-05-27 00:39:00 +0800" in markdown
     assert "关键词：创意咖啡" in markdown
 
 

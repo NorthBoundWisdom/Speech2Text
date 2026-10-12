@@ -411,7 +411,7 @@ extension JobController {
         librarySyncStatus = status
     }
 
-    func noteLocalLibraryMutationForSyncStatus(_ detail: String = "本地资料修改正在同步。") {
+    func noteLocalLibraryMutationForSyncStatus(_ detail: String = "Local library changes are syncing.") {
         localLibraryMutationSyncingUntil = Date().addingTimeInterval(45)
         localLibraryMutationSyncDetail = detail
         librarySyncStatus = .syncing(
@@ -423,7 +423,7 @@ extension JobController {
         )
     }
 
-    func refreshLibraryAfterLocalMutation(_ detail: String = "本地资料修改正在同步。") {
+    func refreshLibraryAfterLocalMutation(_ detail: String = "Local library changes are syncing.") {
         noteLocalLibraryMutationForSyncStatus(detail)
         refreshLibraryInBackground()
     }

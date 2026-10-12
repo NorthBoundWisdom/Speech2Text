@@ -29,7 +29,7 @@ final class JobControllerProcessingTests: XCTestCase {
         controller.processLibraryItem(item, workflow: .localOnly)
 
         try await waitForProcessingCondition("local-only warning completes") {
-            controller.processingReport?.title == "本地转写完成，QA 需复查"
+            controller.processingReport?.title == "Local transcription completed; review QA"
         }
         XCTAssertEqual(runner.methods.filter { $0 != "sync" }, ["transcribe", "qa"])
         XCTAssertEqual(controller.processingTaskStatus?.state, .warning)
@@ -52,9 +52,9 @@ final class JobControllerProcessingTests: XCTestCase {
         XCTAssertFalse(runner.methods.contains("sync"))
         XCTAssertEqual(controller.processingTaskStatus?.state, .warning)
         XCTAssertEqual(controller.cloudProcessingTaskStatus?.state, .success)
-        XCTAssertEqual(controller.processingReport?.title, "处理完成，需复查")
-        XCTAssertTrue(controller.processingReport?.detail.contains("本地：QA failed") == true)
-        XCTAssertTrue(controller.processingReport?.detail.contains("云：Cloud summary completed") == true)
+        XCTAssertEqual(controller.processingReport?.title, "Processing completed; review needed")
+        XCTAssertTrue(controller.processingReport?.detail.contains("Local: QA failed") == true)
+        XCTAssertTrue(controller.processingReport?.detail.contains("cloud: Cloud summary completed") == true)
     }
 
     func testSummaryWorkflowTreatsFailedCloudPayloadAsFailure() async throws {
@@ -73,7 +73,7 @@ final class JobControllerProcessingTests: XCTestCase {
         XCTAssertEqual(controller.cloudProcessingTaskStatus?.state, .failure)
         XCTAssertTrue(controller.cloudProcessingTaskStatus?.detail.contains("Cloud chunk summaries failed") == true)
         XCTAssertTrue(controller.cloudProcessingTaskStatus?.detail.contains("Cloud responses API response has no text content.") == true)
-        XCTAssertEqual(controller.processingReport?.title, "处理部分完成")
+        XCTAssertEqual(controller.processingReport?.title, "Processing partially completed")
         XCTAssertTrue(controller.processingReport?.detail.contains("Cloud chunk summaries failed") == true)
         XCTAssertTrue(controller.processingReport?.detail.contains("Cloud responses API response has no text content.") == true)
         XCTAssertFalse(FileManager.default.fileExists(atPath: item.outputURL.appendingPathComponent("cloud/summary.md").path))
@@ -110,17 +110,17 @@ final class JobControllerProcessingTests: XCTestCase {
 
         controller.beginCloudOnlyTask(
             itemTitle: "Retry Cloud",
-            detail: "准备请求云总结",
+            detail: "Preparing cloud summary request",
             state: .queued
         )
         controller.refreshManualSummaryProgress(
             for: item,
-            fallbackDetail: "正在请求云总结",
+            fallbackDetail: "Requesting cloud summary",
             fallbackFraction: 0.25
         )
 
         XCTAssertEqual(controller.cloudProcessingTaskStatus?.state, .running)
-        XCTAssertEqual(controller.cloudProcessingTaskStatus?.detail, "正在请求云总结")
+        XCTAssertEqual(controller.cloudProcessingTaskStatus?.detail, "Requesting cloud summary")
     }
 
     func testBackgroundSummaryProgressKeepsCurrentRunOverStaleCloudFailure() throws {
@@ -140,7 +140,7 @@ final class JobControllerProcessingTests: XCTestCase {
         )
 
         XCTAssertEqual(controller.cloudProcessingTaskStatus?.state, .running)
-        XCTAssertEqual(controller.cloudProcessingTaskStatus?.detail, "云总结处理中")
+        XCTAssertEqual(controller.cloudProcessingTaskStatus?.detail, "Generating cloud summary")
         XCTAssertFalse(controller.cloudProcessingTaskStatus?.detail.contains("old cloud failure") == true)
     }
 

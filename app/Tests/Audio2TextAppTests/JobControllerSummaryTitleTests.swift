@@ -138,13 +138,13 @@ final class JobControllerSummaryTitleTests: XCTestCase {
         controller.regenerateSummaryDiscardingExisting()
 
         XCTAssertEqual(try readText(summaryURL), "existing summary")
-        XCTAssertTrue(controller.message.contains("API Key"))
+        XCTAssertTrue(controller.message.contains("API key"))
         XCTAssertEqual(controller.visibleSummaryRequestStatus(for: item)?.state, .failure)
-        XCTAssertTrue(controller.visibleSummaryRequestStatus(for: item)?.message.contains("API Key") == true)
+        XCTAssertTrue(controller.visibleSummaryRequestStatus(for: item)?.message.contains("API key") == true)
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.kind), [.cloud])
-        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.title), ["云任务"])
+        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.title), ["Cloud task"])
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.state, .failure)
-        XCTAssertTrue(controller.sidebarProcessingTaskStatuses.first?.detail.contains("API Key") == true)
+        XCTAssertTrue(controller.sidebarProcessingTaskStatuses.first?.detail.contains("API key") == true)
         XCTAssertNil(controller.processingTaskStatus)
     }
 
@@ -237,9 +237,9 @@ final class JobControllerSummaryTitleTests: XCTestCase {
 
         XCTAssertNil(controller.processingTaskStatus)
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.kind), [.cloud])
-        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.title, "云任务")
+        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.title, "Cloud task")
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.state, .failure)
-        XCTAssertTrue(controller.sidebarProcessingTaskStatuses.first?.detail.contains("API Key") == true)
+        XCTAssertTrue(controller.sidebarProcessingTaskStatuses.first?.detail.contains("API key") == true)
     }
 
     @MainActor
@@ -265,9 +265,9 @@ final class JobControllerSummaryTitleTests: XCTestCase {
 
         XCTAssertNil(controller.processingTaskStatus)
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.kind), [.cloud])
-        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.title, "云任务")
+        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.title, "Cloud task")
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.state, .failure)
-        XCTAssertTrue(controller.sidebarProcessingTaskStatuses.first?.detail.contains("API Key") == true)
+        XCTAssertTrue(controller.sidebarProcessingTaskStatuses.first?.detail.contains("API key") == true)
     }
 
     @MainActor
@@ -281,10 +281,10 @@ final class JobControllerSummaryTitleTests: XCTestCase {
         controller.snapshot.cloudProgressFraction = 0.7
 
         XCTAssertTrue(controller.hasActiveSidebarModelProgress)
-        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.title), ["处理", "云任务"])
+        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.title), ["Process", "Cloud task"])
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.kind), [.processing, .cloud])
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.state), [.success, .running])
-        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.last?.detail, "整集总结中")
+        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.last?.detail, "Summarizing episode")
     }
 
     @MainActor
@@ -297,10 +297,10 @@ final class JobControllerSummaryTitleTests: XCTestCase {
         controller.snapshot.cloudStage = "episode_summary"
         controller.snapshot.cloudProgressFraction = 0.7
 
-        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.title), ["处理", "云任务"])
+        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.title), ["Process", "Cloud task"])
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.kind), [.processing, .cloud])
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.state), [.warning, .running])
-        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.detail, "转写完成，QA 待复查")
+        XCTAssertEqual(controller.sidebarProcessingTaskStatuses.first?.detail, "Transcription completed; review QA")
     }
 
     @MainActor

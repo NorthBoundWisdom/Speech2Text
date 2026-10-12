@@ -41,9 +41,9 @@ final class LibraryWorkspaceLayoutTests: XCTestCase {
             VStack(spacing: 0) {
                 LibraryWorkspaceDetailHeader {
                     Picker("", selection: .constant(0)) {
-                        Text("简介").tag(0)
-                        Text("摘要").tag(1)
-                        Text("转写").tag(2)
+                        Text("Overview").tag(0)
+                        Text("Summary").tag(1)
+                        Text("Transcript").tag(2)
                     }
                     .pickerStyle(.segmented)
                     .labelsHidden()

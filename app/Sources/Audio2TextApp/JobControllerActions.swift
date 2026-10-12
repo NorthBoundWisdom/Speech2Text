@@ -21,11 +21,11 @@ extension JobController {
         guard !stage.isRunning else { return }
         let url = urlText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !url.isEmpty else {
-            linkCheckStatus = .invalid("请输入链接")
+            linkCheckStatus = .invalid("Enter a link")
             return
         }
         guard url.contains("xiaoyuzhoufm.com/episode/") else {
-            linkCheckStatus = .invalid("目前只支持小宇宙单集链接")
+            linkCheckStatus = .invalid("Only Xiaoyuzhou episode links are currently supported")
             return
         }
         logEvent(event: "link_check_requested", message: "Link check requested", fields: ["host": URL(string: url)?.host ?? ""])
@@ -110,12 +110,12 @@ extension JobController {
             message = reason
             setProcessingTaskStatus(detail: reason, fraction: max(progressFraction, 0.10), state: .failure)
             processingReport = ProcessingReport(
-                title: "处理失败",
+                title: "Processing failed",
                 detail: reason,
                 items: [
                     ProcessingReportItem(
                         id: selectedFile?.path ?? urlText,
-                        title: selectedFile?.deletingPathExtension().lastPathComponent ?? "当前任务",
+                        title: selectedFile?.deletingPathExtension().lastPathComponent ?? "Current task",
                         state: .failure,
                         reason: reason
                     ),

@@ -25,7 +25,7 @@ extension ProcessSidebarView {
             }
             .buttonStyle(.plain)
             .foregroundStyle(.secondary)
-            .help("刷新全部订阅")
+            .help("Refresh all subscriptions")
             .disabled(controller.subscriptions.isEmpty || controller.isRefreshingSubscriptions || controller.isAddingSubscription)
             .padding(.trailing, 6)
         }
@@ -102,21 +102,21 @@ extension ProcessSidebarView {
             Button {
                 controller.refreshSubscription(subscription)
             } label: {
-                Label("刷新订阅", systemImage: "arrow.clockwise")
+                Label("Refresh subscription", systemImage: "arrow.clockwise")
             }
             .disabled(controller.isRefreshingSubscriptions || controller.isAddingSubscription)
 
             Button {
                 controller.fetchSubscriptionHistory(subscription)
             } label: {
-                Label("抓取历史全部", systemImage: "clock.arrow.circlepath")
+                Label("Fetch complete history", systemImage: "clock.arrow.circlepath")
             }
             .disabled(controller.isRefreshingSubscriptions || controller.isAddingSubscription)
 
             Button {
                 copySubscriptionURLToPasteboard(subscription)
             } label: {
-                Label("复制链接", systemImage: "link")
+                Label("Copy link", systemImage: "link")
             }
 
             Divider()
@@ -124,7 +124,7 @@ extension ProcessSidebarView {
             Button(role: .destructive) {
                 controller.removeSubscription(subscription)
             } label: {
-                Label("移除订阅", systemImage: "trash")
+                Label("Remove subscription", systemImage: "trash")
             }
             .disabled(controller.isRefreshingSubscriptions || controller.isAddingSubscription)
         }

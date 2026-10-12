@@ -261,7 +261,7 @@ def write_cloud_polish_suggestions(
                 "end": seconds_to_hms(float(line["end"])),
                 "old_text": original,
                 "new_text": suggested,
-                "reason": "中文标点规范化",
+                "reason": "Chinese punctuation normalization",
                 "risk": "low",
                 "requires_audio_check": False,
             }

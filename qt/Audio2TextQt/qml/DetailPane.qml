@@ -17,15 +17,15 @@ Pane {
     property bool hasSelection: item && item.id !== undefined && item.id !== ""
     property bool isProcessed: hasSelection && item.hasProcessed
     property var processedTabs: [
-        { id: "metadata", title: "简介" },
-        { id: "summary", title: "摘要" },
-        { id: "transcript", title: "转写" },
+        { id: "metadata", title: "Overview" },
+        { id: "summary", title: "Summary" },
+        { id: "transcript", title: "Transcript" },
         { id: "repair", title: "Repair" },
         { id: "glossary", title: "Glossary" },
         { id: "log", title: "Log" }
     ]
     property var unprocessedTabs: [
-        { id: "metadata", title: "简介" }
+        { id: "metadata", title: "Overview" }
     ]
     property var availableTabs: isProcessed ? processedTabs : unprocessedTabs
 

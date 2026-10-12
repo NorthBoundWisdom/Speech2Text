@@ -581,8 +581,8 @@ enum CloudConnectionTester {
         return [
             "model": model,
             "input": [
-                ["role": "system", "content": "直接输出最终答案。"],
-                ["role": "user", "content": "用一句话回复：连接测试"],
+                ["role": "system", "content": "Return only the final answer."],
+                ["role": "user", "content": "Reply in one sentence: connection test"],
             ],
             "max_output_tokens": maxTokens,
             "temperature": Double(CloudSettings.defaultTemperature) ?? 1.0,

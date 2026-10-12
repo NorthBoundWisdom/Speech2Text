@@ -11,7 +11,7 @@ hooks:
   - hooks/build_metadata.py
 theme:
   name: material
-  language: zh
+  language: en
   font: false
   logo: assets/icon.png
   favicon: assets/icon.png
@@ -30,17 +30,17 @@ theme:
       accent: custom
       toggle:
         icon: material/weather-night
-        name: 切换深色模式
+        name: Switch to dark mode
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
       primary: custom
       accent: custom
       toggle:
         icon: material/weather-sunny
-        name: 切换浅色模式
+        name: Switch to light mode
 plugins:
   - search:
-      lang: [zh, en]
+      lang: [en]
 extra_css:
   - stylesheets/sonafolio.css
 markdown_extensions:
@@ -54,17 +54,17 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
 nav:
-  - 首页: index.md
-  - 开始使用:
-      - 下载与安装: install.md
-      - 第一次转录: quick-start.md
-  - 使用手册:
-      - 资料库与订阅: guides/library.md
-      - Codex 总结与回写: guides/agent-summary.md
-      - CLI 与自动化: guides/cli.md
-      - QA 与修复: guides/quality.md
-      - 隐私与数据: guides/privacy.md
-      - 常见问题: faq.md
-  - 项目:
-      - 品牌与兼容名称: naming.md
-      - 开发与贡献: development.md
+  - Home: index.md
+  - Get started:
+      - Download and install: install.md
+      - Your first transcript: quick-start.md
+  - Handbook:
+      - Library and subscriptions: guides/library.md
+      - Codex summaries: guides/agent-summary.md
+      - CLI and automation: guides/cli.md
+      - QA and repair: guides/quality.md
+      - Privacy and data: guides/privacy.md
+      - Common questions: faq.md
+  - Project:
+      - Branding and compatibility: naming.md
+      - Development: development.md

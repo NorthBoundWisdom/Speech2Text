@@ -25,22 +25,22 @@ enum ProcessingWorkflow: Equatable {
     func actionTitle(reprocess: Bool = false, isCloudConfigured: Bool = true) -> String {
         switch (self, reprocess) {
         case (.localOnly, true):
-            return "仅重新本地转写"
+            return "Retranscribe locally only"
         case (.localOnly, false):
-            return "仅本地转写"
+            return "Transcribe locally only"
         case (.transcribeAndSummarize, true):
-            return isCloudConfigured ? "重新转写并总结" : "重新转写并总结（未配置）"
+            return isCloudConfigured ? "Retranscribe and summarize" : "Retranscribe and summarize (not configured)"
         case (.transcribeAndSummarize, false):
-            return isCloudConfigured ? "转写并总结" : "转写并总结（未配置）"
+            return isCloudConfigured ? "Transcribe and summarize" : "Transcribe and summarize (not configured)"
         }
     }
 
     func batchTitle(reprocess: Bool = false) -> String {
         switch (self, reprocess) {
-        case (.localOnly, true): return "仅重新本地转写"
-        case (.localOnly, false): return "仅本地转写"
-        case (.transcribeAndSummarize, true): return "重新转写并总结"
-        case (.transcribeAndSummarize, false): return "转写并总结"
+        case (.localOnly, true): return "Retranscribe locally only"
+        case (.localOnly, false): return "Transcribe locally only"
+        case (.transcribeAndSummarize, true): return "Retranscribe and summarize"
+        case (.transcribeAndSummarize, false): return "Transcribe and summarize"
         }
     }
 }

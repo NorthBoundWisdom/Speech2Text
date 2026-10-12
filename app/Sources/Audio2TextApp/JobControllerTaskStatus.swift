@@ -13,7 +13,7 @@ extension JobController {
     ) {
         processingTaskStatus = ProcessingTaskStatus(
             kind: .processing,
-            title: "处理",
+            title: "Process",
             itemTitle: itemTitle ?? currentProcessingItemTitle,
             detail: detail,
             fraction: fraction,
@@ -29,7 +29,7 @@ extension JobController {
     ) {
         cloudProcessingTaskStatus = ProcessingTaskStatus(
             kind: .cloud,
-            title: "云任务",
+            title: "Cloud task",
             itemTitle: itemTitle,
             detail: detail,
             fraction: fraction,

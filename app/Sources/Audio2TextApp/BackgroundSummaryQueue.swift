@@ -29,13 +29,13 @@ struct BackgroundSummaryQueueSnapshot: Equatable {
     ) -> String {
         if total > 1 {
             let visibleCompleted = currentItemCompleted ? completed : min(completed + 1, total)
-            let prefix = currentItemCompleted ? "云总结完成" : "云总结处理中"
+            let prefix = currentItemCompleted ? "Cloud summary completed" : "Generating cloud summary"
             let item = titleFormatter(currentTitle)
             return item.isEmpty
                 ? "\(prefix) \(visibleCompleted)/\(total)"
-                : "\(prefix) \(visibleCompleted)/\(total)：\(item)"
+                : "\(prefix) \(visibleCompleted)/\(total): \(item)"
         }
-        return currentItemCompleted ? "云总结完成" : "云总结处理中"
+        return currentItemCompleted ? "Cloud summary completed" : "Generating cloud summary"
     }
 }
 

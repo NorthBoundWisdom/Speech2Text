@@ -656,22 +656,22 @@ QString LibraryController::metadataText(const QVariantMap &item) const
             lines << QString("- %1: %2").arg(label, value.trimmed());
         }
     };
-    append("节目", item.value("seriesName").toString());
-    append("来源", item.value("source").toString());
-    append("分组", item.value("groupName").toString());
-    append("原始链接", item.value("sourceURL").toString());
-    append("节目链接", item.value("seriesURL").toString());
-    append("发布时间", item.value("publishedAt").toString());
-    append("时长", item.value("duration").toString());
-    append("音频链接", item.value("mediaURL").toString());
-    append("本地音频", item.value("audioPath").toString());
-    append("输出目录", item.value("outputPath").toString());
-    append("状态", item.value("status").toString());
-    append("队列", item.value("queueStatus").toString());
+    append("Podcast", item.value("seriesName").toString());
+    append("Source", item.value("source").toString());
+    append("Group", item.value("groupName").toString());
+    append("Original link", item.value("sourceURL").toString());
+    append("Podcast link", item.value("seriesURL").toString());
+    append("Published at", item.value("publishedAt").toString());
+    append("Duration", item.value("duration").toString());
+    append("Audio link", item.value("mediaURL").toString());
+    append("Local audio", item.value("audioPath").toString());
+    append("Output directory", item.value("outputPath").toString());
+    append("Status", item.value("status").toString());
+    append("Queue", item.value("queueStatus").toString());
     const QString description = item.value("description").toString().trimmed();
     if (!description.isEmpty())
     {
-        lines << "" << "## 简介" << "" << description;
+        lines << "" << "## Overview" << "" << description;
     }
     const QString metadataJson = item.value("metadataJson").toString();
     if (!metadataJson.isEmpty())

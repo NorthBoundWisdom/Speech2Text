@@ -36,12 +36,12 @@ public struct LibrarySyncStatus: Equatable {
         self.progress = progress
     }
 
-    public static func unavailable(_ detail: String = "无法访问同步库，请检查网络或 iCloud Drive。") -> LibrarySyncStatus {
-        LibrarySyncStatus(state: .offline, title: "网络断开", detail: detail)
+    public static func unavailable(_ detail: String = "The synced library is unavailable. Check the network or iCloud Drive.") -> LibrarySyncStatus {
+        LibrarySyncStatus(state: .offline, title: "Offline", detail: detail)
     }
 
     public static func syncing(
-        _ detail: String = "资料正在同步。",
+        _ detail: String = "Library changes are syncing.",
         checkedAt: Date = Date(),
         scannedFileCount: Int = 0,
         pendingFileCount: Int = 0,
@@ -50,7 +50,7 @@ public struct LibrarySyncStatus: Equatable {
     ) -> LibrarySyncStatus {
         LibrarySyncStatus(
             state: .syncing,
-            title: "同步中",
+            title: "Syncing",
             detail: detail,
             checkedAt: checkedAt,
             scannedFileCount: scannedFileCount,
@@ -73,7 +73,7 @@ public enum LibrarySyncStatusProbe {
     ) -> LibrarySyncStatus {
         var isDirectory: ObjCBool = false
         guard fileManager.fileExists(atPath: libraryRoot.path, isDirectory: &isDirectory), isDirectory.boolValue else {
-            return .unavailable("无法访问同步库，请检查网络或 iCloud Drive。")
+            return .unavailable("The synced library is unavailable. Check the network or iCloud Drive.")
         }
 
         let checkedAt = Date()
@@ -103,8 +103,8 @@ public enum LibrarySyncStatusProbe {
         if !cloudBacked {
             return LibrarySyncStatus(
                 state: .synced,
-                title: "同步成功",
-                detail: "当前资料已可用。",
+                title: "Synced",
+                detail: "Current library files are available.",
                 checkedAt: checkedAt,
                 scannedFileCount: files.count,
                 progress: 1
@@ -112,7 +112,7 @@ public enum LibrarySyncStatusProbe {
         }
         if !pending.isEmpty {
             return .syncing(
-                "\(pending.count) 个资料文件正在同步。",
+                "Syncing \(pending.count) library files.",
                 checkedAt: checkedAt,
                 scannedFileCount: files.count,
                 pendingFileCount: pending.count,
@@ -122,8 +122,8 @@ public enum LibrarySyncStatusProbe {
         if !failures.isEmpty {
             return LibrarySyncStatus(
                 state: .offline,
-                title: "网络断开",
-                detail: "同步暂时不可用，请检查网络或 iCloud Drive。",
+                title: "Offline",
+                detail: "Sync is unavailable. Check the network or iCloud Drive.",
                 checkedAt: checkedAt,
                 scannedFileCount: files.count,
                 pendingFileCount: pending.count,
@@ -133,15 +133,15 @@ public enum LibrarySyncStatusProbe {
         if sawUnknownCloudValue && files.isEmpty {
             return LibrarySyncStatus(
                 state: .synced,
-                title: "同步成功",
-                detail: "暂无需要同步的资料。",
+                title: "Synced",
+                detail: "No files need syncing.",
                 checkedAt: checkedAt
             )
         }
         return LibrarySyncStatus(
             state: .synced,
-            title: "同步成功",
-            detail: "资料已同步完成。",
+            title: "Synced",
+            detail: "Library sync is complete.",
             checkedAt: checkedAt,
             scannedFileCount: files.count,
             progress: 1

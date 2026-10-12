@@ -12,12 +12,12 @@ extension JobController {
             let reason = conciseFailureReason(error)
             message = reason
             processingReport = ProcessingReport(
-                title: "批量处理失败",
+                title: "Batch processing failed",
                 detail: reason,
                 items: [
                     ProcessingReportItem(
                         id: "runtime",
-                        title: "运行环境",
+                        title: "Runtime",
                         state: .failure,
                         reason: reason
                     ),
@@ -88,13 +88,13 @@ extension JobController {
         }
         if !workflow.requiresCloudSummary || failureCount > 0 {
             processingReport = ProcessingReport(
-                title: failureCount > 0 ? "\(workflow.batchTitle())完成，有失败" : "\(workflow.batchTitle())完成",
+                title: failureCount > 0 ? "\(workflow.batchTitle()) completed with failures" : "\(workflow.batchTitle()) completed",
                 detail: detail,
                 items: reportItems
             )
         }
         setProcessingTaskStatus(
-            detail: failureCount > 0 ? "本地批量完成，有失败" : (warningCount > 0 ? "本地批量完成，QA 需复查" : "本地批量完成"),
+            detail: failureCount > 0 ? "Local batch completed with failures" : (warningCount > 0 ? "Local batch completed; review QA" : "Local batch completed"),
             fraction: 1.0,
             state: localBatchState,
             itemTitle: ""
@@ -113,12 +113,12 @@ extension JobController {
             let reason = conciseFailureReason(error)
             message = reason
             processingReport = ProcessingReport(
-                title: "批量重新处理失败",
+                title: "Batch reprocessing failed",
                 detail: reason,
                 items: [
                     ProcessingReportItem(
                         id: "runtime",
-                        title: "运行环境",
+                        title: "Runtime",
                         state: .failure,
                         reason: reason
                     ),
@@ -181,13 +181,13 @@ extension JobController {
             : "Success \(successCount), failed \(failureCount)."
         if !workflow.requiresCloudSummary || failureCount > 0 {
             processingReport = ProcessingReport(
-                title: failureCount > 0 ? "\(workflow.batchTitle(reprocess: true))完成，有失败" : "\(workflow.batchTitle(reprocess: true))完成",
+                title: failureCount > 0 ? "\(workflow.batchTitle(reprocess: true)) completed with failures" : "\(workflow.batchTitle(reprocess: true)) completed",
                 detail: detail,
                 items: reportItems
             )
         }
         setProcessingTaskStatus(
-            detail: failureCount > 0 ? "本地批量完成，有失败" : (warningCount > 0 ? "本地批量完成，QA 需复查" : "本地批量完成"),
+            detail: failureCount > 0 ? "Local batch completed with failures" : (warningCount > 0 ? "Local batch completed; review QA" : "Local batch completed"),
             fraction: 1.0,
             state: localBatchState,
             itemTitle: ""
@@ -200,7 +200,7 @@ extension JobController {
 
     func runBatchTitleGeneration(_ items: [ProcessLibraryItem], cloudSettings: CloudSettings) async {
         clearProcessingTaskStatus()
-        beginMarkedBatch(total: items.count, title: "生成标题", taskKind: .cloud)
+        beginMarkedBatch(total: items.count, title: "Generate title", taskKind: .cloud)
         var reportItems: [ProcessingReportItem] = []
         for (index, item) in items.enumerated() where !Task.isCancelled {
             activeBatchCompleted = index
@@ -238,14 +238,14 @@ extension JobController {
             ? "Stopped after current item. Success \(successCount), failed \(failureCount)."
             : "Success \(successCount), failed \(failureCount)."
         processingReport = ProcessingReport(
-            title: failureCount > 0 ? "批量标题生成完成，有失败" : "批量标题生成完成",
+            title: failureCount > 0 ? "Batch title generation completed with failures" : "Batch title generation completed",
             detail: detail,
             items: reportItems
         )
         let taskState: ProcessingTaskState = failureCount > 0 ? .failure : (isBatchStopRequested ? .warning : .success)
         setCloudTaskStatus(
             itemTitle: "",
-            detail: failureCount > 0 ? "生成标题完成，有失败" : (isBatchStopRequested ? "生成标题已停止" : "生成标题完成"),
+            detail: failureCount > 0 ? "Title generation completed with failures" : (isBatchStopRequested ? "Title generation stopped" : "Title generation completed"),
             fraction: 1.0,
             state: taskState
         )

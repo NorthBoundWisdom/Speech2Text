@@ -58,25 +58,25 @@ struct MobileSubscriptionDetailPane: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 4) {
-                MobileReaderActionButton(title: "复制", systemName: "link") {
+                MobileReaderActionButton(title: "Copy", systemName: "link") {
                     onCopyLink(subscription)
                 }
                 MobileReaderActionButton(
-                    title: "刷新",
+                    title: "Refresh",
                     systemName: "arrow.clockwise",
                     isDisabled: isRefreshing
                 ) {
                     onRefresh(subscription)
                 }
                 MobileReaderActionButton(
-                    title: "历史",
+                    title: "History",
                     systemName: "clock.arrow.circlepath",
                     isDisabled: isRefreshing
                 ) {
                     onFetchHistory(subscription)
                 }
                 MobileReaderActionButton(
-                    title: "移除",
+                    title: "Remove",
                     systemName: "trash",
                     role: .destructive,
                     isDisabled: isRefreshing

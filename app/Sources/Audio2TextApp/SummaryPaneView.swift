@@ -32,15 +32,15 @@ struct SummaryPaneView: View {
                 isEditing = false
             }
         }
-        .alert("重新生成总结？", isPresented: $isRegenerateConfirmationPresented) {
-            Button("重新生成", role: .destructive) {
+        .alert("Regenerate summary?", isPresented: $isRegenerateConfirmationPresented) {
+            Button("Regenerate", role: .destructive) {
                 isEditing = false
                 controller.flushPendingSummarySaveSynchronously()
                 controller.regenerateSummaryDiscardingExisting()
             }
-            Button("取消", role: .cancel) {}
+            Button("Cancel", role: .cancel) {}
         } message: {
-            Text("旧的总结将被丢弃，并调用云 LLM 重新生成。")
+            Text("This discards the existing summary and regenerates it with the cloud model.")
         }
     }
 
@@ -59,7 +59,7 @@ struct SummaryPaneView: View {
                 summaryHeaderButton(
                     systemName: item.isRead ? "checkmark.circle.fill" : "checkmark.circle",
                     foregroundColor: item.isRead ? .accentColor : .secondary,
-                    help: item.isRead ? "标记为未读" : "标记为已读"
+                    help: item.isRead ? "Mark unread" : "Mark read"
                 ) {
                     controller.markRead(!item.isRead, for: item)
                 }
@@ -79,7 +79,7 @@ struct SummaryPaneView: View {
             }
             summaryHeaderButton(
                 systemName: "arrow.clockwise",
-                help: "使用云 API 重新生成总结",
+                help: "Regenerate summary with the cloud API",
                 disabled: !controller.isCloudSummaryConfigured || !canRegenerateSummary || isSummaryRequestInProgress
             ) {
                 if hasExistingSummary {

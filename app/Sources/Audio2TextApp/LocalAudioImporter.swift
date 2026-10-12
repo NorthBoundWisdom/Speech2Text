@@ -14,8 +14,8 @@ enum LocalImportMode: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .copy: return "复制"
-        case .reference: return "引用"
+        case .copy: return "Copy"
+        case .reference: return "Quote"
         }
     }
 }
@@ -110,15 +110,15 @@ struct LocalAudioImporter {
         let text = """
         # \(title)
 
-        - 来源：本地音视频
-        - 导入模式：\(mode.rawValue)
-        - 导入时间：\(formatter.string(from: now()))
-        - 原始文件：\(sourceURL.path)
-        - 媒体：\(target.lastPathComponent)
+        - Source: local media
+        - Import mode:\(mode.rawValue)
+        - Imported at:\(formatter.string(from: now()))
+        - Original file:\(sourceURL.path)
+        - Media:\(target.lastPathComponent)
 
         ## Shownotes
 
-        本地导入音视频。
+        Locally imported media.
         """
         try text.write(
             to: episodeDirectory.appendingPathComponent("主题.md"),

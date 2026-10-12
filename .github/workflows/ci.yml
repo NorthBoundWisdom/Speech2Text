@@ -39,6 +39,7 @@ jobs:
       - run: python -m ruff check .
       - run: python -m mypy
       - run: python src/scripts/check_public_paths.py --scope worktree
+      - run: python configs/check_repository_language.py
       - run: python src/scripts/validate_model_inventory.py
       - run: python -m pytest
   qt:

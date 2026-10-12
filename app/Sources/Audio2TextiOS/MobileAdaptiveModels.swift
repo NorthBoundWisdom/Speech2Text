@@ -24,11 +24,11 @@ enum MobileReaderSection: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .intro:
-            return "简介"
+            return "Overview"
         case .summary:
-            return "摘要"
+            return "Summary"
         case .transcript:
-            return "转写"
+            return "Transcript"
         }
     }
 

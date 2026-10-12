@@ -92,7 +92,7 @@ extension ProcessSidebarView {
             Button {
                 controller.setUnprocessedQueueFilter(nil)
             } label: {
-                Label("全部状态", systemImage: controller.unprocessedQueueFilter == nil ? "checkmark" : "line.3.horizontal.decrease.circle")
+                Label("All states", systemImage: controller.unprocessedQueueFilter == nil ? "checkmark" : "line.3.horizontal.decrease.circle")
             }
 
             Divider()
@@ -132,8 +132,8 @@ extension ProcessSidebarView {
         }
         .buttonStyle(.plain)
         .foregroundStyle(controller.hidesReadLibraryItems ? Color.accentColor : Color.secondary)
-        .help(controller.hidesReadLibraryItems ? "显示已读" : "隐藏已读")
-        .accessibilityLabel(controller.hidesReadLibraryItems ? "显示已读" : "隐藏已读")
+        .help(controller.hidesReadLibraryItems ? "Show read items" : "Hide read items")
+        .accessibilityLabel(controller.hidesReadLibraryItems ? "Show read items" : "Hide read items")
         .fixedSize()
         .padding(.trailing, 6)
     }
@@ -155,9 +155,9 @@ extension ProcessSidebarView {
 
     var unprocessedFilterHelp: String {
         if let status = controller.unprocessedQueueFilter {
-            return "过滤：\(status.compactTitle)"
+            return "Filter: \(status.compactTitle)"
         }
-        return "按标记状态过滤"
+        return "Filter by marked state"
     }
 
     var isShowingUnprocessedItems: Bool {

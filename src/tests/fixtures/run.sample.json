@@ -73,7 +73,7 @@
   "model_source": "mlx-community",
   "model_alias_or_input": "large-v3-turbo",
   "language": "zh",
-  "prompt_file": "doc/examples/prompt.zh.txt",
+  "prompt_file": "src/atot/data/prompt.zh.txt",
   "prompt_sources": [],
   "prompt": null,
   "glossary_file": "doc/examples/glossary.zh.json",

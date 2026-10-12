@@ -43,8 +43,8 @@ final class JobControllerSubscriptionProgressTests: XCTestCase {
             ]
         )
         XCTAssertEqual(controller.subscriptionRefreshTaskStatus?.id, "subscription-refresh")
-        XCTAssertEqual(controller.subscriptionRefreshTaskStatus?.title, "刷新订阅")
-        XCTAssertEqual(controller.subscriptionRefreshTaskStatus?.detail, "已刷新 2/2，同步完成")
+        XCTAssertEqual(controller.subscriptionRefreshTaskStatus?.title, "Refresh subscription")
+        XCTAssertEqual(controller.subscriptionRefreshTaskStatus?.detail, "Refreshed 2/2; sync complete")
         XCTAssertEqual(controller.subscriptionRefreshTaskStatus?.fraction, 1.0)
         XCTAssertEqual(controller.subscriptionRefreshTaskStatus?.state, .success)
         XCTAssertEqual(controller.sidebarProcessingTaskStatuses.map(\.id), ["subscription-refresh"])
@@ -55,7 +55,7 @@ final class JobControllerSubscriptionProgressTests: XCTestCase {
         controller.subscriptionRefreshTaskStatus = ProcessingTaskStatus(
             kind: .sync,
             id: "subscription-refresh",
-            title: "刷新订阅",
+            title: "Refresh subscription",
             itemTitle: "Alpha Show",
             detail: "正在刷新 1/2",
             fraction: 0.5,
@@ -73,7 +73,7 @@ final class JobControllerSubscriptionProgressTests: XCTestCase {
         controller.subscriptionRefreshTaskStatus = ProcessingTaskStatus(
             kind: .sync,
             id: "subscription-refresh",
-            title: "抓取订阅历史",
+            title: "Fetch subscription history",
             itemTitle: "Alpha Show",
             detail: "正在刷新 1/1",
             fraction: 0.25,
@@ -83,7 +83,7 @@ final class JobControllerSubscriptionProgressTests: XCTestCase {
         let status = controller.displayedLibrarySyncStatus
 
         XCTAssertEqual(status.state, .syncing)
-        XCTAssertEqual(status.title, "同步中")
+        XCTAssertEqual(status.title, "Syncing")
         XCTAssertEqual(status.detail, "正在刷新 1/1")
         XCTAssertEqual(status.progress, 0.25)
     }

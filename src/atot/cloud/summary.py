@@ -316,14 +316,14 @@ def _fallback_summary_from_chunk_summaries(output_dir: Path, *, partial: bool) -
     lines = [f"# {episode_title_for_output(output_dir) or 'Summary'}", ""]
     if partial:
         lines.append(
-            "本摘要基于当前可用 chunk 结果自动汇总。部分 chunk 云摘要未完成，已尽量用可用文本补位，请结合 uncertainty_report.md 复核。"
+            "This summary combines available chunk results. Some cloud chunks are incomplete; review uncertainty_report.md."
         )
     else:
-        lines.append("本摘要基于当前可用 chunk 结果自动汇总。")
+        lines.append("This summary combines the currently available chunk results.")
     lines.append("")
 
     if not entries:
-        lines.append("暂无可用的 chunk 摘要结果。")
+        lines.append("No chunk summaries are available.")
         return "\n".join(lines).strip() + "\n"
 
     lines.extend(["## Chunk Highlights", ""])

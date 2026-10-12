@@ -1,22 +1,26 @@
-# QA 与修复
+# QA and repair
 
-自动转录可能出现漏句、重复、术语或时间戳问题。SonaFolio 保存 QA、修正规则记录与审阅线索，方便你判断哪些内容需要回听。
+ASR can miss sentences, repeat words, or misidentify terminology and timestamps. SonaFolio keeps QA,
+correction records, and review evidence so you can decide where to revisit the audio.
 
 ```bash
 atot exec qa path/to/work-dir
 atot exec repair path/to/work-dir --plan-only
 ```
 
-先查看 `qa.json`、`review.json`、`entity_consistency.json` 和修复计划。确认需要局部替换时再执行：
+Inspect `qa.json`, `review.json`, `entity_consistency.json`, and the repair plan. Apply local replacement
+only when needed:
 
 ```bash
 atot exec repair path/to/work-dir
 ```
 
-修复需要对应本地后端与模型，不应被当作纯文本润色。自动修正记录在 `corrections.json`；需要人工确认的术语保留为审阅项，不自动推广为全局替换。
+Repair requires the matching local backend and model; it is not text-only polishing. Automatic
+corrections are recorded in `corrections.json`. Uncertain terminology remains review-only rather than
+becoming global replacements automatically.
 
-QA 通过说明通过了程序的指标检查，并不代表文本逐字准确。研究、引用或重要判断应结合原始音频核实。
+Passing QA means the program's checks passed, not that every word is accurate. Verify important
+citations and judgments against the original audio. Candidate ASR backends require the same gate and
+semantic review before promotion; historical experiments describe dated evidence, not current support.
 
-候选 ASR 后端只有通过相同质量门禁和语义审阅才会晋升。实验记录描述当时测量结果，不能当作当前支持承诺。
-
-[质量规则与研究文档](https://github.com/NorthBoundWisdom/sonafolio/blob/main/doc/QUALITY_LOOP.md)
+[Quality rules and research](https://github.com/NorthBoundWisdom/sonafolio/blob/main/doc/QUALITY_LOOP.md)

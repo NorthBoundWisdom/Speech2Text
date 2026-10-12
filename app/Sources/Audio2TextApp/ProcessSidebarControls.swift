@@ -24,7 +24,7 @@ struct LibrarySyncStatusBadge: View {
         }
         .buttonStyle(.plain)
         .help(status.detail)
-        .accessibilityLabel("同步状态：\(status.title)")
+        .accessibilityLabel("Sync status: \(status.title)")
         .accessibilityHint(status.detail)
     }
 

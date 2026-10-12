@@ -69,7 +69,7 @@ final class MobileLibraryViewModel: ObservableObject {
     var displayedLibrarySyncStatus: LibrarySyncStatus {
         guard isRefreshing else { return librarySyncStatus }
         return .syncing(
-            "资料正在同步。",
+            "Library changes are syncing.",
             checkedAt: librarySyncStatus.checkedAt,
             progress: nil
         )

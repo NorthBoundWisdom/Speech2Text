@@ -138,14 +138,14 @@ struct Audio2TextCommands: Commands {
             .keyboardShortcut(.return, modifiers: [.command, .shift])
             .disabled(!store.job.canProcessLibraryItem(store.selectedLibraryItem, reprocess: true, workflow: .localOnly))
 
-            Button("复制 Codex 总结回写指令") {
+            Button("Copy Codex summary write-back instructions") {
                 if let item = store.selectedLibraryItem {
                     let prompt = """
-                    使用已连接的 SonaFolio MCP 为 episode_id="\(item.id)" 生成中文 Markdown 总结并回写。
-                    先 get_episode 获取版本和 QA 信息，再通过 read_document 分页读完全部转录，保留有用的时间标记。
-                    使用你当前的模型总结，不调用 SonaFolio 云 API。
-                    write_summary 时传入 transcript_sha256 和 summary_sha256，generator 填 Codex。
-                    如果已有非空总结，先确认用户是否要求重新生成；不要自行设置 overwrite=true。
+                    Use the connected SonaFolio MCP server to summarize episode_id="\(item.id)" and publish the result.
+                    Get the episode's current hashes and QA through get_episode, then page through the complete transcript with read_document.
+                    Use your current model to write a Chinese Markdown summary and retain useful timestamps; do not call the SonaFolio cloud API.
+                    Pass transcript_sha256 and summary_sha256 to write_summary and set generator to Codex.
+                    Replace a nonempty summary only after an explicit regeneration request; do not enable overwrite on your own.
                     """
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(prompt, forType: .string)
@@ -153,7 +153,7 @@ struct Audio2TextCommands: Commands {
             }
             .disabled(store.selectedLibraryItem?.documentsURL == nil || !store.job.canGenerateSummary(for: store.selectedLibraryItem))
 
-            Button("云 API 重新生成总结") {
+            Button("Regenerate summary with cloud API") {
                 if let item = store.selectedLibraryItem {
                     store.job.generateSummary(for: item)
                 }

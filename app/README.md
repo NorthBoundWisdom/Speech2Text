@@ -1,11 +1,12 @@
-# SonaFolio Swift 客户端
+# SonaFolio Swift clients
 
-macOS 原生 App 执行本地导入、转录、QA 与资料库管理；iOS/iPadOS 客户端读取共享资料库并管理订阅与阅读状态。
-产品名统一为 SonaFolio；Swift 模块与 Xcode scheme 保留兼容身份，见[品牌说明](../doc/BRANDING.md)。
+The macOS app imports media, runs local transcription/QA, and manages the library. iOS/iPadOS reads
+the shared library and manages subscriptions and reading state. Product interfaces use English;
+module and scheme identities remain compatible, as documented in [branding](../doc/BRANDING.md).
 
-## 构建与运行
+## Build and run
 
-在仓库根目录执行：
+From the repository root:
 
 ```bash
 git submodule update --init --recursive FreeCM
@@ -15,7 +16,7 @@ python3 configs/ios_workflow.py build --platform mac --scheme Audio2TextApp --co
 python3 configs/ios_workflow.py run --platform mac --scheme Audio2TextApp
 ```
 
-SwiftPM 用于快速逻辑检查：
+SwiftPM logic checks:
 
 ```bash
 cd app
@@ -23,31 +24,28 @@ swift test --scratch-path ../build/swiftpm
 swift run --scratch-path ../build/swiftpm Audio2TextApp
 ```
 
-最低 macOS 13 / iOS 17。本地 ASR 的稳定 macOS 路径要求 Apple Silicon。
-iOS 模拟器构建使用 `--platform ios --scheme Audio2Text-iOS`；当前无 App Store 或 IPA 自动发行。
+Targets require macOS 13+ / iOS 17+. Stable macOS ASR requires Apple Silicon. iOS Simulator builds use
+`--platform ios --scheme Audio2Text-iOS`; there is no automatic IPA/App Store distribution.
 
-构建生成 `build/app/SonaFolio.app`，App 内保留兼容 CLI：
+The bundle is `build/app/SonaFolio.app`. Its compatibility CLI is
+`Contents/MacOS/Audio2TextCli`, which invokes the internal JSON `serve --stdio` protocol. Standard MCP
+is separate: `atot mcp`. The generated `Audio2Text.xcodeproj` stays out of Git.
 
-```text
-build/app/SonaFolio.app/Contents/MacOS/Audio2TextCli
-```
+## Processing and summaries
 
-App 调用内部 `serve --stdio` JSON 服务；标准 MCP 是独立的 `atot mcp` 协议。
-`Audio2Text.xcodeproj` 由脚本生成，不提交到 Git。
+Import a link or local media, choose a group, then process it through the item menu. The detail pane
+shows Overview, Transcript, and existing Summary. Default processing and primary shortcuts execute
+local transcription and QA without a cloud API key.
 
-## 处理与总结
+For agent summaries, Codex reads complete transcript/QA documents through MCP and publishes with
+current hashes. Replacing a nonempty summary requires an explicit regeneration request. MCP itself
+does not call a model API; agent-read text enters the client's conversation.
 
-导入时选择链接或本地音视频并指定分组。导入后通过菜单执行处理、再处理、收藏、分组或删除。
-详情展示简介、转录与已有摘要。默认处理动作与主要快捷键只执行本地转录和 QA，不需要云 API Key。
+Optional cloud summaries require explicit enablement, transcript-upload permission, endpoint, model,
+and a securely stored key. Settings checks call the API only when requested, or when automatic cloud
+summaries have explicitly enabled startup checks. This is not the default local processing flow.
 
-摘要推荐通过 `atot mcp` 交给 Codex：先读取完整转录与 QA，再带当前文档哈希回写。
-已有非空摘要必须在用户明确请求重新生成后替换。MCP 不调用模型 API，读出的文本进入 Agent 会话。
-
-可选云 API 总结必须显式启用并设置文本上传许可、API 地址、模型与安全存储的 Key。
-设置页只有在用户点击检查，或明确启用自动云摘要的启动检查时调用云接口。
-不要把可选云流程写成所有处理动作的默认后续步骤。
-
-## 数据与模型
+## Data and models
 
 ```text
 ~/Library/Mobile Documents/com~apple~CloudDocs/Audio2Text/Audio2TextLibrary/
@@ -56,20 +54,23 @@ App 调用内部 `serve --stdio` JSON 服务；标准 MCP 是独立的 `atot mcp
 ~/Documents/SpeechToTextData/work/<episode_id>/
 ```
 
-前两行分别是 iCloud 和本地存储模式的权威库；音视频与处理过程留在本机。
-iOS 通过 Files 选择 `Audio2Text` 或 `Audio2TextLibrary` 并持久记录书签，可以刷新订阅元信息、
-读取转录与摘要、管理阅读/收藏/归档/分组/删除，不运行 ASR 或下载处理音频。
+The first two are alternate iCloud/local authoritative library locations. Media and work files remain
+local. iOS selects the existing `Audio2Text` or `Audio2TextLibrary` folder through Files and stores a
+bookmark. It reads documents and manages subscriptions/read/star/archive/group/delete state, without
+running ASR or downloading audio for processing.
 
-默认模型为 `large-v3-turbo`，放置在数据根 `model/whisper-large-v3-turbo/`，包含
-`config.json` 和 `weights.safetensors`。必须手动准备模型；下载清单见仓库 README。
-日志在 `cache/logs/`，任务建立后同时写入对应 work 目录。
+The default model is `large-v3-turbo`, under `model/whisper-large-v3-turbo/`, with `config.json` and
+`weights.safetensors`. Download manually using the repository model inventory. Logs live in
+`cache/logs/` and corresponding work directories.
 
-## 打包
+## Package
 
 ```bash
 python3 configs/ios_workflow.py package --platform mac --scheme Audio2TextApp --configuration release --distribution ad-hoc
 ```
 
-当前 Actions 生成 ad-hoc 签名 DMG，不需要证书、未公证。Swift 包包含 CLI wheel，运行时仍需
-Python、FFmpeg 与模型。自有证书发行可显式使用 `developer-id` 和 notarytool profile。
-详见[多平台发行](../doc/CI_RELEASES.md)、[隐私](../doc/PRIVACY.md)和[官网手册](https://northboundwisdom.github.io/sonafolio/)。
+Actions packages use ad-hoc signatures without notarization. The Swift bundle includes the CLI wheel;
+Python, FFmpeg, and models still need runtime setup. Optional Developer ID signing requires the
+appropriate certificate and notarytool profile.
+
+[Releases](../doc/CI_RELEASES.md) · [Privacy](../doc/PRIVACY.md) · [Handbook](https://northboundwisdom.github.io/sonafolio/)

@@ -93,7 +93,7 @@ final class JobController: ObservableObject {
     var pendingSummarySaveText: String?
     var summarySaveTask: Task<Void, Never>?
     var localLibraryMutationSyncingUntil: Date?
-    var localLibraryMutationSyncDetail = "本地资料修改正在同步。"
+    var localLibraryMutationSyncDetail = "Local library changes are syncing."
     var librarySidebarDerivedStateIsDirty = true
     var cachedLibrarySidebarState = LibrarySidebarState(items: [])
     var cachedVisibleLibraryItems: [ProcessLibraryItem] = []

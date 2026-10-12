@@ -12,11 +12,11 @@ extension JobController {
         let reportTitle: String
         switch localState {
         case .warning:
-            reportTitle = reprocess ? "本地重新转写完成，QA 需复查" : "本地转写完成，QA 需复查"
+            reportTitle = reprocess ? "Local retranscription completed; review QA" : "Local transcription completed; review QA"
         case .failure:
-            reportTitle = reprocess ? "本地重新转写失败" : "本地转写失败"
+            reportTitle = reprocess ? "Local retranscription failed" : "Local transcription failed"
         default:
-            reportTitle = reprocess ? "本地重新转写完成" : "本地转写完成"
+            reportTitle = reprocess ? "Local retranscription completed" : "Local transcription completed"
         }
         return ProcessingReport(
             title: reportTitle,
@@ -24,7 +24,7 @@ extension JobController {
             items: [
                 ProcessingReportItem(
                     id: "\(itemID)-local",
-                    title: "本地转写：\(title)",
+                    title: "Local transcription: \(title)",
                     state: reportState(for: localState),
                     reason: reason
                 ),
@@ -42,25 +42,25 @@ extension JobController {
     ) -> ProcessingReport {
         let reportTitle: String
         if cloudState == .failure {
-            reportTitle = "处理部分完成"
+            reportTitle = "Processing partially completed"
         } else if localState == .warning || cloudState == .warning {
-            reportTitle = "处理完成，需复查"
+            reportTitle = "Processing completed; review needed"
         } else {
-            reportTitle = "处理完成"
+            reportTitle = "Processing completed"
         }
         return ProcessingReport(
             title: reportTitle,
-            detail: "本地：\(localReason)；云：\(cloudReason)",
+            detail: "Local: \(localReason); cloud: \(cloudReason)",
             items: [
                 ProcessingReportItem(
                     id: "\(itemID)-local",
-                    title: "本地转写：\(title)",
+                    title: "Local transcription: \(title)",
                     state: reportState(for: localState),
                     reason: localReason
                 ),
                 ProcessingReportItem(
                     id: "\(itemID)-cloud",
-                    title: "云总结：\(title)",
+                    title: "Cloud summary: \(title)",
                     state: reportState(for: cloudState),
                     reason: cloudReason
                 ),

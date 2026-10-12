@@ -213,7 +213,7 @@ public struct LibraryReadCounts: Equatable {
     }
 
     public var accessibilityText: String? {
-        total > 0 ? "未读 \(unread)，总数 \(total)" : nil
+        total > 0 ? "Unread \(unread), total \(total)" : nil
     }
 
     public init(unread: Int, total: Int) {

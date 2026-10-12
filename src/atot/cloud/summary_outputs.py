@@ -98,7 +98,7 @@ def _chapter_from_lines(output_dir: Path, lines: list[dict[str, Any]]) -> dict[s
     start = float(lines[0]["start"])
     end = float(lines[-1]["end"])
     text = "".join(str(item["text"]) for item in lines)
-    title = compact_ws(text[:28]) or "片段"
+    title = compact_ws(text[:28]) or "Segment"
     return {
         "start": seconds_to_hms(start),
         "end": seconds_to_hms(end),

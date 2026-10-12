@@ -133,7 +133,7 @@ struct MobileEpisodePanel: View {
     }
 
     private var readFilterLabel: String {
-        hidesReadItems ? "显示已读" : "隐藏已读"
+        hidesReadItems ? "Show read items" : "Hide read items"
     }
 
     private var columnHeader: some View {

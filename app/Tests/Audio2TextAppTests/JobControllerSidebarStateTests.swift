@@ -347,8 +347,8 @@ final class JobControllerSidebarStateTests: XCTestCase {
 
         let status = controller.displayedLibrarySyncStatus
         XCTAssertEqual(status.state, .syncing)
-        XCTAssertEqual(status.title, "同步中")
-        XCTAssertEqual(status.detail, "本地资料修改正在同步。")
+        XCTAssertEqual(status.title, "Syncing")
+        XCTAssertEqual(status.detail, "Local library changes are syncing.")
     }
 
     @MainActor

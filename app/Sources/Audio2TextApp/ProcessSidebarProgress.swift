@@ -119,8 +119,8 @@ extension ProcessSidebarView {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .help("查看处理结果")
-                .accessibilityLabel("查看处理结果")
+                .help("View processing results")
+                .accessibilityLabel("View processing results")
                 Button {
                     controller.dismissProcessingReport()
                 } label: {
@@ -130,8 +130,8 @@ extension ProcessSidebarView {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .help("关闭状态提示")
-                .accessibilityLabel("关闭状态提示")
+                .help("Dismiss status notice")
+                .accessibilityLabel("Dismiss status notice")
             }
             Text(report.detail)
                 .font(.system(size: 11, weight: .regular))
@@ -139,8 +139,8 @@ extension ProcessSidebarView {
                 .lineLimit(2)
                 .truncationMode(.tail)
             HStack(spacing: 8) {
-                resultCountPill(title: "成功", count: report.successCount, color: .green)
-                resultCountPill(title: "失败", count: report.failureCount, color: .red)
+                resultCountPill(title: "Succeeded", count: report.successCount, color: .green)
+                resultCountPill(title: "Failed", count: report.failureCount, color: .red)
             }
         }
         .padding(.horizontal, 10)
@@ -173,14 +173,14 @@ extension ProcessSidebarView {
             ? status.title
             : status.itemTitle
         return ProcessingReport(
-            title: status.state == .failure ? "\(status.title)失败" : "\(status.title)需复查",
-            detail: reason.isEmpty ? "未提供失败详情" : reason,
+            title: status.state == .failure ? "\(status.title) failed" : "\(status.title) needs review",
+            detail: reason.isEmpty ? "No failure details were provided" : reason,
             items: [
                 ProcessingReportItem(
                     id: status.id,
                     title: title,
                     state: .failure,
-                    reason: reason.isEmpty ? "未提供失败详情" : reason
+                    reason: reason.isEmpty ? "No failure details were provided" : reason
                 ),
             ]
         )
@@ -265,9 +265,9 @@ extension ProcessSidebarView {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(controller.isBatchStopRequested ? Color.secondary : Color.red)
-                    .help(controller.isBatchStopRequested ? "当前任务完成后停止" : "停止后续任务")
+                    .help(controller.isBatchStopRequested ? "Stop after the current task" : "Stop remaining tasks")
                     .disabled(controller.isBatchStopRequested)
-                    .accessibilityLabel(controller.isBatchStopRequested ? "已请求停止后续任务" : "停止后续任务")
+                    .accessibilityLabel(controller.isBatchStopRequested ? "Stop requested for remaining tasks" : "Stop remaining tasks")
                 }
                 if let report {
                     Button {
@@ -279,12 +279,12 @@ extension ProcessSidebarView {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(report.hasFailures ? Color.red : Color.secondary)
-                    .help(report.hasFailures ? "查看失败详情" : "查看处理结果")
-                    .accessibilityLabel(report.hasFailures ? "查看失败详情" : "查看处理结果")
+                    .help(report.hasFailures ? "View failure details" : "View processing results")
+                    .accessibilityLabel(report.hasFailures ? "View failure details" : "View processing results")
                 }
             }
             if !itemTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                Text("当前: \(itemTitle)")
+                Text("Current: \(itemTitle)")
                     .font(.system(size: 11, weight: .regular))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)

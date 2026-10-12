@@ -3,7 +3,7 @@ import Foundation
 extension JobController {
     func beginMarkedBatch(
         total: Int,
-        title: String = "处理标记",
+        title: String = "Processing state",
         taskKind: ProcessingTaskKind? = nil
     ) {
         processingReport = nil
@@ -34,7 +34,7 @@ extension JobController {
     func updateBatchProgressFromCurrentItem() {
         guard activeBatchTotal > 0 else { return }
         batchProgress = BatchProcessingProgress(
-            title: batchProgress?.title ?? "处理标记",
+            title: batchProgress?.title ?? "Processing state",
             completed: min(activeBatchCompleted, activeBatchTotal),
             total: activeBatchTotal,
             currentTitle: activeBatchCurrentTitle,
@@ -49,7 +49,7 @@ extension JobController {
         let compactTitle = compactProgressItemTitle(activeBatchCurrentTitle)
         let detail = compactTitle.isEmpty
             ? "\(batchProgress.title) \(visibleCompleted)/\(activeBatchTotal)"
-            : "\(batchProgress.title) \(visibleCompleted)/\(activeBatchTotal)：\(compactTitle)"
+            : "\(batchProgress.title) \(visibleCompleted)/\(activeBatchTotal): \(compactTitle)"
         switch activeBatchTaskKind {
         case .processing:
             setProcessingTaskStatus(detail: detail, fraction: batchProgress.fraction, state: state, itemTitle: "")

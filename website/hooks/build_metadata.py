@@ -28,9 +28,9 @@ def metadata_html() -> str:
     label = built_at.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     url = f"https://github.com/NorthBoundWisdom/sonafolio/commit/{sha}"
     return (
-        '<aside class="build-provenance" aria-label="网站构建信息">'
-        f'<span>网站构建 · {escape(label)}</span> '
-        f'<a href="{url}">源码 {sha[:7]}</a>'
+        '<aside class="build-provenance" aria-label="Website build information">'
+        f'<span>Website build · {escape(label)}</span> '
+        f'<a href="{url}">Source {sha[:7]}</a>'
         f'<span class="build-title">{escape(title)}</span></aside>'
     )
 

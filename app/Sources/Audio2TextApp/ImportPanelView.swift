@@ -44,7 +44,7 @@ struct ImportPanelView: View {
                         ProgressView()
                             .controlSize(.small)
                     } else {
-                        Text("检查")
+                        Text("Check")
                     }
                 }
                 .disabled(controller.urlText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || controller.stage.isRunning)
@@ -63,7 +63,7 @@ struct ImportPanelView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             case let .valid(_, title):
-                Label(title.isEmpty ? "链接有效" : "链接有效：\(title)", systemImage: "checkmark.circle.fill")
+                Label(title.isEmpty ? "Link is valid" : "Link is valid: \(title)", systemImage: "checkmark.circle.fill")
                     .font(.caption)
                     .foregroundStyle(.green)
                     .lineLimit(2)
@@ -85,7 +85,7 @@ struct ImportPanelView: View {
                 TextField("Choose an audio or video file", text: selectedFilePathBinding)
                     .textFieldStyle(.roundedBorder)
                     .disabled(true)
-                Button("选择") {
+                Button("Select") {
                     chooseAudioFile()
                 }
             }
@@ -129,7 +129,7 @@ struct ImportPanelView: View {
                 controller.resetImportDraft()
                 isPresented = false
             } label: {
-                Text("取消")
+                Text("Cancel")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
@@ -138,7 +138,7 @@ struct ImportPanelView: View {
                 controller.importOnly()
                 isPresented = false
             } label: {
-                Label("确认", systemImage: "checkmark")
+                Label("Confirm", systemImage: "checkmark")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)

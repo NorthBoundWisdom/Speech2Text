@@ -309,7 +309,7 @@ final class SubscriptionLibraryTests: XCTestCase {
         XCTAssertEqual(snapshot.counts.total, 1)
         XCTAssertEqual(snapshot.counts.processed, 1)
         XCTAssertEqual(snapshot.episodes.first?.title, "AI 标题")
-        XCTAssertEqual(snapshot.episodes.first?.primaryCaption, "原名：订阅源原始标题")
+        XCTAssertEqual(snapshot.episodes.first?.primaryCaption, "Original title: 订阅源原始标题")
         let snapshotVersion = controller.subscriptionDetailSnapshotVersion
 
         controller.message = "Unrelated progress update"

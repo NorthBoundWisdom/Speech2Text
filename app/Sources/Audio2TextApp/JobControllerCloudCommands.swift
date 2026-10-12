@@ -14,10 +14,10 @@ extension JobController {
         stage = .refreshing
         progressFraction = 0.05
         startWatching(outputDirectory: item.outputURL)
-        setSummaryRequestStatus("准备请求云总结", state: .inProgress, itemID: item.id)
+        setSummaryRequestStatus("Preparing cloud summary request", state: .inProgress, itemID: item.id)
         setCloudTaskStatus(
             itemTitle: compactProgressItemTitle(item.title),
-            detail: "准备请求云总结",
+            detail: "Preparing cloud summary request",
             fraction: 0.05,
             state: .queued
         )
@@ -28,10 +28,10 @@ extension JobController {
             persistentLogPath = logStore.outputURL?.path ?? logStore.fallbackURL?.path ?? ""
             progressFraction = 0.2
             logEvent(category: "summary", event: "summary_generation_started", message: "Summary generation started", fields: ["item_id": item.id])
-            setSummaryRequestStatus("准备处理包", state: .inProgress, itemID: item.id)
+            setSummaryRequestStatus("Preparing processing package", state: .inProgress, itemID: item.id)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "准备云端处理包",
+                detail: "Preparing cloud processing package",
                 fraction: 0.15,
                 state: .queued
             )
@@ -39,15 +39,15 @@ extension JobController {
                 self?.appendLog(text)
                 self?.refreshManualSummaryProgress(
                     for: item,
-                    fallbackDetail: "准备云端处理包",
+                    fallbackDetail: "Preparing cloud processing package",
                     fallbackFraction: 0.15,
                     fallbackState: .queued
                 )
             }
-            setSummaryRequestStatus("正在请求云总结", state: .inProgress, itemID: item.id)
+            setSummaryRequestStatus("Requesting cloud summary", state: .inProgress, itemID: item.id)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "正在请求云总结",
+                detail: "Requesting cloud summary",
                 fraction: 0.25,
                 state: .running
             )
@@ -60,7 +60,7 @@ extension JobController {
                 self?.appendLog(text)
                 self?.refreshManualSummaryProgress(
                     for: item,
-                    fallbackDetail: "正在请求云总结",
+                    fallbackDetail: "Requesting cloud summary",
                     fallbackFraction: 0.25
                 )
             }
@@ -68,10 +68,10 @@ extension JobController {
             progressFraction = 1.0
             stage = .completed
             message = "Summary generated"
-            setSummaryRequestStatus("总结生成成功", state: .success, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("Summary generated", state: .success, itemID: item.id, clearsAfterDelay: true)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "生成总结完成",
+                detail: "Summary generation completed",
                 fraction: 1.0,
                 state: .success
             )
@@ -85,10 +85,10 @@ extension JobController {
             stage = .failed
             message = error.localizedDescription
             let reason = shortStatusMessage(error.localizedDescription)
-            setSummaryRequestStatus("总结生成失败：\(reason)", state: .failure, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("Summary generation failed: \(reason)", state: .failure, itemID: item.id, clearsAfterDelay: true)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "云任务失败：\(reason)",
+                detail: "Cloud task failed: \(reason)",
                 fraction: max(progressFraction, snapshot.cloudProgressFraction, 0.10),
                 state: .failure
             )
@@ -108,10 +108,10 @@ extension JobController {
         stage = .refreshing
         progressFraction = 0.2
         startWatching(outputDirectory: item.outputURL)
-        setSummaryRequestStatus("正在请求云标题", state: .inProgress, itemID: item.id)
+        setSummaryRequestStatus("Requesting cloud title", state: .inProgress, itemID: item.id)
         setCloudTaskStatus(
             itemTitle: compactProgressItemTitle(item.title),
-            detail: "正在请求云标题",
+            detail: "Requesting cloud title",
             fraction: 0.25,
             state: .running
         )
@@ -124,7 +124,7 @@ extension JobController {
                 self?.appendLog(text)
                 self?.setCloudTaskStatus(
                     itemTitle: self?.compactProgressItemTitle(item.title) ?? "",
-                    detail: "正在请求云标题",
+                    detail: "Requesting cloud title",
                     fraction: 0.50,
                     state: .running
                 )
@@ -133,10 +133,10 @@ extension JobController {
             progressFraction = 1.0
             stage = .completed
             message = "Title regenerated"
-            setSummaryRequestStatus("标题生成成功", state: .success, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("Title generated", state: .success, itemID: item.id, clearsAfterDelay: true)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "生成标题完成",
+                detail: "Title generation completed",
                 fraction: 1.0,
                 state: .success
             )
@@ -147,10 +147,10 @@ extension JobController {
             stage = .failed
             message = error.localizedDescription
             let reason = shortStatusMessage(error.localizedDescription)
-            setSummaryRequestStatus("标题生成失败：\(reason)", state: .failure, itemID: item.id, clearsAfterDelay: true)
+            setSummaryRequestStatus("Title generation failed: \(reason)", state: .failure, itemID: item.id, clearsAfterDelay: true)
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(item.title),
-                detail: "云任务失败：\(reason)",
+                detail: "Cloud task failed: \(reason)",
                 fraction: max(progressFraction, 0.10),
                 state: .failure
             )
@@ -197,7 +197,7 @@ extension JobController {
                 result,
                 outputDirectory: outputDirectory,
                 requiredArtifact: "cloud/summary.md",
-                missingArtifactMessage: "云总结命令完成但没有写入 cloud/summary.md。",
+                missingArtifactMessage: "Cloud summary command completed without writing cloud/summary.md.",
                 includeChunkFailures: true
             )
             try publishTitleIfPresent(outputDirectory: outputDirectory, dataRoot: runtime.dataRoot)
@@ -238,7 +238,7 @@ extension JobController {
                 result,
                 outputDirectory: outputDirectory,
                 requiredArtifact: "cloud/short_title.txt",
-                missingArtifactMessage: "云标题命令完成但没有写入 cloud/short_title.txt。"
+                missingArtifactMessage: "Cloud title command completed without writing cloud/short_title.txt."
             )
             try publishTitleIfPresent(outputDirectory: outputDirectory, dataRoot: runtime.dataRoot)
         } catch let AppError.processFailed(_, _, output) {

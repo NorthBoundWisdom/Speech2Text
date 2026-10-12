@@ -142,7 +142,7 @@ extension JobController {
             updateProgress(defaultValue: 0.95)
             refresh()
             setProcessingTaskStatus(
-                detail: processingResult.qaPassed ? (reprocess ? "重新转写完成" : "本地转写完成") : "本地转写完成，QA 需复查",
+                detail: processingResult.qaPassed ? (reprocess ? "Retranscription completed" : "Local transcription completed") : "Local transcription completed; review QA",
                 fraction: 1.0,
                 state: processingResult.taskState,
                 itemTitle: compactProgressItemTitle(processingItem.title)
@@ -179,7 +179,7 @@ extension JobController {
             message = reason
             setProcessingTaskStatus(detail: reason, fraction: max(progressFraction, 0.10), state: .failure)
             processingReport = ProcessingReport(
-                title: "处理失败",
+                title: "Processing failed",
                 detail: reason,
                 items: [
                     ProcessingReportItem(
@@ -244,12 +244,12 @@ extension JobController {
     ) async throws -> LocalProcessingResult {
         snapshot = snapshotForOutputDirectory(outputDirectory)
         updateProgress(defaultValue: 0.12)
-        setProcessingTaskStatus(detail: "准备本地转写", fraction: max(progressFraction, 0.05), state: .queued)
+        setProcessingTaskStatus(detail: "Preparing local transcription", fraction: max(progressFraction, 0.05), state: .queued)
         if skipExisting, isAlreadyProcessed(snapshot) {
             stage = .completed
             progressFraction = 1.0
             message = "Already processed; showing existing output"
-            setProcessingTaskStatus(detail: "已有本地转写", fraction: 1.0, state: .success)
+            setProcessingTaskStatus(detail: "Local transcript already exists", fraction: 1.0, state: .success)
             appendLog("Existing output detected; skipped transcription.\n")
             logEvent(event: "transcription_skipped_existing", message: "Existing output detected; skipped transcription", fields: ["output_directory": outputDirectory.path])
             await refreshLibraryAndWait()
@@ -269,14 +269,14 @@ extension JobController {
                 stage = .transcribing
                 updateProgress(defaultValue: 0.15)
                 message = "Transcribing \(audioURL.lastPathComponent)"
-                setProcessingTaskStatus(detail: "本地转写中", fraction: max(progressFraction, 0.15), state: .running)
+                setProcessingTaskStatus(detail: "Transcribing locally", fraction: max(progressFraction, 0.15), state: .running)
                 logEvent(event: "stage_changed", message: "Transcribing", fields: ["stage": "transcribing", "audio": audioURL.lastPathComponent])
                 appendLog("\n$ \(runtime.cli.path) \(arguments.joined(separator: " "))\n")
             case let .willRunQA(arguments):
                 stage = .qa
                 progressFraction = 0.86
                 message = "Running QA"
-                setProcessingTaskStatus(detail: "QA 检查中", fraction: 0.86, state: .running)
+                setProcessingTaskStatus(detail: "Checking QA", fraction: 0.86, state: .running)
                 logEvent(event: "stage_changed", message: "Running QA", fields: ["stage": "qa", "output_directory": outputDirectory.path])
                 appendLog("\n$ \(runtime.cli.path) \(arguments.joined(separator: " "))\n")
             case let .qaFailed(code, output):
@@ -294,7 +294,7 @@ extension JobController {
         progressFraction = 1.0
         message = processingResult.qaPassed ? "Local transcript ready" : "Local transcript ready; QA needs review"
         setProcessingTaskStatus(
-            detail: processingResult.qaPassed ? "本地转写完成" : "本地转写完成，QA 需复查",
+            detail: processingResult.qaPassed ? "Local transcription completed" : "Local transcription completed; review QA",
             fraction: 1.0,
             state: processingResult.taskState
         )

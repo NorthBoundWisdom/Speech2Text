@@ -43,7 +43,7 @@ extension JobController {
             appendLog("Cloud summary skipped for \(title): cloud summary is not configured.\n")
             setCloudTaskStatus(
                 itemTitle: compactProgressItemTitle(title),
-                detail: "云任务失败：云总结未配置",
+                detail: "Cloud task failed: cloud summaries are not configured",
                 fraction: 1.0,
                 state: .failure
             )
@@ -125,7 +125,7 @@ extension JobController {
         case let .failed(job, error, _):
             appendBackgroundSummaryLog("\nERROR: \(error.localizedDescription)\n", outputDirectory: job.outputDirectory)
             let reason = shortStatusMessage(error.localizedDescription)
-            setBackgroundSummaryProgress(for: job, detail: "云任务失败：\(reason)", fraction: summaryQueueFraction(currentFraction: 1.0), state: .failure)
+            setBackgroundSummaryProgress(for: job, detail: "Cloud task failed: \(reason)", fraction: summaryQueueFraction(currentFraction: 1.0), state: .failure)
             message = reason
             processingReport = combinedProcessingReport(
                 itemID: job.itemID,
@@ -190,7 +190,7 @@ extension JobController {
             )
         } ?? ProcessingTaskStatus(
             kind: .cloud,
-            title: "云任务",
+            title: "Cloud task",
             itemTitle: compactProgressItemTitle(job.title),
             detail: summaryQueueDetail(currentTitle: job.title),
             fraction: summaryQueueFraction(currentFraction: 0.08),

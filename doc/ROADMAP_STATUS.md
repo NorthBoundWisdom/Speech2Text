@@ -21,7 +21,7 @@ acceptance items that require local audio, model weights, or cloud credentials.
 | P1 audio preparation trace | Implemented and tested | `prepared_audio.prepare_tool`, `prepare_command`, WAV metadata in `run.json` |
 | P1 chunk-cache safety | Implemented and tested | ASR fingerprint includes `chunk_layout_sha256`; `validate_run_json.py` checks cache-identity hash consistency |
 | P1 postprocess-only rerun | Implemented and tested | `src/atot/postprocess.py` |
-| Prompt construction guardrail | Implemented and tested | full `主题.md` is not injected; capped summary and terms stay under 800 chars |
+| Prompt construction guardrail | Implemented and tested | full topic metadata is not injected; capped summary and terms stay under 800 chars |
 | P2 cloud input package | Implemented and tested | `output/cloud/input/manifest.json`, time-range text chunks with previous-chunk context, QA/review/topic files, prompt templates, `validate_cloud_package.py` |
 | P2 cloud prompt templates | Implemented and packaged | `doc/cloud_prompts/*.zh.md`, copied to `cloud/input/prompts/*.prompt.md` |
 | P2 cloud output schemas | Implemented and tested | output manifest plus schema validation for chunk-level summaries, summary, chapters, shownotes, title candidates, social copy, terms, chunk uncertainty rollup, `fact_or_term_uncertainties.md`, glossary suggestions, polish patches |

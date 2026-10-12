@@ -13,7 +13,7 @@ SAMPLE="$1"
 MODELS="${ATOT_BENCHMARK_MODELS:-small-4bit large-v3-turbo-q4}"
 "$HOME/Documents/SpeechToTextData/env/bin/python" -m atot.cli benchmark "$SAMPLE" \
   --language zh \
-  --prompt-file "$ROOT_DIR/doc/examples/prompt.zh.txt" \
+  --prompt-file "$ROOT_DIR/src/atot/data/prompt.zh.txt" \
   --glossary-file "$ROOT_DIR/doc/examples/glossary.zh.json" \
   --repeat 2 \
   --models $MODELS

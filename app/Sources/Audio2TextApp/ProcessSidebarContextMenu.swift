@@ -17,7 +17,7 @@ extension ProcessSidebarView {
         Button {
             copyTitlesToPasteboard(actionItems)
         } label: {
-            Label(multipleSelection ? "复制 \(actionItems.count) 项标题" : "复制标题", systemImage: "doc.on.doc")
+            Label(multipleSelection ? "Copy \(actionItems.count) item titles" : "Copy title", systemImage: "doc.on.doc")
         }
 
         Divider()
@@ -27,7 +27,7 @@ extension ProcessSidebarView {
                 controller.unarchiveLibraryItems(actionItems)
                 selectedItemIDs = Set(actionItems.map(\.id))
             } label: {
-                Label(multipleSelection ? "取消归档 \(actionItems.count) 项" : "取消归档", systemImage: "tray.and.arrow.up")
+                Label(multipleSelection ? "Unarchive \(actionItems.count) items" : "Unarchive", systemImage: "tray.and.arrow.up")
             }
             .disabled(controller.stage.isRunning)
 
@@ -40,7 +40,7 @@ extension ProcessSidebarView {
                     pendingDeleteItem = archivedItem
                 }
             } label: {
-                Label(multipleSelection ? "删除 \(actionItems.count) 项" : "删除", systemImage: "trash")
+                Label(multipleSelection ? "Delete \(actionItems.count) items" : "Delete", systemImage: "trash")
             }
             .disabled(controller.stage.isRunning)
         }
@@ -61,14 +61,14 @@ extension ProcessSidebarView {
                         }
                     }
                 } label: {
-                    Label("标记未处理项为", systemImage: "flag")
+                    Label("Mark unprocessed items as", systemImage: "flag")
                 }
 
                 Button {
                     controller.processLibraryItems(unprocessedActionItems, workflow: .transcribeAndSummarize)
                     clearItemSelection()
                 } label: {
-                    Label("转写并总结未处理项 \(unprocessedActionItems.count) 个", systemImage: "play.fill")
+                    Label("Transcribe and summarize \(unprocessedActionItems.count) unprocessed items", systemImage: "play.fill")
                 }
                 .disabled(
                     controller.stage.isRunning
@@ -81,7 +81,7 @@ extension ProcessSidebarView {
                     controller.processLibraryItems(unprocessedActionItems, workflow: .localOnly)
                     clearItemSelection()
                 } label: {
-                    Label("仅本地转写未处理项 \(unprocessedActionItems.count) 个", systemImage: "waveform")
+                    Label("Transcribe \(unprocessedActionItems.count) unprocessed items locally", systemImage: "waveform")
                 }
                 .disabled(
                     controller.stage.isRunning
@@ -96,7 +96,7 @@ extension ProcessSidebarView {
                     controller.reprocessLibraryItems(processedActionItems, workflow: .transcribeAndSummarize)
                     clearItemSelection()
                 } label: {
-                    Label("重新转写并总结已处理项 \(processedActionItems.count) 个", systemImage: "arrow.clockwise")
+                    Label("Retranscribe and summarize \(processedActionItems.count) processed items", systemImage: "arrow.clockwise")
                 }
                 .disabled(
                     controller.stage.isRunning
@@ -109,7 +109,7 @@ extension ProcessSidebarView {
                     controller.reprocessLibraryItems(processedActionItems, workflow: .localOnly)
                     clearItemSelection()
                 } label: {
-                    Label("仅重新本地转写已处理项 \(processedActionItems.count) 个", systemImage: "waveform")
+                    Label("Retranscribe \(processedActionItems.count) processed items locally", systemImage: "waveform")
                 }
                 .disabled(
                     controller.stage.isRunning
@@ -127,7 +127,7 @@ extension ProcessSidebarView {
                     }
                 } label: {
                     Label(
-                        multipleSelection ? "重新生成总结 \(processedActionItems.count) 个" : "重新生成总结",
+                        multipleSelection ? "Regenerate \(processedActionItems.count) summaries" : "Regenerate summary",
                         systemImage: "text.badge.star"
                     )
                 }
@@ -137,7 +137,7 @@ extension ProcessSidebarView {
                     controller.regenerateTitles(for: processedActionItems)
                     clearItemSelection()
                 } label: {
-                    Label("重新生成标题 \(processedActionItems.count) 个", systemImage: "textformat")
+                    Label("Regenerate \(processedActionItems.count) titles", systemImage: "textformat")
                 }
                 .disabled(controller.stage.isRunning || processedActionItems.allSatisfy { !controller.canRegenerateTitle(for: $0) })
             }
@@ -150,7 +150,7 @@ extension ProcessSidebarView {
                 }
             } label: {
                 Label(
-                    actionItems.contains(where: { !$0.isRead }) ? "标记 \(actionItems.count) 项为已读" : "标记 \(actionItems.count) 项为未读",
+                    actionItems.contains(where: { !$0.isRead }) ? "Mark \(actionItems.count) items read" : "Mark \(actionItems.count) items unread",
                     systemImage: actionItems.contains(where: { !$0.isRead }) ? "checkmark.circle" : "circle"
                 )
             }
@@ -162,7 +162,7 @@ extension ProcessSidebarView {
                 clearItemSelection()
             } label: {
                 Label(
-                    actionItems.contains(where: { !$0.isStarred }) ? "星标 \(actionItems.count) 项" : "取消 \(actionItems.count) 项星标",
+                    actionItems.contains(where: { !$0.isStarred }) ? "Star \(actionItems.count) items" : "Unstar \(actionItems.count) items",
                     systemImage: actionItems.contains(where: { !$0.isStarred }) ? "star" : "star.slash"
                 )
             }
@@ -177,14 +177,14 @@ extension ProcessSidebarView {
                     .disabled(controller.stage.isRunning || actionItems.allSatisfy { $0.groupName == groupName })
                 }
             } label: {
-                Label("移动 \(actionItems.count) 项到分组", systemImage: "folder")
+                Label("Move \(actionItems.count) items to group", systemImage: "folder")
             }
 
             Button {
                 controller.archiveLibraryItems(actionItems)
                 clearItemSelection()
             } label: {
-                Label("归档 \(actionItems.count) 项", systemImage: "archivebox")
+                Label("Archive \(actionItems.count) items", systemImage: "archivebox")
             }
             .disabled(controller.stage.isRunning)
 
@@ -192,14 +192,14 @@ extension ProcessSidebarView {
                 controller.cleanupCache(for: actionItems)
                 clearItemSelection()
             } label: {
-                Label("清理 \(actionItems.count) 项缓存", systemImage: "externaldrive.badge.minus")
+                Label("Clear cache for \(actionItems.count) items", systemImage: "externaldrive.badge.minus")
             }
             .disabled(controller.stage.isRunning)
 
             Button(role: .destructive) {
                 pendingBulkDeleteItems = actionItems
             } label: {
-                Label("删除 \(actionItems.count) 项", systemImage: "trash")
+                Label("Delete \(actionItems.count) items", systemImage: "trash")
             }
             .disabled(controller.stage.isRunning)
 
@@ -210,7 +210,7 @@ extension ProcessSidebarView {
             Button {
                 controller.restoreAudio(for: item)
             } label: {
-                Label("重新下载音频", systemImage: "arrow.down.circle")
+                Label("Download audio again", systemImage: "arrow.down.circle")
             }
             .disabled(controller.stage.isRunning || !item.canRestoreAudio)
         }
@@ -224,14 +224,14 @@ extension ProcessSidebarView {
             Button {
                 controller.regenerateSummaryDiscardingExisting(for: item)
             } label: {
-                Label("重新生成总结", systemImage: "text.badge.star")
+                Label("Regenerate summary", systemImage: "text.badge.star")
             }
             .disabled(!controller.canGenerateSummary(for: item))
 
             Button {
                 controller.regenerateTitle(for: item)
             } label: {
-                Label("重新生成标题", systemImage: "textformat")
+                Label("Regenerate title", systemImage: "textformat")
             }
             .disabled(!controller.canRegenerateTitle(for: item))
         }
@@ -240,14 +240,14 @@ extension ProcessSidebarView {
             Button {
                 NSWorkspace.shared.open(item.audioURL.deletingLastPathComponent())
             } label: {
-                Label("打开数据文件夹", systemImage: "folder")
+                Label("Open data folder", systemImage: "folder")
             }
 
             if FileManager.default.fileExists(atPath: item.outputURL.path) {
                 Button {
                     NSWorkspace.shared.open(item.outputURL)
                 } label: {
-                    Label("打开产物文件夹", systemImage: "shippingbox")
+                    Label("Open output folder", systemImage: "shippingbox")
                 }
             }
         }
@@ -258,13 +258,13 @@ extension ProcessSidebarView {
                     controller.markRead(!item.isRead, for: item)
                 }
             } label: {
-                Label(item.isRead ? "标记为未读" : "标记为已读", systemImage: item.isRead ? "circle" : "checkmark.circle")
+                Label(item.isRead ? "Mark unread" : "Mark read", systemImage: item.isRead ? "circle" : "checkmark.circle")
             }
 
             Button {
                 controller.toggleStar(for: item)
             } label: {
-                Label(item.isStarred ? "取消星标" : "星标", systemImage: item.isStarred ? "star.slash" : "star")
+                Label(item.isStarred ? "Unstar" : "Star", systemImage: item.isStarred ? "star.slash" : "star")
             }
 
             Menu {
@@ -282,20 +282,20 @@ extension ProcessSidebarView {
                     }
                 }
             } label: {
-                Label("移动到分组", systemImage: "folder")
+                Label("Move to group", systemImage: "folder")
             }
 
             Button {
                 controller.cleanupCache(for: [item])
             } label: {
-                Label("清理缓存", systemImage: "externaldrive.badge.minus")
+                Label("Clear cache", systemImage: "externaldrive.badge.minus")
             }
             .disabled(controller.stage.isRunning)
 
             Button {
                 controller.archiveLibraryItem(item)
             } label: {
-                Label("归档", systemImage: "archivebox")
+                Label("Archive", systemImage: "archivebox")
             }
             .disabled(controller.stage.isRunning)
 
@@ -304,7 +304,7 @@ extension ProcessSidebarView {
             Button(role: .destructive) {
                 pendingDeleteItem = item
             } label: {
-                Label("删除", systemImage: "trash")
+                Label("Delete", systemImage: "trash")
             }
             .disabled(controller.stage.isRunning)
         }
@@ -325,7 +325,7 @@ extension ProcessSidebarView {
         } label: {
             Label(
                 multipleSelection
-                    ? "转写并总结 \(actionItems.count) 个"
+                    ? "Transcribe and summarize \(actionItems.count) items"
                     : ProcessingWorkflow.transcribeAndSummarize.actionTitle(isCloudConfigured: controller.isCloudSummaryConfigured),
                 systemImage: "play.fill"
             )
@@ -347,7 +347,7 @@ extension ProcessSidebarView {
         } label: {
             Label(
                 multipleSelection
-                    ? "仅本地转写 \(actionItems.count) 个"
+                    ? "Transcribe \(actionItems.count) items locally"
                     : ProcessingWorkflow.localOnly.actionTitle(),
                 systemImage: "waveform"
             )
@@ -368,7 +368,7 @@ extension ProcessSidebarView {
                     controller.downloadAudio(for: item)
                 }
             } label: {
-                Label(multipleSelection ? "下载音频 \(downloadableItems.count) 个" : "下载音频", systemImage: "arrow.down.circle")
+                Label(multipleSelection ? "Download \(downloadableItems.count) audio files" : "Download audio", systemImage: "arrow.down.circle")
             }
             .disabled(controller.stage.isRunning || downloadableItems.allSatisfy { !controller.canDownloadAudio(for: $0) })
         }
@@ -393,7 +393,7 @@ extension ProcessSidebarView {
             controller.archiveLibraryItems(actionItems)
             clearItemSelection()
         } label: {
-            Label(multipleSelection ? "归档 \(actionItems.count) 个" : "归档", systemImage: "archivebox")
+            Label(multipleSelection ? "Archive \(actionItems.count) items" : "Archive", systemImage: "archivebox")
         }
         .disabled(controller.stage.isRunning)
 
@@ -404,7 +404,7 @@ extension ProcessSidebarView {
                 pendingDeleteItem = item
             }
         } label: {
-            Label(multipleSelection ? "删除 \(actionItems.count) 个" : "删除", systemImage: "trash")
+            Label(multipleSelection ? "Delete \(actionItems.count) items" : "Delete", systemImage: "trash")
         }
         .disabled(controller.stage.isRunning)
     }

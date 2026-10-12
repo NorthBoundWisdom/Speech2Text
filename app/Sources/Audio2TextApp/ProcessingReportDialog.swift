@@ -24,7 +24,7 @@ struct ProcessingReportDialog: View {
     private var clipboardText: String {
         let itemText = allVisibleItems
             .map { item in
-                let state = item.state == .failure ? "失败" : "成功"
+                let state = item.state == .failure ? "Failed" : "Succeeded"
                 return "[\(state)] \(item.title)\n\(item.reason)"
             }
             .joined(separator: "\n\n")
@@ -38,10 +38,10 @@ struct ProcessingReportDialog: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 14) {
                     if !failureItems.isEmpty {
-                        reportSection(title: "失败", color: .red, items: failureItems)
+                        reportSection(title: "Failed", color: .red, items: failureItems)
                     }
                     if !successItems.isEmpty {
-                        reportSection(title: "成功", color: .green, items: successItems)
+                        reportSection(title: "Succeeded", color: .green, items: successItems)
                     }
                 }
                 .padding(16)
@@ -55,7 +55,7 @@ struct ProcessingReportDialog: View {
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(report.hasFailures ? Color.red : Color.green)
             VStack(alignment: .leading, spacing: 3) {
-                Text(report.hasFailures ? "失败详情" : "处理结果")
+                Text(report.hasFailures ? "Failure details" : "Processing results")
                     .font(.headline)
                 Text(report.detail)
                     .font(.caption)
@@ -64,8 +64,8 @@ struct ProcessingReportDialog: View {
             }
             Spacer()
             HStack(spacing: 8) {
-                resultBadge(title: "成功", count: report.successCount, color: .green)
-                resultBadge(title: "失败", count: report.failureCount, color: .red)
+                resultBadge(title: "Succeeded", count: report.successCount, color: .green)
+                resultBadge(title: "Failed", count: report.failureCount, color: .red)
                 Button {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(clipboardText, forType: .string)
@@ -76,7 +76,7 @@ struct ProcessingReportDialog: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .help(report.hasFailures ? "复制失败信息" : "复制处理结果")
+                .help(report.hasFailures ? "Copy failure details" : "Copy processing results")
                 Button {
                     dismiss()
                 } label: {
@@ -87,8 +87,8 @@ struct ProcessingReportDialog: View {
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
                 .keyboardShortcut(.cancelAction)
-                .help("关闭")
-                .accessibilityLabel("关闭")
+                .help("Close")
+                .accessibilityLabel("Close")
             }
         }
         .padding(16)

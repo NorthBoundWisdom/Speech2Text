@@ -65,14 +65,14 @@ extension JobController {
 
     func runRefreshSubscriptions(id: String?, fullHistory: Bool = false) async {
         isRefreshingSubscriptions = true
-        let operationTitle = fullHistory ? "抓取订阅历史" : "刷新订阅"
+        let operationTitle = fullHistory ? "Fetch subscription history" : "Refresh subscription"
         let selectedSubscriptions = selectedSubscriptionsForRefresh(id: id)
         let total = max(selectedSubscriptions.count, id == nil ? 0 : 1)
         message = fullHistory ? "Fetching subscription history" : "Refreshing subscriptions"
         beginSubscriptionRefreshStatus(
             title: operationTitle,
             itemTitle: selectedSubscriptions.first?.title ?? "",
-            detail: total > 0 ? "准备刷新 0/\(total)" : "准备刷新订阅列表",
+            detail: total > 0 ? "Preparing refresh 0/\(total)" : "Preparing subscription refresh",
             fraction: 0.02,
             state: .running
         )
@@ -90,7 +90,7 @@ extension JobController {
                 updateSubscriptionRefreshStatus(
                     title: operationTitle,
                     itemTitle: itemTitle,
-                    detail: total > 0 ? "正在刷新 1/\(total)" : "正在刷新订阅",
+                    detail: total > 0 ? "Refreshing 1/\(total)" : "Refreshing subscription",
                     fraction: 0.25,
                     state: .running
                 )
@@ -102,7 +102,7 @@ extension JobController {
             updateSubscriptionRefreshStatus(
                 title: operationTitle,
                 itemTitle: "",
-                detail: "同步订阅列表",
+                detail: "Sync subscription list",
                 fraction: 0.95,
                 state: .running
             )
@@ -111,7 +111,7 @@ extension JobController {
             updateSubscriptionRefreshStatus(
                 title: operationTitle,
                 itemTitle: "",
-                detail: total > 0 ? "已刷新 \(total)/\(total)，同步完成" : "同步完成",
+                detail: total > 0 ? "Refreshed \(total)/\(total); sync complete" : "Sync complete",
                 fraction: 1.0,
                 state: .success
             )
@@ -128,7 +128,7 @@ extension JobController {
             updateSubscriptionRefreshStatus(
                 title: operationTitle,
                 itemTitle: subscriptionRefreshTaskStatus?.itemTitle ?? "",
-                detail: "刷新失败：\(error.localizedDescription)",
+                detail: "Refresh failed: \(error.localizedDescription)",
                 fraction: max(subscriptionRefreshTaskStatus?.fraction ?? 0.10, 0.10),
                 state: .failure
             )
@@ -160,7 +160,7 @@ extension JobController {
             updateSubscriptionRefreshStatus(
                 title: title,
                 itemTitle: subscription.title,
-                detail: "正在刷新 \(completed + 1)/\(total)",
+                detail: "Refreshing \(completed + 1)/\(total)",
                 fraction: Double(completed) / Double(total),
                 state: .running
             )
@@ -171,7 +171,7 @@ extension JobController {
             updateSubscriptionRefreshStatus(
                 title: title,
                 itemTitle: subscription.title,
-                detail: "已刷新 \(completed + 1)/\(total)",
+                detail: "Refreshed \(completed + 1)/\(total)",
                 fraction: Double(completed + 1) / Double(total),
                 state: .running
             )

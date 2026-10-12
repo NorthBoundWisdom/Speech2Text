@@ -61,7 +61,7 @@ struct DetailPaneView: View {
         let stage = controller.stage.rawValue
         let progress = Int((min(1.0, max(0.0, controller.progressFraction)) * 100).rounded())
         sections.append("""
-        # 状态
+        # Status
 
         - Stage: \(stage)
         - Progress: \(progress)%
@@ -70,7 +70,7 @@ struct DetailPaneView: View {
 
         if let selectedFile = controller.selectedFile {
             sections.append("""
-            # 当前条目
+            # Current item
 
             - Audio: \(selectedFile.path)
             - Output: \(controller.snapshot.outputDirectory?.path ?? "None")
@@ -79,7 +79,7 @@ struct DetailPaneView: View {
 
         if !controller.persistentLogPath.isEmpty {
             sections.append("""
-            # 日志文件
+            # Log file
 
             \(controller.persistentLogPath)
             """)

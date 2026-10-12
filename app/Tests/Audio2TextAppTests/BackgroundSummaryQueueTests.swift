@@ -66,11 +66,11 @@ final class BackgroundSummaryQueueTests: XCTestCase {
         XCTAssertEqual(snapshot.overallFraction(currentFraction: 0.5), 0.5, accuracy: 0.001)
         XCTAssertEqual(
             snapshot.progressDetail(currentTitle: "A Long Episode Title", titleFormatter: { String($0.prefix(6)) }),
-            "云总结处理中 2/3：A Long"
+            "Generating cloud summary 2/3: A Long"
         )
         XCTAssertEqual(
             snapshot.progressDetail(currentTitle: "Done", currentItemCompleted: true),
-            "云总结完成 1/3：Done"
+            "Cloud summary completed 1/3: Done"
         )
     }
 

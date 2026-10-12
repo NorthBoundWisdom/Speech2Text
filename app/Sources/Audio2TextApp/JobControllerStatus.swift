@@ -60,7 +60,7 @@ extension JobController {
         }
         let detail = syncStatus.detail.trimmingCharacters(in: .whitespacesAndNewlines)
         return .syncing(
-            detail.isEmpty ? "资料正在同步。" : detail,
+            detail.isEmpty ? "Library changes are syncing." : detail,
             checkedAt: librarySyncStatus.checkedAt,
             progress: syncStatus.fraction
         )
@@ -105,7 +105,7 @@ extension JobController {
             kind: .sync,
             title: "Library",
             itemTitle: "",
-            detail: libraryRefreshMessage.isEmpty ? "刷新中" : libraryRefreshMessage,
+            detail: libraryRefreshMessage.isEmpty ? "Refreshing" : libraryRefreshMessage,
             fraction: isRefreshingLibrary ? 0.5 : 1.0,
             state: isRefreshingLibrary ? .running : .success
         )
@@ -139,19 +139,19 @@ extension JobController {
         let fraction: Double
         let state: ProcessingTaskState
         if stage == .transcribing, snapshot.runStatus != "running" {
-            detail = "本地转写中"
+            detail = "Transcribing locally"
             fraction = max(localFraction, 0.15)
             state = .running
         } else if snapshot.runStatus == "running", stage != .qa {
-            detail = snapshot.totalChunks > 0 ? "分块 \(snapshot.chunkProgress)" : "本地转写中"
+            detail = snapshot.totalChunks > 0 ? "Chunks \(snapshot.chunkProgress)" : "Transcribing locally"
             fraction = max(localFraction, 0.10)
             state = .running
         } else if stage == .qa {
-            detail = "QA 检查中"
+            detail = "Checking QA"
             fraction = max(localFraction, 0.86)
             state = .running
         } else if processContextActive, stage == .summarizing, snapshot.runStatus == "done" {
-            detail = snapshot.qaStatus == "fail" ? "转写完成，QA 待复查" : "转写完成"
+            detail = snapshot.qaStatus == "fail" ? "Transcription completed; review QA" : "Transcription completed"
             fraction = 1.0
             state = snapshot.qaStatus == "fail" ? .warning : .success
         } else {
@@ -160,7 +160,7 @@ extension JobController {
 
         return ProcessingTaskStatus(
             kind: .processing,
-            title: "处理",
+            title: "Process",
             itemTitle: currentProcessingItemTitle,
             detail: detail,
             fraction: fraction,
@@ -190,48 +190,48 @@ extension JobController {
         let state: ProcessingTaskState
         switch status {
         case "prepared":
-            detail = processContextActive ? "准备云端处理包" : "云端处理包已就绪"
+            detail = processContextActive ? "Preparing cloud processing package" : "Cloud processing package is ready"
             fraction = max(cloudFraction, 0.05)
             state = .queued
         case "running":
             if source.cloudStage == "chunk_summaries" {
-                detail = source.cloudTotalChunks > 0 ? "分块总结 \(source.cloudChunkProgress)" : "分块总结中"
+                detail = source.cloudTotalChunks > 0 ? "Chunk summaries \(source.cloudChunkProgress)" : "Summarizing chunks"
             } else if source.cloudStage == "episode_summary" {
-                detail = "整集总结中"
+                detail = "Summarizing episode"
             } else if source.cloudStage == "prepare" {
-                detail = "准备云端处理包"
+                detail = "Preparing cloud processing package"
             } else {
-                detail = "云总结处理中"
+                detail = "Generating cloud summary"
             }
             fraction = max(cloudFraction, prefersSummaryStageFloor ? 0.92 : 0.08)
             state = .running
         case "partial":
             guard processContextActive else { return nil }
             detail = source.cloudFailedChunks > 0
-                ? "云总结部分完成，失败 \(source.cloudFailedChunks)"
-                : "云总结部分完成"
+                ? "Cloud summary partially completed; \(source.cloudFailedChunks) failed"
+                : "Cloud summary partially completed"
             fraction = 1.0
             state = .warning
         case "complete":
             guard processContextActive else { return nil }
-            detail = "云总结完成"
+            detail = "Cloud summary completed"
             fraction = 1.0
             state = .success
         case "failed":
             guard processContextActive else { return nil }
-            detail = source.cloudMessage.isEmpty ? "云任务失败" : "云任务失败：\(source.cloudMessage)"
+            detail = source.cloudMessage.isEmpty ? "Cloud task failed" : "Cloud task failed: \(source.cloudMessage)"
             fraction = max(cloudFraction, 0.10)
             state = .failure
         default:
             guard processContextActive, allowsUnknownSummaryProgress else { return nil }
-            detail = "云总结处理中"
+            detail = "Generating cloud summary"
             fraction = max(cloudFraction, 0.92)
             state = .running
         }
 
         return ProcessingTaskStatus(
             kind: .cloud,
-            title: "云任务",
+            title: "Cloud task",
             itemTitle: itemTitle,
             detail: detail,
             fraction: fraction,

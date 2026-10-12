@@ -1,9 +1,11 @@
-# 品牌与兼容名称
+# Branding and compatible names
 
-产品统一名称为 **SonaFolio**，仓库为 **sonafolio**，公开入口为 [GitHub](https://github.com/NorthBoundWisdom/sonafolio) 与本官网。
+The product is **SonaFolio**, the repository is **sonafolio**, and the CLI remains `atot`.
+The [GitHub repository](https://github.com/NorthBoundWisdom/sonafolio) and this website are public entrypoints.
 
-CLI 保留 `atot`。旧名称仅在数据格式、凭据标识、构建模块与历史测量记录中保留，以便已有安装继续读写数据。无需迁移现有资料库或重装 Python 包。
+Old names survive only in data formats, credential identities, build modules, and historical evidence.
+Existing installations continue reading the same data without a migration or package rename.
 
-完整清单和维护规则见[仓库品牌说明](https://github.com/NorthBoundWisdom/sonafolio/blob/main/doc/BRANDING.md)。
-
-历史实验中的 Audio2Text / AtoT 均指本项目的早期名称，其结果对应记录日期。它们不是另一个产品，也不代表当前平台或后端的支持范围。
+See the [complete identifier policy](https://github.com/NorthBoundWisdom/sonafolio/blob/main/doc/BRANDING.md).
+Historical Audio2Text/AtoT references identify earlier versions of this project, not separate products
+or current platform/backend support promises.

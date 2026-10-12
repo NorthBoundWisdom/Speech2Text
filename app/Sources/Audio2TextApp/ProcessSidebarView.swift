@@ -82,8 +82,8 @@ struct ProcessSidebarView: View {
                 newGroupName = ""
             }
         }
-        .alert("重新处理？", isPresented: reprocessConfirmationBinding, presenting: pendingReprocessItem) { item in
-            Button("取消", role: .cancel) {
+        .alert("Reprocess?", isPresented: reprocessConfirmationBinding, presenting: pendingReprocessItem) { item in
+            Button("Cancel", role: .cancel) {
                 pendingReprocessItem = nil
             }
             Button(pendingReprocessWorkflow.actionTitle(reprocess: true, isCloudConfigured: controller.isCloudSummaryConfigured), role: .destructive) {
@@ -93,42 +93,42 @@ struct ProcessSidebarView: View {
                 pendingReprocessItem = nil
             }
         } message: { item in
-            let scope = pendingReprocessWorkflow == .localOnly ? "转写和 QA 结果" : "转写、QA 和摘要结果"
-            Text("这会清理并重新生成“\(item.title)”的\(scope)。")
+            let scope = pendingReprocessWorkflow == .localOnly ? "transcript and QA results" : "transcript, QA, and summary results"
+            Text("This clears and regenerates the \(scope) for \(item.title).")
         }
-        .alert("删除条目？", isPresented: deleteConfirmationBinding, presenting: pendingDeleteItem) { item in
-            Button("取消", role: .cancel) {
+        .alert("Delete item?", isPresented: deleteConfirmationBinding, presenting: pendingDeleteItem) { item in
+            Button("Cancel", role: .cancel) {
                 pendingDeleteItem = nil
             }
-            Button("删除", role: .destructive) {
+            Button("Delete", role: .destructive) {
                 controller.deleteLibraryItem(item)
                 pendingDeleteItem = nil
             }
         } message: { item in
-            Text("这会删除“\(item.title)”的缓存文件和输出结果；订阅来源的条目后续刷新不会重新出现。")
+            Text("This deletes cached files and outputs for \(item.title). Subscription items will not reappear after refresh.")
         }
-        .alert("删除所选条目？", isPresented: bulkDeleteConfirmationBinding) {
-            Button("取消", role: .cancel) {
+        .alert("Delete selected items?", isPresented: bulkDeleteConfirmationBinding) {
+            Button("Cancel", role: .cancel) {
                 pendingBulkDeleteItems = []
             }
-            Button("删除 \(pendingBulkDeleteItems.count) 个", role: .destructive) {
+            Button("Delete \(pendingBulkDeleteItems.count) items", role: .destructive) {
                 controller.deleteLibraryItems(pendingBulkDeleteItems)
                 clearItemSelection()
                 pendingBulkDeleteItems = []
             }
         } message: {
-            Text("这会删除所选条目的缓存文件和输出结果；订阅来源的条目后续刷新不会重新出现。")
+            Text("This deletes the selected items' cached files and outputs. Subscription items will not reappear after refresh.")
         }
-        .alert("删除分组？", isPresented: deleteGroupConfirmationBinding, presenting: pendingDeleteGroupName) { groupName in
-            Button("取消", role: .cancel) {
+        .alert("Delete group?", isPresented: deleteGroupConfirmationBinding, presenting: pendingDeleteGroupName) { groupName in
+            Button("Cancel", role: .cancel) {
                 pendingDeleteGroupName = nil
             }
-            Button("删除分组", role: .destructive) {
+            Button("Delete group", role: .destructive) {
                 controller.deleteGroup(groupName)
                 pendingDeleteGroupName = nil
             }
         } message: { groupName in
-            Text("这只会删除“\(groupName)”分组标签；该分组下的内容会移动回 \(ProcessLibrary.defaultGroupName)，不会删除节目或文件。")
+            Text("This removes the \(groupName) label and moves its items to \(ProcessLibrary.defaultGroupName). Episodes and files are preserved.")
         }
         .sheet(item: $presentedProcessingReport) { report in
             ProcessingReportDialog(report: report)

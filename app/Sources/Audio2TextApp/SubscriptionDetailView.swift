@@ -80,18 +80,18 @@ struct SubscriptionDetailView: View, Equatable {
                 details: ProcessLibrary.channelEpisodeDetails(for: item)
             )
         }
-        .alert("删除所选条目？", isPresented: deleteConfirmationBinding) {
-            Button("取消", role: .cancel) {
+        .alert("Delete selected items?", isPresented: deleteConfirmationBinding) {
+            Button("Cancel", role: .cancel) {
                 pendingDeleteItems = []
             }
-            Button("删除 \(pendingDeleteItems.count) 个", role: .destructive) {
+            Button("Delete \(pendingDeleteItems.count) items", role: .destructive) {
                 let items = pendingDeleteItems
                 controller.deleteLibraryItems(items)
                 clearEpisodeSelection()
                 pendingDeleteItems = []
             }
         } message: {
-            Text("这会删除所选条目的缓存文件和输出结果；订阅来源的条目后续刷新不会重新出现。")
+            Text("This deletes the selected items' cached files and outputs. Subscription items will not reappear after refresh.")
         }
         .onChange(of: state.snapshot?.subscription.id) { _ in
             clearEpisodeSelection()
@@ -139,7 +139,7 @@ struct SubscriptionDetailView: View, Equatable {
                     }
                 }
                 subscriptionActionButton(
-                    tooltip: "抓取历史全部",
+                    tooltip: "Fetch complete history",
                     disabled: state.isRefreshingSubscriptions || state.isAddingSubscription
                 ) {
                     controller.fetchSubscriptionHistory(subscription)
@@ -473,7 +473,7 @@ private struct SubscriptionStaticDetailContent: View, Equatable {
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
             } else if episodes.isEmpty {
-                Label("没有符合过滤条件的节目。", systemImage: "line.3.horizontal.decrease.circle")
+                Label("No episodes match the filters.", systemImage: "line.3.horizontal.decrease.circle")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .padding(.vertical, 10)
@@ -633,12 +633,12 @@ enum SubscriptionEpisodeTimeFilter: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .all: return "全部时间"
-        case .today: return "今天"
-        case .last7Days: return "最近 7 天"
-        case .last30Days: return "最近 30 天"
-        case .last90Days: return "最近 90 天"
-        case .thisYear: return "今年"
+        case .all: return "All time"
+        case .today: return "Today"
+        case .last7Days: return "Last 7 days"
+        case .last30Days: return "Last 30 days"
+        case .last90Days: return "Last 90 days"
+        case .thisYear: return "This year"
         }
     }
 
@@ -697,7 +697,7 @@ private struct SubscriptionEpisodeFilterBar: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Toggle("只看未处理", isOn: onlyUnprocessedBinding)
+            Toggle("Unprocessed only", isOn: onlyUnprocessedBinding)
                 .toggleStyle(.checkbox)
                 .fixedSize(horizontal: true, vertical: false)
 
@@ -730,12 +730,12 @@ private struct SubscriptionEpisodeFilterBar: View {
                 Button {
                     selectFrontVisibleSelection(limit)
                 } label: {
-                    Label("前 \(limit)", systemImage: "list.number")
+                    Label("First \(limit)", systemImage: "list.number")
                         .lineLimit(1)
                 }
                 .buttonStyle(SubscriptionControlButtonStyle())
                 .disabled(filterState.filteredCount == 0)
-                .accessibilityLabel("选择前 \(limit) 个")
+                .accessibilityLabel("Select first \(limit) items")
             }
 
             Text("\(filterState.filteredCount) / \(filterState.totalCount)")
@@ -755,7 +755,7 @@ private struct SubscriptionEpisodeFilterBar: View {
     }
 
     private var selectAllTitle: String {
-        isAllVisibleSelected ? "取消全选" : "全选"
+        isAllVisibleSelected ? "Deselect all" : "Select all"
     }
 
     private var onlyUnprocessedBinding: Binding<Bool> {
@@ -841,7 +841,7 @@ private struct SubscriptionBulkActionBar: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text("已选 \(actionState.selectedCount)")
+            Text("Selected \(actionState.selectedCount)")
                 .font(.callout.weight(.semibold))
                 .lineLimit(1)
 
@@ -852,7 +852,7 @@ private struct SubscriptionBulkActionBar: View {
                     processSelection(.transcribeAndSummarize)
                 } label: {
                     Label(
-                        "\(ProcessingWorkflow.transcribeAndSummarize.actionTitle(isCloudConfigured: actionState.isCloudSummaryConfigured)) \(actionState.transcribeAndSummarizeCount) 个",
+                        "\(ProcessingWorkflow.transcribeAndSummarize.actionTitle(isCloudConfigured: actionState.isCloudSummaryConfigured)): \(actionState.transcribeAndSummarizeCount) items",
                         systemImage: "play.fill"
                     )
                 }
@@ -861,11 +861,11 @@ private struct SubscriptionBulkActionBar: View {
                 Button {
                     processSelection(.localOnly)
                 } label: {
-                    Label("仅本地转写 \(actionState.localOnlyCount) 个", systemImage: "waveform")
+                    Label("Transcribe \(actionState.localOnlyCount) items locally", systemImage: "waveform")
                 }
                 .disabled(actionState.isProcessing || actionState.localOnlyCount == 0)
             } label: {
-                SubscriptionMenuLabel(title: "处理 \(actionState.unprocessedCount) 个", systemImage: "play.fill")
+                SubscriptionMenuLabel(title: "Process \(actionState.unprocessedCount) items", systemImage: "play.fill")
             }
             .disabled(actionState.isProcessing || !actionState.canProcessAny)
             .menuStyle(.button)
@@ -875,7 +875,7 @@ private struct SubscriptionBulkActionBar: View {
             Button {
                 archiveSelection()
             } label: {
-                Label("归档 \(actionState.selectedCount) 个", systemImage: "archivebox")
+                Label("Archive \(actionState.selectedCount) items", systemImage: "archivebox")
                     .lineLimit(1)
             }
             .buttonStyle(SubscriptionControlButtonStyle())
@@ -884,7 +884,7 @@ private struct SubscriptionBulkActionBar: View {
             Button(role: .destructive) {
                 deleteSelection()
             } label: {
-                Label("删除 \(actionState.selectedCount) 个", systemImage: "trash")
+                Label("Delete \(actionState.selectedCount) items", systemImage: "trash")
                     .lineLimit(1)
             }
             .buttonStyle(SubscriptionControlButtonStyle(variant: .destructive))
@@ -893,11 +893,11 @@ private struct SubscriptionBulkActionBar: View {
             Button {
                 clearSelection()
             } label: {
-                Label("全部取消选择", systemImage: "xmark.circle")
+                Label("Deselect all items", systemImage: "xmark.circle")
                     .lineLimit(1)
             }
             .buttonStyle(SubscriptionControlButtonStyle())
-            .accessibilityLabel("全部取消选择")
+            .accessibilityLabel("Deselect all items")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
@@ -959,7 +959,7 @@ struct SubscriptionEpisodeDisplayItem: Identifiable, Equatable {
         let originalTitle = item.originalTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let title = item.title.trimmingCharacters(in: .whitespacesAndNewlines)
         if !originalTitle.isEmpty && originalTitle != title {
-            return "原名：\(originalTitle)"
+            return "Original title: \(originalTitle)"
         }
         return item.status
     }
@@ -992,7 +992,7 @@ private struct SubscriptionEpisodeRow: View, Equatable {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(isSelected ? "取消选择 \(episode.title)" : "选择 \(episode.title)")
+            .accessibilityLabel(isSelected ? "Deselect \(episode.title)" : "Select \(episode.title)")
 
             Button {
                 open(episode.item)
