@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.24)
 set(AUDIO2TEXTQT_RELEASE_VERSION "0.1.0" CACHE STRING "Numeric release version")
 project(Audio2TextQt
     VERSION ${AUDIO2TEXTQT_RELEASE_VERSION}
-    DESCRIPTION "Audio2Text Qt/QML client"
+    DESCRIPTION "SonaFolio Qt/QML client"
     LANGUAGES CXX
 )
 
@@ -116,7 +116,7 @@ if(WIN32)
             "${AUDIO2TEXTQT_QT_PREFIX_DIR}/plugins/platforms/qoffscreen.dll"
             "${AUDIO2TEXTQT_QT_PREFIX_DIR}/plugins/platforms/qminimal.dll"
             "$<TARGET_FILE_DIR:Audio2TextQt>/platforms"
-        COMMENT "Deploying Qt runtime for Audio2TextQt"
+        COMMENT "Deploying Qt runtime for SonaFolio Qt"
         VERBATIM
     )
 elseif(APPLE)

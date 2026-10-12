@@ -24,7 +24,7 @@
       {
         "id": "mac-qt-client",
         "label": "Mac Qt Client",
-        "description": "Configure the Audio2TextQt macOS CMake build",
+        "description": "Configure the SonaFolio Qt macOS CMake build",
         "command": "python3",
         "args": [
           "configs/qt_workflow.py",
@@ -45,7 +45,7 @@
       {
         "id": "win-qt-client",
         "label": "Windows Qt Client",
-        "description": "Configure the Audio2TextQt Windows CMake build",
+        "description": "Configure the SonaFolio Qt Windows CMake build",
         "command": "python",
         "args": [
           "configs/qt_workflow.py",
@@ -107,7 +107,7 @@
       {
         "id": "mac-qt-client",
         "label": "Mac Qt Client",
-        "description": "Build the Audio2TextQt macOS client",
+        "description": "Build the SonaFolio Qt macOS client",
         "command": "python3",
         "args": [
           "configs/qt_workflow.py",
@@ -122,7 +122,7 @@
       {
         "id": "win-qt-client",
         "label": "Windows Qt Client",
-        "description": "Build the Audio2TextQt Windows client",
+        "description": "Build the SonaFolio Qt Windows client",
         "command": "python",
         "args": [
           "configs/qt_workflow.py",
@@ -169,7 +169,7 @@
       {
         "id": "mac-qt-client-smoke",
         "label": "Mac Qt Client Smoke",
-        "description": "Build Audio2TextQt and run the offscreen QML smoke check",
+        "description": "Build SonaFolio Qt and run the offscreen QML smoke check",
         "command": "python3",
         "args": [
           "configs/qt_workflow.py",
@@ -184,7 +184,7 @@
       {
         "id": "win-qt-client-smoke",
         "label": "Windows Qt Client Smoke",
-        "description": "Build Audio2TextQt and run the offscreen QML smoke check",
+        "description": "Build SonaFolio Qt and run the offscreen QML smoke check",
         "command": "python",
         "args": [
           "configs/qt_workflow.py",
@@ -218,7 +218,7 @@
       {
         "id": "mac-qt-client",
         "label": "Mac Qt Client",
-        "description": "Build and run the Audio2TextQt macOS client in the current terminal",
+        "description": "Build and run the SonaFolio Qt macOS client in the current terminal",
         "command": "python3",
         "args": [
           "configs/qt_workflow.py",
@@ -233,7 +233,7 @@
       {
         "id": "win-qt-client",
         "label": "Windows Qt Client",
-        "description": "Build and run the Audio2TextQt Windows client in the current terminal",
+        "description": "Build and run the SonaFolio Qt Windows client in the current terminal",
         "steps": [
           {
             "command": "python",
@@ -305,7 +305,7 @@
       {
         "id": "win-qt-client-zip",
         "label": "Windows Qt Client ZIP",
-        "description": "Build and package the Audio2TextQt Windows client into build/package/SonaFolioQt_v<version>_Windows.zip",
+        "description": "Build and package the SonaFolio Qt Windows client into build/package/SonaFolioQt_v<version>_Windows.zip",
         "command": "python",
         "args": [
           "configs/qt_workflow.py",
@@ -320,7 +320,7 @@
       {
         "id": "mac-qt-client-zip",
         "label": "Mac Qt Client ZIP",
-        "description": "Build and package the Audio2TextQt macOS client into build/package/SonaFolioQt_v<version>_macOS.zip",
+        "description": "Build and package the SonaFolio Qt macOS client into build/package/SonaFolioQt_v<version>_macOS.zip",
         "command": "python3",
         "args": [
           "configs/qt_workflow.py",
@@ -335,7 +335,7 @@
       {
         "id": "win-qt-client-runtime-zip",
         "label": "Windows Qt Client Runtime ZIP",
-        "description": "Build and package the Audio2TextQt Windows client with bundled Python runtime into build/package/SonaFolioQt_v<version>_Windows_Runtime.zip",
+        "description": "Build and package the SonaFolio Qt Windows client with bundled Python runtime into build/package/SonaFolioQt_v<version>_Windows_Runtime.zip",
         "command": "python",
         "args": [
           "configs/qt_workflow.py",
