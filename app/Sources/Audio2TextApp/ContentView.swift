@@ -7,7 +7,8 @@ struct ContentView: View {
     @AppStorage(LibrarySplitViewController.listCollapsedKey) private var listCollapsed = false
 
     var body: some View {
-        MacLibraryWorkspace(sourceCollapsed: $sourceCollapsed, listCollapsed: $listCollapsed) {
+        MacLibraryWorkspace(sourceCollapsed: $sourceCollapsed, listCollapsed: $listCollapsed,
+                            statusContent: AnyView(ProcessSidebarView(store: store, layoutMode: .statusOnly).frame(width: 360, height: 440))) {
             sourceColumn
         } listColumn: {
             listColumn

@@ -11,6 +11,7 @@ Pane {
 
     signal importRequested()
     signal settingsRequested()
+    signal logsRequested()
 
     function sourceById(sourceId) {
         for (var i = 0; i < libraryController.sources.length; ++i) {
@@ -89,6 +90,32 @@ Pane {
                 onClicked: root.settingsRequested()
                 Layout.preferredWidth: 32
                 Layout.preferredHeight: 28
+            }
+        }
+
+        ScrollView {
+            id: statusArea
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            Layout.bottomMargin: 10
+            Layout.preferredHeight: Math.min(sourceStatus.implicitHeight, Math.max(120, root.height * 0.45))
+            contentWidth: availableWidth
+            clip: true
+            ApplicationStatusPanel {
+                id: sourceStatus
+                width: statusArea.availableWidth
+                running: jobController.running
+                stage: jobController.stage
+                errorText: jobController.lastError
+                queuedCount: jobController.queuedJobCount
+                libraryMessage: libraryController.statusMessage
+                textColor: themeController.text
+                mutedColor: themeController.muted
+                errorColor: themeController.danger
+                accentColor: themeController.accent
+                surfaceColor: themeController.panelAlt
+                onLogsRequested: root.logsRequested()
             }
         }
 

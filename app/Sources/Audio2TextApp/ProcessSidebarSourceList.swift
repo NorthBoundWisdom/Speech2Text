@@ -97,9 +97,6 @@ extension ProcessSidebarView {
             HStack(spacing: 8) {
                 sidebarHeader("Folders")
                 Spacer()
-                LibrarySyncStatusBadge(status: controller.displayedLibrarySyncStatus) {
-                    controller.refreshLibrarySyncStatus()
-                }
                 Button {
                     store.isNewGroupPanelPresented = true
                 } label: {

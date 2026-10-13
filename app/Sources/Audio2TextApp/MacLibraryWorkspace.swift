@@ -5,6 +5,7 @@ struct MacLibraryWorkspace<SourceColumn: View, ListColumn: View, DetailColumn: V
     @Binding var sourceCollapsed: Bool
     @Binding var listCollapsed: Bool
     var preferences: UserDefaults = .standard
+    var statusContent: AnyView? = nil
     @ViewBuilder let sourceColumn: () -> SourceColumn
     @ViewBuilder let listColumn: () -> ListColumn
     @ViewBuilder let detailColumn: () -> DetailColumn
@@ -18,6 +19,7 @@ struct MacLibraryWorkspace<SourceColumn: View, ListColumn: View, DetailColumn: V
             source: AnyView(sourceColumn()), list: AnyView(listColumn()), detail: AnyView(detailColumn()),
             preferences: preferences
         )
+        controller.statusContent = statusContent
         let coordinator = context.coordinator
         controller.onLayoutChange = { [weak coordinator, weak controller] in
             guard let controller else { return }
@@ -28,6 +30,7 @@ struct MacLibraryWorkspace<SourceColumn: View, ListColumn: View, DetailColumn: V
     }
 
     func updateNSViewController(_ controller: LibrarySplitViewController, context: Context) {
+        controller.statusContent = statusContent
         context.coordinator.sourceCollapsed = $sourceCollapsed
         context.coordinator.listCollapsed = $listCollapsed
         controller.updateContent(source: AnyView(sourceColumn()), list: AnyView(listColumn()), detail: AnyView(detailColumn()))
@@ -73,6 +76,9 @@ final class LibrarySplitViewController: NSSplitViewController {
     let sourceHost: NSHostingController<AnyView>
     let listHost: NSHostingController<AnyView>
     let detailHost: NSHostingController<AnyView>
+    var statusContent: AnyView? {
+        didSet { windowToolbar?.updateStatusContent() }
+    }
     var onLayoutChange: (() -> Void)?
     private let preferences: UserDefaults
     private var resizeObserver: NSObjectProtocol?

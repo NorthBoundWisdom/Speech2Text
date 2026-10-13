@@ -58,3 +58,11 @@ Use item/context actions for favorites, groups, and read/archive state. Read is 
 Actions depend on selection, media, and readiness. Check prerequisites when disabled.
 
 [Import →](import.md) · [Settings →](settings.md)
+
+## Upper-left application status
+
+Processing, cloud tasks, subscription refresh, library synchronization, and cloud connection notices share the upper-left status area. Folders retains group actions only. Sync titles wrap independently instead of competing with folder buttons. Concurrent states remain visible; longer status lists can scroll.
+
+After Sources is collapsed, the native titlebar info button or Qt's **Status** toolbar action still opens the full panel. Refresh, stop-remaining-task, and result actions remain available. Qt logs open on request from the panel rather than occupying a permanent bottom status bar.
+
+The screenshot on this page comes from an earlier source build; its Folders sync badge is not the latest placement.

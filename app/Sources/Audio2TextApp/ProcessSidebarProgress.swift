@@ -4,45 +4,46 @@ import SwiftUI
 #endif
 
 extension ProcessSidebarView {
-    @ViewBuilder
     var processingProgressHeader: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            processingActivityHeader
+            LibrarySyncStatusCard(status: controller.displayedLibrarySyncStatus,
+                                  showsFullDetails: layoutMode == .statusOnly) {
+                controller.refreshLibrarySyncStatus()
+            }
+            .padding(.trailing, 12)
+            .padding(.bottom, 8)
+
+            if let report = controller.processingReport,
+               !controller.sidebarModelProgressStatuses.contains(where: { $0.kind == .processing }) {
+                processingResultStrip(report)
+            }
+            if let status = store.cloudStartupStatus {
+                progressStrip(title: status.title, detail: status.detail,
+                              fraction: status.fraction, state: status.state)
+            } else if let detail = cloudAPIKeyWarningDetail {
+                progressStrip(title: cloudAPIKeyWarningTitle, detail: detail,
+                              fraction: 1, state: .warning)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Application status")
+        .accessibilityIdentifier("application.status.panel")
+    }
+
+    @ViewBuilder
+    private var processingActivityHeader: some View {
         if !controller.sidebarModelProgressStatuses.isEmpty {
             modelProgressPanel
         } else if let batchProgress = controller.batchProgress {
-            VStack(alignment: .leading, spacing: 8) {
-                progressStrip(
-                    title: "\(batchProgress.title) \(min(batchProgress.completed + 1, batchProgress.total))/\(batchProgress.total)",
-                    detail: batchProgress.currentTitle,
-                    fraction: batchProgress.fraction,
-                    showsStopButton: true
-                )
-            }
-        } else if controller.hasActiveSidebarModelProgress {
-            modelProgressPanel
+            progressStrip(
+                title: "\(batchProgress.title) \(min(batchProgress.completed + 1, batchProgress.total))/\(batchProgress.total)",
+                detail: batchProgress.currentTitle, fraction: batchProgress.fraction,
+                showsStopButton: true
+            )
         } else if controller.stage.isRunning {
-            progressStrip(
-                title: controller.stage.title,
-                detail: controller.message,
-                fraction: controller.progressFraction
-            )
-        } else if let report = controller.processingReport {
-            processingResultStrip(report)
-        } else if !controller.sidebarModelProgressStatuses.isEmpty {
-            modelProgressPanel
-        } else if let status = store.cloudStartupStatus {
-            progressStrip(
-                title: status.title,
-                detail: status.detail,
-                fraction: status.fraction,
-                state: status.state
-            )
-        } else if let detail = cloudAPIKeyWarningDetail {
-            progressStrip(
-                title: cloudAPIKeyWarningTitle,
-                detail: detail,
-                fraction: 1.0,
-                state: .warning
-            )
+            progressStrip(title: controller.stage.title, detail: controller.message,
+                          fraction: controller.progressFraction)
         }
     }
 
@@ -64,7 +65,7 @@ extension ProcessSidebarView {
     }
 
     var modelProgressPanel: some View {
-        let statuses = controller.sidebarModelProgressStatuses
+        let statuses = controller.sidebarModelProgressStatuses.filter { $0.kind != .sync }
         return Group {
             if !statuses.isEmpty {
                 VStack(alignment: .leading, spacing: 0) {
@@ -108,7 +109,7 @@ extension ProcessSidebarView {
                     .frame(width: 14, height: 14)
                 Text(report.title)
                     .font(.system(size: 12, weight: .semibold))
-                    .lineLimit(1)
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 8)
                 Button {
                     presentedProcessingReport = report
@@ -248,7 +249,7 @@ extension ProcessSidebarView {
                 taskStateIndicator(state)
                 Text(title)
                     .font(.system(size: 12, weight: .semibold))
-                    .lineLimit(1)
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 8)
                 if state.isActive {
                     Text("\(Int((boundedFraction * 100).rounded()))%")
@@ -294,8 +295,9 @@ extension ProcessSidebarView {
                 Text(detail)
                     .font(.system(size: 11, weight: .regular))
                     .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
+                    .lineLimit(layoutMode == .statusOnly ? nil : 2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .help(detail)
             }
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {

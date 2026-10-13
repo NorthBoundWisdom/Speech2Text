@@ -7,6 +7,7 @@ enum ProcessSidebarLayoutMode {
     case combined
     case sourcesOnly
     case itemsOnly
+    case statusOnly
 }
 
 struct ProcessSidebarView: View {
@@ -31,6 +32,7 @@ struct ProcessSidebarView: View {
     @State var renamingGroupName = ""
     @State var newGroupName = ""
     @State var presentedProcessingReport: ProcessingReport?
+    @State private var statusContentHeight: CGFloat = 96
 
     var controller: JobController {
         store.job
@@ -50,17 +52,34 @@ struct ProcessSidebarView: View {
         static let headerFontSize: CGFloat = 12
     }
 
+    private var boundedStatusPanel: some View {
+        ScrollView {
+            processingProgressHeader
+                .background(GeometryReader { geometry in
+                    Color.clear.preference(key: StatusContentHeightKey.self, value: geometry.size.height)
+                })
+        }
+        .frame(height: min(statusContentHeight, 260))
+        .onPreferenceChange(StatusContentHeightKey.self) { height in
+            if abs(statusContentHeight - height) > 0.5 { statusContentHeight = height }
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             switch layoutMode {
             case .combined:
-                processingProgressHeader
+                boundedStatusPanel
                 processList
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .sourcesOnly:
-                processingProgressHeader
+                boundedStatusPanel
                 sourceList
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case .statusOnly:
+                ScrollView {
+                    processingProgressHeader
+                }
             case .itemsOnly:
                 itemList
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -135,4 +154,10 @@ struct ProcessSidebarView: View {
                 .frame(width: 640, height: 520)
         }
     }
+}
+
+
+private struct StatusContentHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 96
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
 }

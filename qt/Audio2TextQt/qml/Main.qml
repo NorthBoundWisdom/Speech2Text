@@ -26,7 +26,6 @@ ApplicationWindow {
         placeholderText: themeController.muted
     }
 
-    property bool logExpanded: false
 
     ColumnLayout {
         anchors.fill: parent
@@ -54,6 +53,13 @@ ApplicationWindow {
                     ToolTip.text: Accessible.name
                     onClicked: workspace.toggleList()
                 }
+                ToolButton {
+                    text: "Status"
+                    Accessible.name: "Application Status"
+                    ToolTip.visible: hovered
+                    ToolTip.text: "View processing and library status"
+                    onClicked: statusPopup.open()
+                }
                 Item { Layout.fillWidth: true }
             }
         }
@@ -75,18 +81,55 @@ ApplicationWindow {
                 SourceColumn {
                     onImportRequested: importDialog.open()
                     onSettingsRequested: settingsDialog.open()
+                    onLogsRequested: logDialog.open()
                 }
             }
             listContent: Component { ItemListColumn {} }
             detailContent: Component { DetailPane {} }
         }
+    }
 
-        JobLogPane {
-            Layout.fillWidth: true
-            Layout.preferredHeight: root.logExpanded || jobController.running || jobController.lastError.length > 0 ? 190 : 34
-            expanded: root.logExpanded || jobController.running || jobController.lastError.length > 0
-            onToggleRequested: root.logExpanded = !root.logExpanded
+    Popup {
+        id: statusPopup
+        parent: root.contentItem
+        x: 10
+        y: 42
+        width: 360
+        height: Math.min(440, statusDetails.implicitHeight + topPadding + bottomPadding)
+        modal: false
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        ScrollView {
+            id: statusScroll
+            anchors.fill: parent
+            contentWidth: availableWidth
+            ApplicationStatusPanel {
+                id: statusDetails
+                width: statusScroll.availableWidth
+                running: jobController.running
+                stage: jobController.stage
+                errorText: jobController.lastError
+                queuedCount: jobController.queuedJobCount
+                libraryMessage: libraryController.statusMessage
+                textColor: themeController.text
+                mutedColor: themeController.muted
+                errorColor: themeController.danger
+                surfaceColor: themeController.panelAlt
+                onLogsRequested: { statusPopup.close(); logDialog.open() }
+            }
         }
+    }
+
+    Dialog {
+        id: logDialog
+        title: "Task log"
+        modal: false
+        parent: root.contentItem
+        x: 10
+        y: 42
+        width: Math.min(760, root.width - 20)
+        height: Math.min(480, root.height - 60)
+        standardButtons: Dialog.Close
+        JobLogPane { anchors.fill: parent; expanded: true }
     }
 
     Settings {

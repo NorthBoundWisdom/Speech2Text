@@ -7,7 +7,6 @@ Pane {
     padding: 0
 
     property bool expanded: false
-    signal toggleRequested()
 
     background: Rectangle {
         color: themeController.panelAlt
@@ -25,28 +24,15 @@ Pane {
             Layout.rightMargin: 10
 
             Label {
-                text: jobController.running ? jobController.stage + "..." : jobController.stage
-                color: jobController.lastError ? themeController.danger : themeController.text
+                text: "Task log"
+                color: themeController.text
                 font.weight: Font.DemiBold
-            }
-            Label {
-                text: jobController.queuedJobCount > 0 ? jobController.queuedJobCount + " queued" : ""
-                color: themeController.muted
-            }
-            Label {
-                text: jobController.lastError
-                color: themeController.danger
-                elide: Text.ElideRight
                 Layout.fillWidth: true
             }
             Button {
                 text: "Clear"
                 visible: root.expanded
                 onClicked: jobController.clearLog()
-            }
-            Button {
-                text: root.expanded ? "Collapse" : "Expand"
-                onClicked: root.toggleRequested()
             }
         }
 

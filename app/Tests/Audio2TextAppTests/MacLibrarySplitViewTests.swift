@@ -42,6 +42,25 @@ final class MacLibrarySplitViewTests: XCTestCase {
     }
 
     @MainActor
+    func testStatusEntryRemainsInTheLeadingToolbarWhenBothColumnsAreCollapsed() throws {
+        let fixture = try WorkspaceFixture(usesTitlebar: true)
+        defer { fixture.close() }
+        fixture.controller.statusContent = AnyView(Text("Application status").frame(width: 360, height: 440))
+        let owner = LibraryWindowToolbar(controller: fixture.controller)
+        owner.install(on: fixture.window)
+        owner.toggleSources(nil)
+        owner.toggleList(nil)
+        fixture.settle()
+        let item = try XCTUnwrap(owner.toolbar.items.first { $0.itemIdentifier == LibraryWindowToolbar.statusIdentifier })
+        let button = try XCTUnwrap(item.view as? NSButton)
+        XCTAssertEqual(button.accessibilityLabel(), "Application Status")
+        XCTAssertTrue(button.isEnabled)
+        XCTAssertNotNil(button.action)
+        XCTAssertTrue(fixture.controller.splitViewItems[0].isCollapsed)
+        XCTAssertTrue(fixture.controller.splitViewItems[1].isCollapsed)
+    }
+
+    @MainActor
     func testSwiftUIBridgeFillsTheWindowInsteadOfUsingItsIntrinsicMinimum() throws {
         let fixture = try WorkspaceFixture()
         defer { fixture.close() }

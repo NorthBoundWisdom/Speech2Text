@@ -59,6 +59,7 @@ qt_add_qml_module(Audio2TextQt
         qml/Main.qml
         qml/DesktopWorkspace.qml
         qml/SourceColumn.qml
+        qml/ApplicationStatusPanel.qml
         qml/ItemListColumn.qml
         qml/DetailPane.qml
         qml/MarkdownView.qml

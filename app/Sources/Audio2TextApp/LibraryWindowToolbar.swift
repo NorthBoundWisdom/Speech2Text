@@ -1,11 +1,15 @@
 import AppKit
+import SwiftUI
 
 @MainActor
 final class LibraryWindowToolbar: NSObject, NSToolbarDelegate {
     static let columnsIdentifier = NSToolbarItem.Identifier("SonaFolio.LibraryColumns")
+    static let statusIdentifier = NSToolbarItem.Identifier("SonaFolio.ApplicationStatus")
     static let titleIdentifier = NSToolbarItem.Identifier("SonaFolio.LibraryTitle")
     private weak var controller: LibrarySplitViewController?
     let toolbar = NSToolbar(identifier: "SonaFolio.LibraryWindow")
+    private let statusPopover = NSPopover()
+    private var statusHost: NSHostingController<AnyView>?
     private let columns = NSToolbarItemGroup(itemIdentifier: columnsIdentifier)
 
     init(controller: LibrarySplitViewController) {
@@ -28,6 +32,27 @@ final class LibraryWindowToolbar: NSObject, NSToolbarDelegate {
         list.action = #selector(toggleList(_:))
         columns.subitems = [sources, list]
         updateState()
+    }
+
+    func updateStatusContent() {
+        guard let content = controller?.statusContent else { return }
+        if let statusHost {
+            statusHost.rootView = content
+        } else {
+            let host = NSHostingController(rootView: content)
+            statusHost = host
+            statusPopover.contentViewController = host
+            statusPopover.behavior = .transient
+            statusPopover.contentSize = NSSize(width: 360, height: 440)
+        }
+    }
+
+    @objc func showStatus(_ sender: Any?) {
+        updateStatusContent()
+        guard let item = toolbar.items.first(where: { $0.itemIdentifier == Self.statusIdentifier }),
+              let anchor = item.view else { return }
+        if statusPopover.isShown { statusPopover.performClose(sender) }
+        else { statusPopover.show(relativeTo: anchor.bounds, of: anchor, preferredEdge: .minY) }
     }
 
     func install(on window: NSWindow) {
@@ -61,7 +86,7 @@ final class LibraryWindowToolbar: NSObject, NSToolbarDelegate {
     }
 
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-        [Self.columnsIdentifier, Self.titleIdentifier, .flexibleSpace]
+        [Self.columnsIdentifier, Self.titleIdentifier] + (controller?.statusContent == nil ? [] : [Self.statusIdentifier]) + [.flexibleSpace]
     }
 
     func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
@@ -70,6 +95,18 @@ final class LibraryWindowToolbar: NSObject, NSToolbarDelegate {
 
     func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier identifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
         if identifier == Self.columnsIdentifier { return columns }
+        if identifier == Self.statusIdentifier {
+            let item = NSToolbarItem(itemIdentifier: identifier)
+            item.label = "Application Status"
+            item.toolTip = "View processing, sync, and cloud status"
+            let button = NSButton(title: "Status", target: self, action: #selector(showStatus(_:)))
+            button.image = NSImage(systemSymbolName: "info.circle", accessibilityDescription: "Application Status")
+            button.imagePosition = .imageOnly
+            button.bezelStyle = .texturedRounded
+            button.setAccessibilityLabel("Application Status")
+            item.view = button
+            return item
+        }
         if identifier == Self.titleIdentifier {
             let item = NSToolbarItem(itemIdentifier: identifier)
             item.label = "SonaFolio"
