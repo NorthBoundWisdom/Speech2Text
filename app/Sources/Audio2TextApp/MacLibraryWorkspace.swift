@@ -76,6 +76,7 @@ final class LibrarySplitViewController: NSSplitViewController {
     var onLayoutChange: (() -> Void)?
     private let preferences: UserDefaults
     private var resizeObserver: NSObjectProtocol?
+    private var windowToolbar: LibraryWindowToolbar?
     private var collapseObservers: [NSKeyValueObservation] = []
     private var hasPlacedColumns = false
     private var isApplyingLayout = false
@@ -121,6 +122,14 @@ final class LibrarySplitViewController: NSSplitViewController {
         resizeObserver = NotificationCenter.default.addObserver(
             forName: NSSplitView.didResizeSubviewsNotification, object: splitView, queue: .main
         ) { [weak self] _ in self?.recordLayout() }
+    }
+
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        guard let window = view.window else { return }
+        let toolbar = windowToolbar ?? LibraryWindowToolbar(controller: self)
+        windowToolbar = toolbar
+        toolbar.install(on: window)
     }
 
     override func viewDidLayout() {
@@ -197,6 +206,7 @@ final class LibrarySplitViewController: NSSplitViewController {
         }
         preferences.set(splitViewItems[0].isCollapsed, forKey: Self.sourceCollapsedKey)
         preferences.set(splitViewItems[1].isCollapsed, forKey: Self.listCollapsedKey)
+        windowToolbar?.updateState()
         onLayoutChange?()
     }
 

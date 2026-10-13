@@ -61,6 +61,7 @@ struct Audio2TextApp: App {
                 }
         }
         .windowStyle(.titleBar)
+        .windowToolbarStyle(.unifiedCompact)
         .commands {
             Audio2TextCommands(store: store)
         }

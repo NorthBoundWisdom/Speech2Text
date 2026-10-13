@@ -78,7 +78,8 @@ appropriate certificate and notarytool profile.
 ## Desktop columns
 
 The macOS workspace follows NetNewsWire's native sidebar/content-list/reader layout. Drag the two
-vertical dividers to resize Sources and Episode List. Toolbar buttons and the View menu independently
+vertical dividers to resize Sources and Episode List. A compact, single-row native toolbar places
+both column buttons beside the window controls on the left. Toolbar buttons and the View menu independently
 hide/show both columns; `Control-Command-S` toggles Sources and `Control-Command-L` toggles Episode List.
 The View menu's Show All Columns restores both. Expanded widths and visibility are remembered, and
 hiding a column preserves its selection and view state. The reader retains a usable minimum width.

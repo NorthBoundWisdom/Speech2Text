@@ -5,6 +5,43 @@ import XCTest
 
 final class MacLibrarySplitViewTests: XCTestCase {
     @MainActor
+    func testCompactToolbarUsesTheLeadingAreaAndKeepsBothCollapseActions() throws {
+        let fixture = try WorkspaceFixture(usesTitlebar: true)
+        defer { fixture.close() }
+        let owner = LibraryWindowToolbar(controller: fixture.controller)
+        owner.install(on: fixture.window)
+        fixture.settle()
+        XCTAssertEqual(fixture.window.toolbarStyle, .unifiedCompact)
+        XCTAssertEqual(fixture.window.titleVisibility, .hidden)
+        XCTAssertEqual(owner.toolbar.items.first?.itemIdentifier, LibraryWindowToolbar.columnsIdentifier)
+        XCTAssertFalse(owner.toolbar.items.contains { $0.itemIdentifier == .sidebarTrackingSeparator })
+        let title = try XCTUnwrap(owner.toolbar.items.first { $0.itemIdentifier == LibraryWindowToolbar.titleIdentifier }?.view)
+        fixture.window.contentView?.superview?.layoutSubtreeIfNeeded()
+        let titleFrame = title.convert(title.bounds, to: nil)
+        XCTAssertLessThan(titleFrame.maxX, 320, "Controls and title must occupy the leading window area.")
+        if let snapshotDirectory = ProcessInfo.processInfo.environment["ATOT_LAYOUT_SNAPSHOT_DIR"] {
+            let frame = try XCTUnwrap(fixture.window.contentView?.superview)
+            let bitmap = try XCTUnwrap(frame.bitmapImageRepForCachingDisplay(in: frame.bounds))
+            frame.cacheDisplay(in: frame.bounds, to: bitmap)
+            let png = try XCTUnwrap(bitmap.representation(using: .png, properties: [:]))
+            let directory = URL(fileURLWithPath: snapshotDirectory, isDirectory: true)
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            try png.write(to: directory.appendingPathComponent("compact-library-toolbar.png"))
+        }
+        let group = try XCTUnwrap(owner.toolbar.items.first as? NSToolbarItemGroup)
+        XCTAssertEqual(group.subitems.count, 2)
+        owner.toggleSources(nil)
+        fixture.settle()
+        XCTAssertTrue(fixture.controller.splitViewItems[0].isCollapsed)
+        XCTAssertEqual(group.subitems[0].label, "Show Sources")
+        owner.toggleList(nil)
+        fixture.settle()
+        XCTAssertTrue(fixture.controller.splitViewItems[1].isCollapsed)
+        XCTAssertEqual(group.subitems[1].label, "Show Episode List")
+        XCTAssertNotNil(fixture.window.toolbar)
+    }
+
+    @MainActor
     func testSwiftUIBridgeFillsTheWindowInsteadOfUsingItsIntrinsicMinimum() throws {
         let fixture = try WorkspaceFixture()
         defer { fixture.close() }
@@ -116,7 +153,7 @@ private final class WorkspaceFixture {
     let controller: LibrarySplitViewController
     let window: NSWindow
 
-    init(sourceWidth: Double = 270, listWidth: Double = 340, sourceCollapsed: Bool = false) throws {
+    init(sourceWidth: Double = 270, listWidth: Double = 340, sourceCollapsed: Bool = false, usesTitlebar: Bool = false) throws {
         preferences = try XCTUnwrap(UserDefaults(suiteName: suite))
         preferences.set(sourceWidth, forKey: LibrarySplitViewController.sourceWidthKey)
         preferences.set(listWidth, forKey: LibrarySplitViewController.listWidthKey)
@@ -129,8 +166,10 @@ private final class WorkspaceFixture {
         controller.applyCollapseState(source: sourceCollapsed, list: false)
         window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 1320, height: 680),
-            styleMask: [.borderless], backing: .buffered, defer: false
+            styleMask: usesTitlebar ? [.titled, .closable, .miniaturizable, .resizable] : [.borderless],
+            backing: .buffered, defer: false
         )
+        window.title = "SonaFolio"
         window.contentViewController = controller
         // Assigning a content controller adopts its initial minimum size; restore our test viewport.
         window.setContentSize(NSSize(width: 1320, height: 680))

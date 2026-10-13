@@ -15,18 +15,6 @@ struct ContentView: View {
             detailColumn
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigation) {
-                Button { sourceCollapsed.toggle() } label: {
-                    Label(sourceCollapsed ? "Show Sources" : "Hide Sources", systemImage: "sidebar.left")
-                }
-                .help(sourceCollapsed ? "Show Sources (Control-Command-S)" : "Hide Sources (Control-Command-S)")
-                Button { listCollapsed.toggle() } label: {
-                    Label(listCollapsed ? "Show Episode List" : "Hide Episode List", systemImage: "list.bullet")
-                }
-                .help(listCollapsed ? "Show Episode List (Control-Command-L)" : "Hide Episode List (Control-Command-L)")
-            }
-        }
         .overlay(alignment: .topLeading) {
             Color.clear
                 .frame(width: 1, height: 1)
