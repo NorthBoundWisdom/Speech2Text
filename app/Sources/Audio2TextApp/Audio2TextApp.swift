@@ -70,7 +70,20 @@ struct Audio2TextApp: App {
 struct Audio2TextCommands: Commands {
     @ObservedObject var store: AppStore
 
+    @AppStorage(LibrarySplitViewController.sourceCollapsedKey) private var sourceCollapsed = false
+    @AppStorage(LibrarySplitViewController.listCollapsedKey) private var listCollapsed = false
+
     var body: some Commands {
+        CommandGroup(after: .sidebar) {
+            Button(sourceCollapsed ? "Show Sources" : "Hide Sources") { sourceCollapsed.toggle() }
+                .keyboardShortcut("s", modifiers: [.control, .command])
+            Button(listCollapsed ? "Show Episode List" : "Hide Episode List") { listCollapsed.toggle() }
+                .keyboardShortcut("l", modifiers: [.control, .command])
+            Button("Show All Columns") {
+                sourceCollapsed = false
+                listCollapsed = false
+            }
+        }
         CommandGroup(replacing: .appSettings) {
             Button("Settings...") {
                 store.showSettings()

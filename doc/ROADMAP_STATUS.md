@@ -13,6 +13,7 @@ acceptance items that require local audio, model weights, or cloud credentials.
 | P0 readable outputs | Implemented and tested | `transcript.readable.md`, `transcript.timestamped.md`, enforced by `validate_run_json.py` and `validate_output_bundle.py` |
 | P0 cloud/local separation | Implemented and tested | `output/cloud/`, `atot exec cloud prepare` |
 | Agent-authored summaries through MCP | Implemented and protocol-tested | `atot mcp`, versioned/paged library reads, explicit summary write-back, `src/tests/test_agent_summary.py`, `src/tests/test_mcp_server.py`; default App processing requires no cloud key |
+| Resizable/collapsible desktop columns | Implemented and interaction-tested | Native macOS split items, persistent widths/visibility, toolbar/View controls; Qt divider hit regions and real QML drag/collapse tests |
 | SonaFolio brand and public website | Implemented | `doc/BRANDING.md`, MkDocs Material `website/`, Pages workflow and documentation/link checks |
 | P0 project naming | Implemented | README title uses `SonaFolio`; distribution remains `audio2text-local`, Python module and CLI remain `atot`; existing data paths and bundle identifiers are preserved |
 | P1 smart chunking | Implemented and unit-tested | `--chunking smart`, `src/atot/vad.py` |

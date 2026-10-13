@@ -74,3 +74,11 @@ Python, FFmpeg, and models still need runtime setup. Optional Developer ID signi
 appropriate certificate and notarytool profile.
 
 [Releases](../doc/CI_RELEASES.md) · [Privacy](../doc/PRIVACY.md) · [Handbook](https://northboundwisdom.github.io/sonafolio/)
+
+## Desktop columns
+
+The macOS workspace follows NetNewsWire's native sidebar/content-list/reader layout. Drag the two
+vertical dividers to resize Sources and Episode List. Toolbar buttons and the View menu independently
+hide/show both columns; `Control-Command-S` toggles Sources and `Control-Command-L` toggles Episode List.
+The View menu's Show All Columns restores both. Expanded widths and visibility are remembered, and
+hiding a column preserves its selection and view state. The reader retains a usable minimum width.

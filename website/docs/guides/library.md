@@ -49,3 +49,12 @@ iOS reads documents, refreshes subscription metadata, and manages state. It does
 download audio for processing. iCloud availability depends on OS sync, networking, and file state.
 
 [Storage and privacy](privacy.md) · [Compatibility names](../naming.md)
+
+## Adjust the desktop workspace
+
+Drag the vertical dividers to resize Sources and Episode List. Their toolbar buttons independently
+hide or restore each column, even when both are hidden. The desktop clients remember expanded
+widths and visibility without clearing your selected episode.
+
+On macOS, the View menu offers the same actions and Show All Columns. Use `Control-Command-S` for
+Sources and `Control-Command-L` for Episode List. Qt uses `Ctrl+Shift+S` and `Ctrl+Shift+L`.

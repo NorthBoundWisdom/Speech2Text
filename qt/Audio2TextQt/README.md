@@ -74,3 +74,13 @@ the manual FreeCM ZIP package above, which explicitly copies FFmpeg and may opti
 a clean Windows Python runtime. Both paths require third-party license/source materials.
 
 See [release workflow](../../doc/CI_RELEASES.md) and the [online installation guide](https://northboundwisdom.github.io/sonafolio/install/).
+
+## Resizable and collapsible columns
+
+Drag the thin vertical separators to resize Sources and Episode List. The toolbar keeps both
+visibility buttons available when columns are hidden. `Ctrl+Shift+S` and `Ctrl+Shift+L` toggle the
+columns. Expanded widths and visibility are saved between sessions; content remains loaded while
+hidden. A wider invisible hit region makes each separator easier to grab.
+
+CTest includes real QML divider-drag, collapse/restore, and narrow-window layout checks. Test QML is
+kept in `tests/qt_workspace/`, outside the deployed module's import scan.

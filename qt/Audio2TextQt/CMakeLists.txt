@@ -57,6 +57,7 @@ qt_add_qml_module(Audio2TextQt
     NO_CACHEGEN
     QML_FILES
         qml/Main.qml
+        qml/DesktopWorkspace.qml
         qml/SourceColumn.qml
         qml/ItemListColumn.qml
         qml/DetailPane.qml
@@ -186,3 +187,10 @@ if(WIN32 AND DEFINED ENV{SystemRoot} AND EXISTS "$ENV{SystemRoot}/Fonts")
     list(APPEND AUDIO2TEXTQT_SMOKE_ENV "QT_QPA_FONTDIR=${AUDIO2TEXTQT_WINDOWS_FONT_DIR}")
 endif()
 set_tests_properties(Audio2TextQtQmlSmoke PROPERTIES ENVIRONMENT "${AUDIO2TEXTQT_SMOKE_ENV}" TIMEOUT 45)
+
+find_program(AUDIO2TEXTQT_QMLTESTRUNNER qmltestrunner
+    HINTS "${Qt6_DIR}/../../../bin" REQUIRED)
+add_test(NAME Audio2TextQtWorkspaceLayout
+    COMMAND ${AUDIO2TEXTQT_QMLTESTRUNNER} -input "${CMAKE_CURRENT_SOURCE_DIR}/../../tests/qt_workspace")
+set_tests_properties(Audio2TextQtWorkspaceLayout PROPERTIES
+    ENVIRONMENT "${AUDIO2TEXTQT_SMOKE_ENV}" TIMEOUT 45)

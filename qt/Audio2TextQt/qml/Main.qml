@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtCore
 
 ApplicationWindow {
     id: root
@@ -31,36 +32,53 @@ ApplicationWindow {
         anchors.fill: parent
         spacing: 0
 
-        SplitView {
+        ToolBar {
+            Layout.fillWidth: true
+            RowLayout {
+                anchors.fill: parent
+                ToolButton {
+                    text: "Sources"
+                    checkable: true
+                    checked: !workspace.sourceCollapsed
+                    Accessible.name: workspace.sourceCollapsed ? "Show Sources" : "Hide Sources"
+                    ToolTip.visible: hovered
+                    ToolTip.text: Accessible.name
+                    onClicked: workspace.toggleSources()
+                }
+                ToolButton {
+                    text: "Episode List"
+                    checkable: true
+                    checked: !workspace.listCollapsed
+                    Accessible.name: workspace.listCollapsed ? "Show Episode List" : "Hide Episode List"
+                    ToolTip.visible: hovered
+                    ToolTip.text: Accessible.name
+                    onClicked: workspace.toggleList()
+                }
+                Item { Layout.fillWidth: true }
+            }
+        }
+
+        DesktopWorkspace {
             id: workspace
-            orientation: Qt.Horizontal
             Layout.fillWidth: true
             Layout.fillHeight: true
+            sourceWidth: workspacePreferences.sourceWidth
+            listWidth: workspacePreferences.listWidth
+            sourceCollapsed: workspacePreferences.sourceCollapsed
+            listCollapsed: workspacePreferences.listCollapsed
+            onSourceWidthChanged: workspacePreferences.sourceWidth = sourceWidth
+            onListWidthChanged: workspacePreferences.listWidth = listWidth
+            onSourceCollapsedChanged: workspacePreferences.sourceCollapsed = sourceCollapsed
+            onListCollapsedChanged: workspacePreferences.listCollapsed = listCollapsed
 
-            handle: Rectangle {
-                implicitWidth: 6
-                implicitHeight: 8
-                color: SplitHandle.pressed
-                    ? "#dbe7f5"
-                    : (SplitHandle.hovered ? "#eef4fb" : "#f4f7fa")
+            sourceContent: Component {
+                SourceColumn {
+                    onImportRequested: importDialog.open()
+                    onSettingsRequested: settingsDialog.open()
+                }
             }
-
-            SourceColumn {
-                SplitView.preferredWidth: 270
-                SplitView.minimumWidth: 210
-                onImportRequested: importDialog.open()
-                onSettingsRequested: settingsDialog.open()
-            }
-
-            ItemListColumn {
-                SplitView.preferredWidth: 360
-                SplitView.minimumWidth: 280
-            }
-
-            DetailPane {
-                SplitView.fillWidth: true
-                SplitView.minimumWidth: 420
-            }
+            listContent: Component { ItemListColumn {} }
+            detailContent: Component { DetailPane {} }
         }
 
         JobLogPane {
@@ -69,6 +87,24 @@ ApplicationWindow {
             expanded: root.logExpanded || jobController.running || jobController.lastError.length > 0
             onToggleRequested: root.logExpanded = !root.logExpanded
         }
+    }
+
+    Settings {
+        id: workspacePreferences
+        category: "LibraryWorkspace"
+        property real sourceWidth: 270
+        property real listWidth: 360
+        property bool sourceCollapsed: false
+        property bool listCollapsed: false
+    }
+
+    Shortcut {
+        sequence: "Ctrl+Shift+S"
+        onActivated: workspace.toggleSources()
+    }
+    Shortcut {
+        sequence: "Ctrl+Shift+L"
+        onActivated: workspace.toggleList()
     }
 
     ImportDialog {
