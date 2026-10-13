@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 MARKER = "<!-- SONAFOLIO_BUILD -->"
@@ -46,3 +47,22 @@ def on_page_markdown(markdown: str, page, config, files) -> str:
         raise ValueError("Home page must contain exactly one build metadata marker.")
     locale = config.theme.get("language", "zh") if config is not None else "zh"
     return markdown.replace(MARKER, metadata_html(locale))
+
+
+
+def on_template_context(context, template_name, config):
+    """Give the shared error page home links, independent of the last rendered chapter."""
+    if template_name != "404.html":
+        return context
+    labels = json.loads((ROOT / "website/locales/zh.json").read_text(encoding="utf-8"))
+    base_path = urlsplit(config.site_url).path.rstrip("/")
+    alternates = []
+    for locale, suffix in (("zh", "/"), ("en", "/en/")):
+        language_labels = json.loads((ROOT / f"website/locales/{locale}.json").read_text(encoding="utf-8"))
+        alternates.append({"lang": locale, "name": language_labels["language_name"], "link": base_path + suffix})
+    localized = dict(config)
+    localized["theme"] = {**dict(config.theme), "language": "zh"}
+    localized["extra"] = {**config.extra, "alternate": alternates,
+                          "error_title": labels["error_title"], "error_hint": labels["error_hint"]}
+    context["config"] = localized
+    return context

@@ -98,3 +98,16 @@ def test_english_is_translated_and_search_indexes_both_versions(site):
     assert any("Too many podcasts" in row["title"] and row["location"].startswith("en/") for row in docs)
     assert any("播客太多" in row["title"] and not row["location"].startswith("en/") for row in docs)
     assert not list(site.rglob("screenshot-2.png"))
+
+
+
+def test_error_page_switches_to_home_instead_of_the_last_chapter(site):
+    page = site / "404.html"
+    text = page.read_text(encoding="utf-8")
+    parsed = HeaderLanguages()
+    parsed.feed(text)
+    assert parsed.language == "zh"
+    assert parsed.header_switch
+    for link in parsed.links:
+        expected = site / ("index.html" if link["hreflang"] == "zh" else "en/index.html")
+        assert destination_for_link(site, page, link["href"]) == expected.resolve()

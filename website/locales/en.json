@@ -1,5 +1,8 @@
 {
   "build_aria": "Website build information",
   "build_label": "Built at",
-  "source_label": "Source"
+  "source_label": "Source",
+  "error_title": "404 · Page not found",
+  "error_hint": "Use the language controls above to return home, or search the handbook.",
+  "language_name": "English"
 }

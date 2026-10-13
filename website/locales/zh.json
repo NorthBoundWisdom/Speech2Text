@@ -1,5 +1,8 @@
 {
   "build_aria": "官网构建信息",
   "build_label": "构建时间",
-  "source_label": "源码版本"
+  "source_label": "源码版本",
+  "error_title": "404 · 页面未找到",
+  "error_hint": "请使用顶部语言入口返回官网，或通过搜索查找手册内容。",
+  "language_name": "中文"
 }
