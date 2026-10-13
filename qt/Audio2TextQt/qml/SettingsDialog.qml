@@ -1,26 +1,26 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Dialogs
+import QtQuick.Controls as QQC
+import GeoControls 1.0
 import QtQuick.Layouts
 
-Dialog {
+CustomDialog {
     id: root
     title: "Settings"
     modal: true
-    parent: Overlay.overlay
+    parent: QQC.Overlay.overlay
     x: Math.round((parent.width - width) / 2)
     y: Math.round((parent.height - height) / 2)
     width: 940
     height: 700
-    standardButtons: Dialog.NoButton
+    standardButtons: QQC.Dialog.NoButton
 
     property int selectedPage: 0
     property bool apiKeyVisible: false
     property var tools: settingsController.detectTools()
-    property color surface: "#fbfcfe"
-    property color surfaceMuted: "#f6f8fb"
-    property color softBorder: "#e1e7ef"
-    property color cardColor: "#ffffff"
+    property color surface: Theme.pageSurfaceColor
+    property color surfaceMuted: Theme.railSurfaceColor
+    property color softBorder: Theme.dividerColor
+    property color cardColor: Theme.contentSurfaceColor
     property string cloudApiBaseDraft: ""
     property string cloudApiKeyDraft: ""
     property string cloudModelDraft: ""
@@ -32,34 +32,34 @@ Dialog {
     property string titlePromptDraft: ""
 
     function loadCloudDrafts() {
-        cloudApiBaseDraft = settingsController.cloudApiBase
-        cloudApiKeyDraft = settingsController.cloudApiKey
-        cloudModelDraft = settingsController.cloudModel
-        cloudTimeoutDraft = settingsController.cloudTimeout
-        cloudTemperatureDraft = settingsController.cloudTemperature
-        cloudMaxTokensDraft = settingsController.cloudMaxTokens
-        cloudModelOptionsDraft = settingsController.cloudModelOptions
-        summaryPromptDraft = settingsController.summaryPrompt
-        titlePromptDraft = settingsController.titlePrompt
+        cloudApiBaseDraft = settingsController.cloudApiBase;
+        cloudApiKeyDraft = settingsController.cloudApiKey;
+        cloudModelDraft = settingsController.cloudModel;
+        cloudTimeoutDraft = settingsController.cloudTimeout;
+        cloudTemperatureDraft = settingsController.cloudTemperature;
+        cloudMaxTokensDraft = settingsController.cloudMaxTokens;
+        cloudModelOptionsDraft = settingsController.cloudModelOptions;
+        summaryPromptDraft = settingsController.summaryPrompt;
+        titlePromptDraft = settingsController.titlePrompt;
     }
 
     function saveCloudDrafts() {
-        settingsController.cloudApiBase = cloudApiBaseDraft
-        settingsController.cloudApiKey = cloudApiKeyDraft
-        settingsController.cloudModel = cloudModelDraft
-        settingsController.cloudTimeout = cloudTimeoutDraft
-        settingsController.cloudTemperature = cloudTemperatureDraft
-        settingsController.cloudMaxTokens = cloudMaxTokensDraft
-        settingsController.cloudModelOptions = cloudModelOptionsDraft
-        settingsController.summaryPrompt = summaryPromptDraft
-        settingsController.titlePrompt = titlePromptDraft
-        settingsController.saveCloudConfig()
-        tools = settingsController.detectTools()
+        settingsController.cloudApiBase = cloudApiBaseDraft;
+        settingsController.cloudApiKey = cloudApiKeyDraft;
+        settingsController.cloudModel = cloudModelDraft;
+        settingsController.cloudTimeout = cloudTimeoutDraft;
+        settingsController.cloudTemperature = cloudTemperatureDraft;
+        settingsController.cloudMaxTokens = cloudMaxTokensDraft;
+        settingsController.cloudModelOptions = cloudModelOptionsDraft;
+        settingsController.summaryPrompt = summaryPromptDraft;
+        settingsController.titlePrompt = titlePromptDraft;
+        settingsController.saveCloudConfig();
+        tools = settingsController.detectTools();
     }
 
     onOpened: {
-        tools = settingsController.detectTools()
-        loadCloudDrafts()
+        tools = settingsController.detectTools();
+        loadCloudDrafts();
     }
 
     Component.onCompleted: loadCloudDrafts()
@@ -80,18 +80,18 @@ Dialog {
             anchors.rightMargin: 18
             spacing: 10
 
-            Label {
+            CustomLabel {
                 text: settingsController.dataRoot
-                color: themeController.muted
+                color: Theme.placeholderTextColor
                 elide: Text.ElideMiddle
                 Layout.fillWidth: true
             }
-            Button {
+            CustomButton {
                 text: "Choose Data Folder"
                 highlighted: true
                 onClicked: dataRootDialog.open()
             }
-            Button {
+            CustomButton {
                 text: "Close"
                 Layout.preferredWidth: 96
                 onClicked: root.close()
@@ -99,46 +99,47 @@ Dialog {
         }
     }
 
-    FolderDialog {
+    CustomFolderDialog {
         id: dataRootDialog
         title: "Choose data folder"
         onAccepted: {
-            settingsController.setDataRootUrl(selectedFolder)
-            root.tools = settingsController.detectTools()
-            root.loadCloudDrafts()
+            settingsController.setDataRootUrl(selectedFolder);
+            root.tools = settingsController.detectTools();
+            root.loadCloudDrafts();
         }
     }
 
-    FolderDialog {
+    CustomFolderDialog {
         id: libraryRootDialog
         title: "Library root"
         onAccepted: {
-            settingsController.setLibraryRootUrl(selectedFolder)
-            root.tools = settingsController.detectTools()
+            settingsController.setLibraryRootUrl(selectedFolder);
+            root.tools = settingsController.detectTools();
         }
     }
 
-    FolderDialog {
+    CustomFolderDialog {
         id: vcpkgDialog
         title: "vcpkg root"
         onAccepted: {
-            settingsController.vcpkgRoot = selectedFolder
-            root.tools = settingsController.detectTools()
+            settingsController.vcpkgRoot = selectedFolder;
+            root.tools = settingsController.detectTools();
         }
     }
 
-    FileDialog {
+    CustomFileDialog {
         id: atotDialog
         title: "atot executable"
         onAccepted: {
-            settingsController.setAtotPathUrl(selectedFile)
-            root.tools = settingsController.detectTools()
+            settingsController.setAtotPathUrl(selectedFile);
+            root.tools = settingsController.detectTools();
         }
     }
 
     RowLayout {
         anchors.fill: parent
         anchors.margins: 10
+        objectName: "settingsDialogBody"
         spacing: 12
 
         Rectangle {
@@ -154,14 +155,29 @@ Dialog {
                 anchors.margins: 8
                 clip: true
                 model: [
-                    { title: "Overview", subtitle: "Readiness" },
-                    { title: "Local ASR", subtitle: "Model and workflow" },
-                    { title: "Cloud Model", subtitle: "API key and prompts" },
-                    { title: "Library", subtitle: "Data locations" },
-                    { title: "Runtime", subtitle: "Tools and CLI" }
+                    {
+                        title: "Overview",
+                        subtitle: "Readiness"
+                    },
+                    {
+                        title: "Local ASR",
+                        subtitle: "Model and workflow"
+                    },
+                    {
+                        title: "Cloud Model",
+                        subtitle: "API key and prompts"
+                    },
+                    {
+                        title: "Library",
+                        subtitle: "Data locations"
+                    },
+                    {
+                        title: "Runtime",
+                        subtitle: "Tools and CLI"
+                    }
                 ]
 
-                delegate: ItemDelegate {
+                delegate: CustomItemDelegate {
                     width: settingsPages.width
                     height: 58
                     leftPadding: 14
@@ -178,7 +194,7 @@ Dialog {
                             width: 3
                             height: 24
                             radius: 2
-                            color: themeController.accent
+                            color: Theme.highlightColor
                             visible: highlighted
                             anchors.left: parent.left
                             anchors.leftMargin: 4
@@ -188,16 +204,16 @@ Dialog {
 
                     contentItem: ColumnLayout {
                         spacing: 2
-                        Label {
+                        CustomLabel {
                             text: modelData.title
-                            color: highlighted ? themeController.accent : themeController.text
+                            color: highlighted ? Theme.highlightColor : Theme.textColor
                             font.weight: highlighted ? Font.DemiBold : Font.Normal
                             elide: Text.ElideRight
                             Layout.fillWidth: true
                         }
-                        Label {
+                        CustomLabel {
                             text: modelData.subtitle
-                            color: themeController.muted
+                            color: Theme.placeholderTextColor
                             font.pixelSize: 11
                             elide: Text.ElideRight
                             Layout.fillWidth: true
@@ -212,7 +228,7 @@ Dialog {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            ScrollView {
+            CustomScrollView {
                 padding: 18
                 contentWidth: availableWidth
                 ColumnLayout {
@@ -226,25 +242,25 @@ Dialog {
                         ColumnLayout {
                             spacing: 2
                             Layout.fillWidth: true
-                            Label {
+                            CustomLabel {
                                 text: "Overview"
-                                color: themeController.text
+                                color: Theme.textColor
                                 font.pixelSize: 22
                                 font.weight: Font.DemiBold
                             }
-                            Label {
+                            CustomLabel {
                                 text: settingsController.dataRoot
-                                color: themeController.muted
+                                color: Theme.placeholderTextColor
                                 elide: Text.ElideMiddle
                                 Layout.fillWidth: true
                             }
                         }
-                        Button {
+                        CustomButton {
                             text: "Choose Data Folder"
                             highlighted: true
                             onClicked: dataRootDialog.open()
                         }
-                        Button {
+                        CustomButton {
                             text: "Detect"
                             onClicked: root.tools = settingsController.detectTools()
                         }
@@ -282,7 +298,7 @@ Dialog {
                         }
                     }
 
-                    TextArea {
+                    CustomTextArea {
                         readOnly: true
                         wrapMode: TextEdit.Wrap
                         text: jobController.lastResult || jobController.lastError
@@ -299,7 +315,7 @@ Dialog {
                 }
             }
 
-            ScrollView {
+            CustomScrollView {
                 padding: 18
                 contentWidth: availableWidth
                 ColumnLayout {
@@ -317,62 +333,97 @@ Dialog {
                         rowSpacing: 10
                         Layout.fillWidth: true
 
-                        Label { text: "Model"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "Model"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: settingsController.modelAlias
                             onEditingFinished: settingsController.modelAlias = text
                             Layout.fillWidth: true
                         }
                         Item {}
 
-                        Label { text: "Cloud chunk"; color: themeController.text }
-                        SpinBox {
-                            from: 1
-                            to: 120
-                            value: settingsController.cloudChunkMinutes
-                            onValueModified: settingsController.cloudChunkMinutes = value
+                        CustomLabel {
+                            text: "Cloud chunk"
+                            color: Theme.textColor
                         }
-                        Label { text: "minutes"; color: themeController.muted }
+                        CustomSpinBox {
+                            objectName: "cloudChunkMinutes"
+                            decimals: 0
+                            realFrom: 1
+                            realTo: 120
+                            realValue: settingsController.cloudChunkMinutes
+                            onEditingCommitted: function (minutes) {
+                                settingsController.cloudChunkMinutes = minutes;
+                            }
+                        }
+                        CustomLabel {
+                            text: "minutes"
+                            color: Theme.placeholderTextColor
+                        }
 
-                        Label { text: "Workflow"; color: themeController.text }
-                        Switch {
-                            text: "Prefer local-only processing"
-                            checked: settingsController.localOnly
-                            onToggled: settingsController.localOnly = checked
+                        CustomLabel {
+                            text: "Workflow"
+                            color: Theme.textColor
+                        }
+                        CustomSwitch {
+                            objectName: "processingWorkflow"
+                            model: ["Local only", "Cloud enabled"]
+                            currentIndex: settingsController.localOnly ? 0 : 1
+                            onActivated: function (index) {
+                                settingsController.localOnly = index === 0;
+                            }
+                            Accessible.name: "Processing workflow"
                             Layout.columnSpan: 2
                         }
                     }
 
-                    SectionHeader { title: "Transcription Languages"; subtitle: "No selection: auto. One: language hint. Multiple: auto with hints, preserving original languages. Hints do not restrict detection." }
+                    SectionHeader {
+                        title: "Transcription Languages"
+                        subtitle: "No selection: auto. One: language hint. Multiple: auto with hints, preserving original languages. Hints do not restrict detection."
+                    }
                     GridLayout {
                         columns: 3
                         Layout.fillWidth: true
                         Repeater {
                             model: settingsController.languageOptions
-                            CheckBox {
+                            CustomCheckBox {
                                 required property var modelData
+                                objectName: "transcriptionLanguage_" + modelData.code
                                 text: modelData.label
                                 checked: settingsController.transcriptionLanguages.indexOf(modelData.code) >= 0
-                                onToggled: {
-                                    let codes = settingsController.transcriptionLanguages.slice()
-                                    let index = codes.indexOf(modelData.code)
-                                    if (index >= 0) codes.splice(index, 1)
-                                    if (checked) codes.push(modelData.code)
-                                    settingsController.transcriptionLanguages = codes
+                                onClicked: {
+                                    let codes = settingsController.transcriptionLanguages.slice();
+                                    let index = codes.indexOf(modelData.code);
+                                    if (index >= 0)
+                                        codes.splice(index, 1);
+                                    if (checked)
+                                        codes.push(modelData.code);
+                                    settingsController.transcriptionLanguages = codes;
                                 }
                             }
                         }
                     }
-                    Button { text: "Automatic Detection"; onClicked: settingsController.transcriptionLanguages = [] }
-                    SectionHeader { title: "Summary Output Language"; subtitle: "Controls summaries, headings, short titles, and MCP instructions. Overrides conflicting custom prompt language requirements. No API key required to save." }
-                    ComboBox {
+                    CustomButton {
+                        text: "Automatic Detection"
+                        onClicked: settingsController.transcriptionLanguages = []
+                    }
+                    SectionHeader {
+                        title: "Summary Output Language"
+                        subtitle: "Controls summaries, headings, short titles, and MCP instructions. Overrides conflicting custom prompt language requirements. No API key required to save."
+                    }
+                    CustomComboBox {
+                        objectName: "summaryOutputLanguage"
                         model: settingsController.languageOptions
                         textRole: "label"
                         valueRole: "code"
                         currentIndex: {
                             for (let i = 0; i < model.length; i++)
-                                if (model[i].code === settingsController.summaryLanguage) return i
-                            return -1
+                                if (model[i].code === settingsController.summaryLanguage)
+                                    return i;
+                            return -1;
                         }
                         onActivated: settingsController.summaryLanguage = currentValue
                         Layout.preferredWidth: 240
@@ -380,20 +431,22 @@ Dialog {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        Button {
+                        CustomButton {
                             text: "Doctor"
                             onClicked: jobController.runDoctor()
                         }
-                        Button {
+                        CustomButton {
                             text: "Library Status"
                             onClicked: jobController.runLibraryStatus()
                         }
-                        Item { Layout.fillWidth: true }
+                        Item {
+                            Layout.fillWidth: true
+                        }
                     }
                 }
             }
 
-            ScrollView {
+            CustomScrollView {
                 padding: 18
                 contentWidth: availableWidth
                 ColumnLayout {
@@ -411,8 +464,12 @@ Dialog {
                         rowSpacing: 10
                         Layout.fillWidth: true
 
-                        Label { text: "API Base"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "API Base"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: root.cloudApiBaseDraft
                             placeholderText: "https://.../v1"
                             onTextChanged: root.cloudApiBaseDraft = text
@@ -420,52 +477,79 @@ Dialog {
                         }
                         Item {}
 
-                        Label { text: "API Key"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "API Key"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: root.cloudApiKeyDraft
                             echoMode: root.apiKeyVisible ? TextInput.Normal : TextInput.Password
                             onTextChanged: root.cloudApiKeyDraft = text
                             Layout.fillWidth: true
                         }
-                        Button {
+                        CustomButton {
                             text: root.apiKeyVisible ? "Hide" : "Show"
                             onClicked: root.apiKeyVisible = !root.apiKeyVisible
                         }
 
-                        Label { text: "Model"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "Model"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: root.cloudModelDraft
                             onTextChanged: root.cloudModelDraft = text
                             Layout.fillWidth: true
                         }
                         Item {}
 
-                        Label { text: "Timeout"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "Timeout"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: root.cloudTimeoutDraft
                             onTextChanged: root.cloudTimeoutDraft = text
                             Layout.fillWidth: true
                         }
-                        Label { text: "seconds"; color: themeController.muted }
+                        CustomLabel {
+                            text: "seconds"
+                            color: Theme.placeholderTextColor
+                        }
 
-                        Label { text: "Temperature"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "Temperature"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: root.cloudTemperatureDraft
                             onTextChanged: root.cloudTemperatureDraft = text
                             Layout.fillWidth: true
                         }
                         Item {}
 
-                        Label { text: "Max Tokens"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "Max Tokens"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: root.cloudMaxTokensDraft
                             onTextChanged: root.cloudMaxTokensDraft = text
                             Layout.fillWidth: true
                         }
                         Item {}
 
-                        Label { text: "Model Options"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "Model Options"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: root.cloudModelOptionsDraft
                             placeholderText: "gpt-5.4-mini, gpt-5.4, gpt-5.5, gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna"
                             onTextChanged: root.cloudModelOptionsDraft = text
@@ -493,34 +577,44 @@ Dialog {
                         columnSpacing: 12
                         rowSpacing: 6
                         Layout.fillWidth: true
-                        Label { text: "Config File"; color: themeController.muted }
-                        Label { text: settingsController.configPath; color: themeController.text; elide: Text.ElideMiddle; Layout.fillWidth: true }
+                        CustomLabel {
+                            text: "Config File"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
+                            text: settingsController.configPath
+                            color: Theme.textColor
+                            elide: Text.ElideMiddle
+                            Layout.fillWidth: true
+                        }
                     }
 
                     RowLayout {
                         Layout.fillWidth: true
-                        Button {
+                        CustomButton {
                             text: "Save Cloud Config"
                             onClicked: root.saveCloudDrafts()
                         }
-                        Button {
+                        CustomButton {
                             text: "Reload"
                             onClicked: {
-                                settingsController.reloadCloudConfig()
-                                root.loadCloudDrafts()
-                                root.tools = settingsController.detectTools()
+                                settingsController.reloadCloudConfig();
+                                root.loadCloudDrafts();
+                                root.tools = settingsController.detectTools();
                             }
                         }
-                        Button {
+                        CustomButton {
                             text: "Inspect"
                             onClicked: jobController.configInspect()
                         }
-                        Item { Layout.fillWidth: true }
+                        Item {
+                            Layout.fillWidth: true
+                        }
                     }
                 }
             }
 
-            ScrollView {
+            CustomScrollView {
                 padding: 18
                 contentWidth: availableWidth
                 ColumnLayout {
@@ -538,31 +632,48 @@ Dialog {
                         rowSpacing: 10
                         Layout.fillWidth: true
 
-                        Label { text: "Data root"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "Data root"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: settingsController.dataRoot
                             onEditingFinished: {
-                                settingsController.dataRoot = text
-                                root.tools = settingsController.detectTools()
-                                root.loadCloudDrafts()
+                                settingsController.dataRoot = text;
+                                root.tools = settingsController.detectTools();
+                                root.loadCloudDrafts();
                             }
                             Layout.fillWidth: true
                         }
-                        Button { text: "Choose Folder"; onClicked: dataRootDialog.open() }
+                        CustomButton {
+                            text: "Choose Folder"
+                            onClicked: dataRootDialog.open()
+                        }
 
-                        Label { text: "Library root"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "Library root"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: settingsController.libraryRootOverride
                             placeholderText: settingsController.resolvedLibraryRoot
                             onEditingFinished: settingsController.libraryRootOverride = text
                             Layout.fillWidth: true
                         }
-                        Button { text: "Browse"; onClicked: libraryRootDialog.open() }
+                        CustomButton {
+                            text: "Browse"
+                            onClicked: libraryRootDialog.open()
+                        }
 
-                        Label { text: "Resolved"; color: themeController.muted }
-                        Label {
+                        CustomLabel {
+                            text: "Resolved"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
                             text: settingsController.resolvedLibraryRoot
-                            color: themeController.text
+                            color: Theme.textColor
                             elide: Text.ElideMiddle
                             Layout.fillWidth: true
                         }
@@ -571,7 +682,7 @@ Dialog {
                 }
             }
 
-            ScrollView {
+            CustomScrollView {
                 padding: 18
                 contentWidth: availableWidth
                 ColumnLayout {
@@ -589,61 +700,93 @@ Dialog {
                         rowSpacing: 10
                         Layout.fillWidth: true
 
-                        Label { text: "atot"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "atot"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: settingsController.atotPath
                             placeholderText: tools.atot || "PATH / data-root env"
                             onEditingFinished: {
-                                settingsController.atotPath = text
-                                root.tools = settingsController.detectTools()
+                                settingsController.atotPath = text;
+                                root.tools = settingsController.detectTools();
                             }
                             Layout.fillWidth: true
                         }
-                        Button { text: "Browse"; onClicked: atotDialog.open() }
+                        CustomButton {
+                            text: "Browse"
+                            onClicked: atotDialog.open()
+                        }
 
-                        Label { text: "vcpkg"; color: themeController.text }
-                        TextField {
+                        CustomLabel {
+                            text: "vcpkg"
+                            color: Theme.textColor
+                        }
+                        CustomTextField {
+                            alignRightWhenFocused: false
                             text: settingsController.vcpkgRoot
                             onEditingFinished: {
-                                settingsController.vcpkgRoot = text
-                                root.tools = settingsController.detectTools()
+                                settingsController.vcpkgRoot = text;
+                                root.tools = settingsController.detectTools();
                             }
                             Layout.fillWidth: true
                         }
-                        Button { text: "Browse"; onClicked: vcpkgDialog.open() }
+                        CustomButton {
+                            text: "Browse"
+                            onClicked: vcpkgDialog.open()
+                        }
 
-                        Label { text: "ffmpeg"; color: themeController.muted }
-                        Label { text: tools.ffmpeg || "missing"; color: tools.ffmpegReady ? themeController.success : themeController.danger; elide: Text.ElideMiddle; Layout.fillWidth: true }
+                        CustomLabel {
+                            text: "ffmpeg"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
+                            text: tools.ffmpeg || "missing"
+                            color: tools.ffmpegReady ? Theme.successColor : Theme.errorColor
+                            elide: Text.ElideMiddle
+                            Layout.fillWidth: true
+                        }
                         Item {}
 
-                        Label { text: "ffprobe"; color: themeController.muted }
-                        Label { text: tools.ffprobe || "missing"; color: tools.ffprobeReady ? themeController.success : themeController.danger; elide: Text.ElideMiddle; Layout.fillWidth: true }
+                        CustomLabel {
+                            text: "ffprobe"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
+                            text: tools.ffprobe || "missing"
+                            color: tools.ffprobeReady ? Theme.successColor : Theme.errorColor
+                            elide: Text.ElideMiddle
+                            Layout.fillWidth: true
+                        }
                         Item {}
                     }
 
                     RowLayout {
                         Layout.fillWidth: true
-                        Button {
+                        CustomButton {
                             text: "Detect"
                             onClicked: root.tools = settingsController.detectTools()
                         }
-                        Button {
+                        CustomButton {
                             text: "Doctor"
                             onClicked: jobController.runDoctor()
                         }
-                        Button {
+                        CustomButton {
                             text: "Config List"
                             onClicked: jobController.configList()
                         }
-                        Button {
+                        CustomButton {
                             text: "Reset App Settings"
                             onClicked: {
-                                settingsController.resetDefaults()
-                                root.tools = settingsController.detectTools()
-                                root.loadCloudDrafts()
+                                settingsController.resetDefaults();
+                                root.tools = settingsController.detectTools();
+                                root.loadCloudDrafts();
                             }
                         }
-                        Item { Layout.fillWidth: true }
+                        Item {
+                            Layout.fillWidth: true
+                        }
                     }
                 }
             }
@@ -655,15 +798,15 @@ Dialog {
         property string subtitle: ""
         Layout.fillWidth: true
         spacing: 4
-        Label {
+        CustomLabel {
             text: parent.title
-            color: themeController.text
+            color: Theme.textColor
             font.pixelSize: 20
             font.weight: Font.DemiBold
         }
-        Label {
+        CustomLabel {
             text: parent.subtitle
-            color: themeController.muted
+            color: Theme.placeholderTextColor
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
         }
@@ -673,7 +816,7 @@ Dialog {
         property string title: ""
         property string detail: ""
         property bool ok: false
-        property color stateColor: ok ? themeController.success : themeController.warning
+        property color stateColor: ok ? Theme.successColor : Theme.warningColor
         radius: 10
         color: root.cardColor
         border.color: root.softBorder
@@ -694,17 +837,17 @@ Dialog {
                     color: parent.parent.parent.stateColor
                     Layout.alignment: Qt.AlignVCenter
                 }
-                Label {
+                CustomLabel {
                     text: parent.parent.parent.title
-                    color: themeController.text
+                    color: Theme.textColor
                     font.weight: Font.DemiBold
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
             }
-            Label {
+            CustomLabel {
                 text: parent.parent.detail
-                color: themeController.muted
+                color: Theme.placeholderTextColor
                 wrapMode: Text.WordWrap
                 maximumLineCount: 3
                 elide: Text.ElideMiddle
@@ -717,12 +860,12 @@ Dialog {
         property alias textValue: editor.text
         property string title: ""
         spacing: 6
-        Label {
+        CustomLabel {
             text: parent.title
-            color: themeController.muted
+            color: Theme.placeholderTextColor
             Layout.fillWidth: true
         }
-        TextArea {
+        CustomTextArea {
             id: editor
             wrapMode: TextEdit.Wrap
             selectByMouse: true

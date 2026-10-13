@@ -1,13 +1,13 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Dialogs
+import QtQuick.Controls as QQC
+import GeoControls 1.0
 import QtQuick.Layouts
 
-Pane {
+CustomPane {
     id: root
     padding: 0
     background: Rectangle {
-        color: themeController.panel
+        color: Theme.baseColor
     }
 
     property var item: libraryController.selectedItem
@@ -17,114 +17,135 @@ Pane {
     property bool hasSelection: item && item.id !== undefined && item.id !== ""
     property bool isProcessed: hasSelection && item.hasProcessed
     property var processedTabs: [
-        { id: "metadata", title: "Overview" },
-        { id: "summary", title: "Summary" },
-        { id: "transcript", title: "Transcript" },
-        { id: "repair", title: "Repair" },
-        { id: "glossary", title: "Glossary" },
-        { id: "log", title: "Log" }
+        {
+            id: "metadata",
+            title: "Overview"
+        },
+        {
+            id: "summary",
+            title: "Summary"
+        },
+        {
+            id: "transcript",
+            title: "Transcript"
+        },
+        {
+            id: "repair",
+            title: "Repair"
+        },
+        {
+            id: "glossary",
+            title: "Glossary"
+        },
+        {
+            id: "log",
+            title: "Log"
+        }
     ]
     property var unprocessedTabs: [
-        { id: "metadata", title: "Overview" }
+        {
+            id: "metadata",
+            title: "Overview"
+        }
     ]
     property var availableTabs: isProcessed ? processedTabs : unprocessedTabs
 
     function tabExists(tabId) {
         for (var i = 0; i < availableTabs.length; ++i) {
             if (availableTabs[i].id === tabId)
-                return true
+                return true;
         }
-        return false
+        return false;
     }
 
     function selectDefaultTab() {
         if (!hasSelection) {
-            currentTab = "metadata"
-            return
+            currentTab = "metadata";
+            return;
         }
         if (!isProcessed) {
-            currentTab = "metadata"
-            return
+            currentTab = "metadata";
+            return;
         }
         if (snapshot.summaryText && snapshot.summaryText.trim().length > 0) {
-            currentTab = "summary"
+            currentTab = "summary";
         } else if (snapshot.transcriptText && snapshot.transcriptText.trim().length > 0) {
-            currentTab = "transcript"
+            currentTab = "transcript";
         } else {
-            currentTab = "metadata"
+            currentTab = "metadata";
         }
     }
 
     function bodyTextForTab(tabId) {
         if (!hasSelection)
-            return "# SonaFolio\n\nSelect an item from the list."
+            return "# SonaFolio\n\nSelect an item from the list.";
         if (!snapshot)
-            return "Metadata is not available."
-        var text = ""
+            return "Metadata is not available.";
+        var text = "";
         if (tabId === "metadata")
-            text = snapshot.metadataText
+            text = snapshot.metadataText;
         else if (tabId === "summary")
-            text = snapshot.summaryText
+            text = snapshot.summaryText;
         else if (tabId === "transcript")
-            text = snapshot.transcriptText
+            text = snapshot.transcriptText;
         else if (tabId === "repair")
-            text = snapshot.repairText
+            text = snapshot.repairText;
         else if (tabId === "glossary")
-            text = snapshot.glossaryText
+            text = snapshot.glossaryText;
         else if (tabId === "log")
-            text = snapshot.logText
+            text = snapshot.logText;
         if (text && text.trim().length > 0)
-            return text
+            return text;
         if (tabId === "summary")
-            return "Summary is not available yet."
+            return "Summary is not available yet.";
         if (tabId === "transcript")
-            return "Transcript is not available yet."
+            return "Transcript is not available yet.";
         if (tabId === "repair")
-            return "No repair artifacts are available."
+            return "No repair artifacts are available.";
         if (tabId === "glossary")
-            return "No glossary artifacts are available."
+            return "No glossary artifacts are available.";
         if (tabId === "log")
-            return "No log artifacts are available."
-        return "Metadata is not available."
+            return "No log artifacts are available.";
+        return "Metadata is not available.";
     }
 
     function hasVisibleChunkProgress() {
         if (!hasSelection || !isProcessed || !snapshot)
-            return false
-        var progress = snapshot.chunkProgress
+            return false;
+        var progress = snapshot.chunkProgress;
         if (progress === undefined || progress === null)
-            return false
-        progress = String(progress)
-        return progress.length > 0 && progress !== "0/0"
+            return false;
+        progress = String(progress);
+        return progress.length > 0 && progress !== "0/0";
     }
 
     function queueStatusTitle(status) {
         if (status === "to_process")
-            return "Process"
+            return "Process";
         if (status === "process_later")
-            return "Later"
+            return "Later";
         if (status === "delete")
-            return "Delete"
-        return "Unread"
+            return "Delete";
+        return "Unread";
     }
 
     function canDownloadAudio() {
-        return hasSelection && !isProcessed && !item.hasFile && item.source !== "local" && item.mediaURL
+        return hasSelection && !isProcessed && !item.hasFile && item.source !== "local" && item.mediaURL;
     }
 
     Connections {
         target: libraryController
         function onSelectedItemChanged() {
-            root.selectDefaultTab()
+            root.selectDefaultTab();
         }
     }
 
     onAvailableTabsChanged: {
         if (!tabExists(currentTab))
-            selectDefaultTab()
+            selectDefaultTab();
     }
 
-    FileDialog {
+    CustomFileDialog {
         id: srtInputDialog
         title: "SRT Input"
         onAccepted: jobController.exportSrtForFile(selectedFile, root.srtOverwriteValue)
@@ -158,7 +179,7 @@ Pane {
             Rectangle {
                 Layout.fillWidth: true
                 height: 1
-                color: themeController.border
+                color: Theme.dividerColor
             }
 
             ColumnLayout {
@@ -166,9 +187,9 @@ Pane {
                 Layout.margins: 14
                 spacing: 8
 
-                Label {
+                CustomLabel {
                     text: root.hasSelection ? root.item.title : "No episode selected"
-                    color: themeController.text
+                    color: Theme.textColor
                     font.pixelSize: 20
                     font.weight: Font.DemiBold
                     elide: Text.ElideRight
@@ -180,9 +201,9 @@ Pane {
                     Layout.fillWidth: true
                     spacing: 8
 
-                    Label {
+                    CustomLabel {
                         text: root.hasSelection ? root.item.status + " · " + root.queueStatusTitle(root.item.queueStatus) : ""
-                        color: themeController.muted
+                        color: Theme.placeholderTextColor
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
@@ -192,10 +213,22 @@ Pane {
 
                         Repeater {
                             model: [
-                                { title: "Unread", value: "unread" },
-                                { title: "Process", value: "to_process" },
-                                { title: "Later", value: "process_later" },
-                                { title: "Delete", value: "delete" }
+                                {
+                                    title: "Unread",
+                                    value: "unread"
+                                },
+                                {
+                                    title: "Process",
+                                    value: "to_process"
+                                },
+                                {
+                                    title: "Later",
+                                    value: "process_later"
+                                },
+                                {
+                                    title: "Delete",
+                                    value: "delete"
+                                }
                             ]
 
                             delegate: SegmentButton {
@@ -208,10 +241,10 @@ Pane {
                         }
                     }
 
-                    Label {
+                    CustomLabel {
                         visible: root.hasSelection
                         text: root.canDownloadAudio() ? "Remote audio" : (root.item.hasFile ? "Audio ready" : "Audio pending")
-                        color: themeController.muted
+                        color: Theme.placeholderTextColor
                         elide: Text.ElideRight
                     }
                 }
@@ -220,7 +253,7 @@ Pane {
             Rectangle {
                 Layout.fillWidth: true
                 height: 1
-                color: themeController.border
+                color: Theme.dividerColor
             }
 
             MarkdownView {
@@ -240,7 +273,7 @@ Pane {
             Rectangle {
                 Layout.fillWidth: true
                 height: 1
-                color: themeController.border
+                color: Theme.dividerColor
             }
 
             ColumnLayout {
@@ -248,9 +281,9 @@ Pane {
                 Layout.margins: 14
                 spacing: 8
 
-                Label {
+                CustomLabel {
                     text: root.hasSelection ? root.item.title : "No episode selected"
-                    color: themeController.text
+                    color: Theme.textColor
                     font.pixelSize: 20
                     font.weight: Font.DemiBold
                     elide: Text.ElideRight
@@ -262,29 +295,23 @@ Pane {
                     Layout.fillWidth: true
                     spacing: 8
 
-                    Label {
+                    CustomLabel {
                         text: root.hasSelection ? root.item.status + " · " + root.item.groupName : ""
-                        color: themeController.muted
+                        color: Theme.placeholderTextColor
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
 
-                    Button {
+                    CustomButton {
                         text: "Actions"
                         enabled: root.hasSelection || libraryController.filteredItems.length > 0
                         onClicked: episodeActions.open()
 
-                        Menu {
+                        CustomMenu {
                             id: episodeActions
                             y: parent.height + 6
                             padding: 8
-                            overlap: 0
-
-                            background: Rectangle {
-                                radius: 10
-                                color: "#fbfcfe"
-                                border.color: "#d9e2ec"
-                            }
+                            menuWidth: 260
 
                             ActionMenuItem {
                                 text: root.item.isRead ? "Mark Unread" : "Mark Read"
@@ -362,10 +389,10 @@ Pane {
                     }
                 }
 
-                Label {
+                CustomLabel {
                     visible: root.hasVisibleChunkProgress()
                     text: "Chunks " + root.snapshot.chunkProgress + " · Cloud " + root.snapshot.cloudStatus
-                    color: themeController.muted
+                    color: Theme.placeholderTextColor
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
@@ -374,7 +401,7 @@ Pane {
             Rectangle {
                 Layout.fillWidth: true
                 height: 1
-                color: themeController.border
+                color: Theme.dividerColor
             }
 
             RowLayout {
@@ -391,7 +418,9 @@ Pane {
                     }
                 }
 
-                Item { Layout.fillWidth: true }
+                Item {
+                    Layout.fillWidth: true
+                }
             }
 
             MarkdownView {
@@ -402,88 +431,19 @@ Pane {
         }
     }
 
-    component SegmentButton: Button {
-        id: segment
+    component SegmentButton: CustomButton {
         property bool selected: false
         checkable: true
         checked: selected
-        implicitWidth: Math.max(74, contentItem.implicitWidth + 28)
-        implicitHeight: 34
-
-        contentItem: Text {
-            text: segment.text
-            color: segment.enabled
-                ? (segment.selected ? "#ffffff" : themeController.text)
-                : themeController.muted
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 14
-            font.weight: segment.selected ? Font.DemiBold : Font.Normal
-            elide: Text.ElideRight
-        }
-
-        background: Rectangle {
-            radius: 6
-            color: segment.selected
-                ? themeController.accent
-                : (segment.hovered ? "#eef5ff" : themeController.panelAlt)
-            border.color: segment.selected ? themeController.accent : themeController.border
-        }
+        defaultHeight: 34
+        defaultPadding: 14
+        font.pixelSize: 14
+        buttonTextColor: selected ? Theme.highlightedTextColor : Theme.textColor
     }
 
-    component ActionMenuItem: MenuItem {
-        id: actionItem
-        implicitWidth: Math.max(240, implicitContentWidth + leftPadding + rightPadding)
-        implicitHeight: visible ? 38 : 0
-        leftPadding: 14
-        rightPadding: 14
-        topPadding: 8
-        bottomPadding: 8
-
-        contentItem: RowLayout {
-            spacing: 10
-
-            Label {
-                text: actionItem.text
-                color: actionItem.enabled
-                    ? (actionItem.highlighted ? "#0f3d7a" : themeController.text)
-                    : "#95a1af"
-                font.pixelSize: 14
-                font.weight: actionItem.checkable && actionItem.checked ? Font.DemiBold : Font.Normal
-                elide: Text.ElideRight
-                Layout.fillWidth: true
-            }
-
-            Label {
-                visible: actionItem.checkable
-                text: actionItem.checked ? "✓" : ""
-                color: themeController.accent
-                font.pixelSize: 13
-                font.weight: Font.DemiBold
-                horizontalAlignment: Text.AlignRight
-                Layout.preferredWidth: 12
-            }
-        }
-
-        background: Rectangle {
-            radius: 8
-            color: actionItem.highlighted
-                ? "#eaf2ff"
-                : (actionItem.hovered ? "#f4f8fc" : "transparent")
-            border.color: actionItem.highlighted ? "#d7e5fb" : "transparent"
-        }
+    component ActionMenuItem: CustomMenuItem {
+        implicitHeight: visible ? Math.max(38, Fonts.listItemHeight) : 0
     }
 
-    component ActionMenuSeparator: MenuSeparator {
-        implicitWidth: 240
-        topPadding: 6
-        bottomPadding: 6
-        leftPadding: 0
-        rightPadding: 0
-
-        contentItem: Rectangle {
-            implicitHeight: 1
-            color: "#e4ebf2"
-        }
-    }
+    component ActionMenuSeparator: CustomMenuSeparator {}
 }

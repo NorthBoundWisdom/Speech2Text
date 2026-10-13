@@ -7,13 +7,13 @@ project(Audio2TextQt
     LANGUAGES CXX
 )
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# The app uses shared Qt. Letting Qt's CMake package auto-import every installed
-# QML plugin can surface warnings from optional Qt modules that this client never uses.
+# Shared Qt loads QML plugins at runtime. Avoid importing unrelated SDK plugin
+# targets; the app registers its static GeoControls modules explicitly.
 set(QT_SKIP_AUTO_PLUGIN_INCLUSION ON)
 set(QT_SKIP_AUTO_QML_PLUGIN_INCLUSION ON)
 
@@ -28,12 +28,24 @@ if(WIN32)
     enable_language(RC)
 endif()
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 QuickDialogs2 Svg QuickTest)
 qt_standard_project_setup(REQUIRES 6.8)
+
+set(GEOCONTROLS_SOURCE_ROOT "$ENV{GEOCONTROLS_SOURCE_ROOT}" CACHE PATH "FreeCM GeoControls source root")
+if(NOT EXISTS "${GEOCONTROLS_SOURCE_ROOT}/Controls/CMakeLists.txt")
+    message(FATAL_ERROR "GeoControls source root is required. Run python configs/source_roots.py init-seeds, then materialize; configure through configs/qt_workflow.py.")
+endif()
+set(GEOCONTROLS_BUILD_DEMO OFF CACHE BOOL "Only build the reusable controls" FORCE)
+set(GEOCONTROLS_INSTALL_SDK OFF CACHE BOOL "Consume GeoControls from its source root" FORCE)
+add_subdirectory("${GEOCONTROLS_SOURCE_ROOT}" "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols")
+add_library(GeoControls::Controls ALIAS GeoControlsControls)
+add_library(GeoControls::AppShell ALIAS GeoControlsAppShell)
 
 qt_add_executable(Audio2TextQt
     src/AppPaths.cpp
     src/AppPaths.h
+    src/GeoControlsSetup.cpp
+    src/GeoControlsSetup.h
     src/AtotServiceClient.cpp
     src/AtotServiceClient.h
     src/JobController.cpp
@@ -42,8 +54,6 @@ qt_add_executable(Audio2TextQt
     src/LibraryController.h
     src/SettingsController.cpp
     src/SettingsController.h
-    src/ThemeController.cpp
-    src/ThemeController.h
     src/main.cpp
     resource.qrc
 )
@@ -55,6 +65,8 @@ qt_add_qml_module(Audio2TextQt
     RESOURCE_PREFIX "/"
     OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml/Audio2TextQt"
     NO_CACHEGEN
+    NO_IMPORT_SCAN
+    DEPENDENCIES GeoControls GeoControls.AppShell
     QML_FILES
         qml/Main.qml
         qml/DesktopWorkspace.qml
@@ -86,6 +98,7 @@ PRIVATE
     Qt6::Qml
     Qt6::Quick
     Qt6::QuickControls2
+    GeoControls::AppShell
 )
 
 target_compile_definitions(Audio2TextQt
@@ -189,12 +202,32 @@ if(WIN32 AND DEFINED ENV{SystemRoot} AND EXISTS "$ENV{SystemRoot}/Fonts")
 endif()
 set_tests_properties(Audio2TextQtQmlSmoke PROPERTIES ENVIRONMENT "${AUDIO2TEXTQT_SMOKE_ENV}" TIMEOUT 45)
 
-find_program(AUDIO2TEXTQT_QMLTESTRUNNER qmltestrunner
-    HINTS "${Qt6_DIR}/../../../bin" REQUIRED)
+qt_add_executable(Audio2TextQtWorkspaceTests ../../tests/qt_workspace/runner.cpp
+    src/GeoControlsSetup.cpp src/GeoControlsSetup.h
+    src/AppPaths.cpp src/AppPaths.h
+    src/SettingsController.cpp src/SettingsController.h
+    src/LibraryController.cpp src/LibraryController.h
+    src/JobController.cpp src/JobController.h
+    src/AtotServiceClient.cpp src/AtotServiceClient.h)
+set_target_properties(Audio2TextQtWorkspaceTests PROPERTIES QT_QML_MODULE_NO_IMPORT_SCAN ON)
+set_target_properties(Audio2TextQtWorkspaceTests PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test-bin")
+target_include_directories(Audio2TextQtWorkspaceTests PRIVATE src)
+target_link_libraries(Audio2TextQtWorkspaceTests PRIVATE Qt6::QuickTest GeoControls::AppShell)
+target_compile_definitions(Audio2TextQtWorkspaceTests PRIVATE
+    QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../../tests/qt_workspace")
 add_test(NAME Audio2TextQtWorkspaceLayout
-    COMMAND ${AUDIO2TEXTQT_QMLTESTRUNNER} -input "${CMAKE_CURRENT_SOURCE_DIR}/../../tests/qt_workspace")
+    COMMAND Audio2TextQtWorkspaceTests)
 set_tests_properties(Audio2TextQtWorkspaceLayout PROPERTIES
     ENVIRONMENT "${AUDIO2TEXTQT_SMOKE_ENV}" TIMEOUT 45)
+if(WIN32)
+    add_custom_command(TARGET Audio2TextQtWorkspaceTests POST_BUILD
+        COMMAND "${AUDIO2TEXTQT_WINDEPLOYQT_EXECUTABLE}"
+            --verbose 0 --no-compiler-runtime --no-opengl-sw --no-system-d3d-compiler
+            --qmldir "${CMAKE_CURRENT_SOURCE_DIR}/../../tests/qt_workspace"
+            "$<TARGET_FILE:Audio2TextQtWorkspaceTests>"
+        VERBATIM)
+endif()
 
 qt_add_executable(Audio2TextQtLanguageSettingsTests
     ../../tests/qt_settings/test_language_settings.cpp
@@ -202,4 +235,13 @@ qt_add_executable(Audio2TextQtLanguageSettingsTests
     src/AppPaths.cpp src/AppPaths.h)
 target_include_directories(Audio2TextQtLanguageSettingsTests PRIVATE src)
 target_link_libraries(Audio2TextQtLanguageSettingsTests PRIVATE Qt6::Core)
+set_target_properties(Audio2TextQtLanguageSettingsTests PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test-bin")
 add_test(NAME Audio2TextQtLanguageSettings COMMAND Audio2TextQtLanguageSettingsTests)
+if(WIN32)
+    add_custom_command(TARGET Audio2TextQtLanguageSettingsTests POST_BUILD
+        COMMAND "${AUDIO2TEXTQT_WINDEPLOYQT_EXECUTABLE}"
+            --verbose 0 --no-compiler-runtime --no-opengl-sw --no-system-d3d-compiler
+            "$<TARGET_FILE:Audio2TextQtLanguageSettingsTests>"
+        VERBATIM)
+endif()

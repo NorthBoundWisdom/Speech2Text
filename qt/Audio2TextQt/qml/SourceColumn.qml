@@ -1,44 +1,45 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls as QQC
+import GeoControls 1.0
 import QtQuick.Layouts
 
-Pane {
+CustomPane {
     id: root
     padding: 0
     background: Rectangle {
-        color: themeController.panel
+        color: Theme.baseColor
     }
 
-    signal importRequested()
-    signal settingsRequested()
-    signal logsRequested()
+    signal importRequested
+    signal settingsRequested
+    signal logsRequested
 
     function sourceById(sourceId) {
         for (var i = 0; i < libraryController.sources.length; ++i) {
-            var source = libraryController.sources[i]
+            var source = libraryController.sources[i];
             if (source.id === sourceId)
-                return source
+                return source;
         }
-        return null
+        return null;
     }
 
     function groupSources() {
-        var groups = []
+        var groups = [];
         for (var i = 0; i < libraryController.sources.length; ++i) {
-            var source = libraryController.sources[i]
+            var source = libraryController.sources[i];
             if (source.kind === "group")
-                groups.push(source)
+                groups.push(source);
         }
-        return groups
+        return groups;
     }
 
     function isSelected(source) {
-        return source && libraryController.selectedSource === source.id
+        return source && libraryController.selectedSource === source.id;
     }
 
     function selectSource(source) {
         if (source)
-            libraryController.selectedSource = source.id
+            libraryController.selectedSource = source.id;
     }
 
     ColumnLayout {
@@ -53,10 +54,14 @@ Pane {
             Layout.bottomMargin: 12
             spacing: 8
 
-            ToolButton {
+            CustomToolButton {
+                display: QQC.AbstractButton.TextOnly
+                focusPolicy: Qt.StrongFocus
                 text: "+"
-                ToolTip.visible: hovered
-                ToolTip.text: "Import"
+                CustomToolTip {
+                    visible: parent.hovered
+                    text: "Import"
+                }
                 onClicked: root.importRequested()
                 Layout.preferredWidth: 30
                 Layout.preferredHeight: 28
@@ -65,35 +70,39 @@ Pane {
             ColumnLayout {
                 spacing: 1
                 Layout.fillWidth: true
-                Label {
+                CustomLabel {
                     text: "SonaFolio"
                     font.pixelSize: 15
                     font.weight: Font.DemiBold
-                    color: themeController.text
+                    color: Theme.textColor
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
-                Label {
+                CustomLabel {
                     text: libraryController.items.length + " episodes"
                     font.pixelSize: 11
-                    color: themeController.muted
+                    color: Theme.placeholderTextColor
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
             }
 
-            ToolButton {
+            CustomToolButton {
+                display: QQC.AbstractButton.TextOnly
+                focusPolicy: Qt.StrongFocus
                 text: "\u2699"
                 font.pixelSize: 17
-                ToolTip.visible: hovered
-                ToolTip.text: "Settings"
+                CustomToolTip {
+                    visible: parent.hovered
+                    text: "Settings"
+                }
                 onClicked: root.settingsRequested()
                 Layout.preferredWidth: 32
                 Layout.preferredHeight: 28
             }
         }
 
-        ScrollView {
+        CustomScrollView {
             id: statusArea
             Layout.fillWidth: true
             Layout.leftMargin: 10
@@ -110,11 +119,11 @@ Pane {
                 errorText: jobController.lastError
                 queuedCount: jobController.queuedJobCount
                 libraryMessage: libraryController.statusMessage
-                textColor: themeController.text
-                mutedColor: themeController.muted
-                errorColor: themeController.danger
-                accentColor: themeController.accent
-                surfaceColor: themeController.panelAlt
+                textColor: Theme.textColor
+                mutedColor: Theme.placeholderTextColor
+                errorColor: Theme.errorColor
+                accentColor: Theme.highlightColor
+                surfaceColor: Theme.alternateBaseColor
                 onLogsRequested: root.logsRequested()
             }
         }
@@ -122,10 +131,10 @@ Pane {
         Rectangle {
             Layout.fillWidth: true
             height: 1
-            color: themeController.border
+            color: Theme.dividerColor
         }
 
-        ScrollView {
+        CustomScrollView {
             id: sourceScroll
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -145,34 +154,68 @@ Pane {
                     Layout.fillWidth: true
                     spacing: 4
 
-                    SectionHeader { title: "Library" }
-                    SourceRow { source: root.sourceById("library"); badge: "LIB"; tint: themeController.muted }
-                    SourceRow { source: root.sourceById("subscriptions"); badge: "RSS"; tint: "#7c3aed" }
+                    SectionHeader {
+                        title: "Library"
+                    }
+                    SourceRow {
+                        source: root.sourceById("library")
+                        badge: "LIB"
+                        tint: Theme.placeholderTextColor
+                    }
+                    SourceRow {
+                        source: root.sourceById("subscriptions")
+                        badge: "RSS"
+                        tint: "#7c3aed"
+                    }
                 }
 
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 4
 
-                    SectionHeader { title: "Smart Feeds" }
-                    SourceRow { source: root.sourceById("smart:today"); badge: "DAY"; tint: "#c26a00" }
-                    SourceRow { source: root.sourceById("smart:unprocessed"); badge: "NEW"; tint: themeController.accent }
-                    SourceRow { source: root.sourceById("smart:processed"); badge: "OK"; tint: themeController.success }
-                    SourceRow { source: root.sourceById("smart:starred"); badge: "*"; tint: "#b77900" }
-                    SourceRow { source: root.sourceById("smart:archive"); badge: "ARC"; tint: themeController.muted }
+                    SectionHeader {
+                        title: "Smart Feeds"
+                    }
+                    SourceRow {
+                        source: root.sourceById("smart:today")
+                        badge: "DAY"
+                        tint: "#c26a00"
+                    }
+                    SourceRow {
+                        source: root.sourceById("smart:unprocessed")
+                        badge: "NEW"
+                        tint: Theme.highlightColor
+                    }
+                    SourceRow {
+                        source: root.sourceById("smart:processed")
+                        badge: "OK"
+                        tint: Theme.successColor
+                    }
+                    SourceRow {
+                        source: root.sourceById("smart:starred")
+                        badge: "*"
+                        tint: "#b77900"
+                    }
+                    SourceRow {
+                        source: root.sourceById("smart:archive")
+                        badge: "ARC"
+                        tint: Theme.placeholderTextColor
+                    }
                 }
 
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 4
 
-                    SectionHeader { title: "Folders" }
+                    SectionHeader {
+                        title: "Folders"
+                    }
                     Repeater {
                         model: root.groupSources()
                         delegate: SourceRow {
                             source: modelData
                             badge: "#"
-                            tint: themeController.muted
+                            tint: Theme.placeholderTextColor
                             dimWhenEmpty: true
                         }
                     }
@@ -186,10 +229,10 @@ Pane {
         }
     }
 
-    component SectionHeader: Label {
+    component SectionHeader: CustomLabel {
         property string title: ""
         text: title
-        color: themeController.muted
+        color: Theme.placeholderTextColor
         font.pixelSize: 11
         font.weight: Font.DemiBold
         Layout.fillWidth: true
@@ -203,7 +246,7 @@ Pane {
         id: row
         property var source
         property string badge: ""
-        property color tint: themeController.muted
+        property color tint: Theme.placeholderTextColor
         property bool dimWhenEmpty: false
         property bool selected: root.isSelected(source)
         property bool empty: source && source.count === 0
@@ -228,7 +271,7 @@ Pane {
                 visible: row.selected
                 width: 3
                 radius: 2
-                color: themeController.accent
+                color: Theme.highlightColor
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
@@ -237,10 +280,10 @@ Pane {
             }
         }
 
-        Label {
+        CustomLabel {
             id: badgeLabel
             text: row.badge
-            color: row.selected ? themeController.accent : row.tint
+            color: row.selected ? Theme.highlightColor : row.tint
             opacity: row.dimWhenEmpty && row.empty && !row.selected ? 0.58 : 1.0
             font.pixelSize: row.badge.length > 1 ? 9 : 13
             font.weight: Font.DemiBold
@@ -253,10 +296,10 @@ Pane {
             height: 24
         }
 
-        Label {
+        CustomLabel {
             id: titleLabel
             text: row.source ? row.source.title : ""
-            color: row.selected ? themeController.accent : themeController.text
+            color: row.selected ? Theme.highlightColor : Theme.textColor
             opacity: row.dimWhenEmpty && row.empty && !row.selected ? 0.62 : 1.0
             font.pixelSize: 14
             font.weight: row.selected ? Font.DemiBold : Font.Normal
@@ -270,10 +313,10 @@ Pane {
             height: 24
         }
 
-        Label {
+        CustomLabel {
             id: countLabel
             text: row.source && row.source.count > 0 ? row.source.count : ""
-            color: row.selected ? themeController.accent : themeController.muted
+            color: row.selected ? Theme.highlightColor : Theme.placeholderTextColor
             font.pixelSize: 13
             font.weight: row.selected ? Font.DemiBold : Font.Normal
             horizontalAlignment: Text.AlignRight

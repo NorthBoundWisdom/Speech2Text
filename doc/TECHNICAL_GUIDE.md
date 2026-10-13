@@ -72,6 +72,8 @@ is ignored; do not maintain it as source.
 Qt:
 
 ```bash
+python3 configs/source_roots.py init-seeds --quiet
+python3 configs/source_roots.py materialize --quiet
 python3 configs/qt_workflow.py config --configuration Release --qt-prefix <Qt-prefix>
 python3 configs/qt_workflow.py smoke --configuration Release
 ctest --test-dir build/Audio2TextQt -C Release --output-on-failure

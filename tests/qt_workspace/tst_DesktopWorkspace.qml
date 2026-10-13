@@ -42,11 +42,12 @@ Item {
         }
         function test_divider_drags_resize_both_columns() {
             var beforeSource = workspace.sourceActualWidth
-            mouseDrag(workspace, beforeSource, 180, 40, 0)
+            var dividerWidth = (workspace.width - workspace.sourceActualWidth - workspace.listActualWidth - workspace.detailActualWidth) / 2
+            mouseDrag(workspace, beforeSource + dividerWidth / 2, 180, 40, 0)
             settle()
             verify(workspace.sourceActualWidth > beforeSource + 20)
             var beforeList = workspace.listActualWidth
-            mouseDrag(workspace, workspace.sourceActualWidth + beforeList + 1, 180, 45, 0)
+            mouseDrag(workspace, workspace.sourceActualWidth + beforeList + dividerWidth * 1.5, 180, 45, 0)
             settle()
             verify(workspace.listActualWidth > beforeList + 20)
             fuzzyCompare(workspace.sourceWidth, workspace.sourceActualWidth, 1)
@@ -59,6 +60,13 @@ Item {
             verify(workspace.sourceActualWidth + workspace.listActualWidth + workspace.detailActualWidth <= 980)
             parent.width = 1320
             settle()
+        }
+        function test_divider_hit_area_extends_beyond_visual_handle() {
+            var beforeSource = workspace.sourceActualWidth
+            var dividerWidth = (workspace.width - workspace.sourceActualWidth - workspace.listActualWidth - workspace.detailActualWidth) / 2
+            mouseDrag(workspace, beforeSource + dividerWidth / 2 + 4, 220, 25, 0)
+            settle()
+            verify(workspace.sourceActualWidth > beforeSource + 15)
         }
     }
 }

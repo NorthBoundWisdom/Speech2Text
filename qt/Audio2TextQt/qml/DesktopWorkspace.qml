@@ -1,7 +1,8 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls as QQC
+import GeoControls 1.0
 
-SplitView {
+CustomSplitView {
     id: root
     orientation: Qt.Horizontal
     property real sourceWidth: 270
@@ -17,63 +18,50 @@ SplitView {
 
     function rememberWidths() {
         if (!sourceCollapsed && sourcePane.width >= 180)
-            sourceWidth = sourcePane.width
+            sourceWidth = sourcePane.width;
         if (!listCollapsed && listPane.width >= 240)
-            listWidth = listPane.width
+            listWidth = listPane.width;
     }
 
     function toggleSources() {
-        rememberWidths()
-        sourceCollapsed = !sourceCollapsed
+        rememberWidths();
+        sourceCollapsed = !sourceCollapsed;
         if (!sourceCollapsed)
-            sourcePane.SplitView.preferredWidth = sourceWidth
+            sourcePane.QQC.SplitView.preferredWidth = sourceWidth;
     }
 
     function toggleList() {
-        rememberWidths()
-        listCollapsed = !listCollapsed
+        rememberWidths();
+        listCollapsed = !listCollapsed;
         if (!listCollapsed)
-            listPane.SplitView.preferredWidth = listWidth
+            listPane.QQC.SplitView.preferredWidth = listWidth;
     }
 
     onResizingChanged: {
         if (!resizing)
-            rememberWidths()
-    }
-
-    handle: Rectangle {
-        id: divider
-        implicitWidth: 1
-        implicitHeight: 1
-        color: SplitHandle.pressed || SplitHandle.hovered ? palette.highlight : palette.mid
-        // Keep the divider visually thin while making it easy to grab.
-        containmentMask: Item {
-            x: (divider.width - width) / 2
-            width: 12
-            height: root.height
-        }
+            rememberWidths();
     }
 
     Loader {
         id: sourcePane
         visible: !root.sourceCollapsed
         sourceComponent: root.sourceContent
-        SplitView.preferredWidth: root.sourceWidth
-        SplitView.minimumWidth: 180
-        SplitView.maximumWidth: 460
+        QQC.SplitView.preferredWidth: root.sourceWidth
+        QQC.SplitView.minimumWidth: 180
+        QQC.SplitView.maximumWidth: 460
     }
     Loader {
         id: listPane
         visible: !root.listCollapsed
         sourceComponent: root.listContent
-        SplitView.preferredWidth: root.listWidth
-        SplitView.minimumWidth: 240
-        SplitView.maximumWidth: 700
+        QQC.SplitView.preferredWidth: root.listWidth
+        QQC.SplitView.minimumWidth: 240
+        QQC.SplitView.maximumWidth: 700
     }
     Loader {
         id: detailPane
         sourceComponent: root.detailContent
-        SplitView.fillWidth: true
-        SplitView.minimumWidth: 320
+        QQC.SplitView.fillWidth: true
+        QQC.SplitView.minimumWidth: 320
     }
 }

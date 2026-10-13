@@ -11,8 +11,10 @@ remain compatible; see [brand identifiers](../../doc/BRANDING.md).
 ## Build
 
 ```powershell
-cmake -S qt/Audio2TextQt -B build/Audio2TextQt -DCMAKE_PREFIX_PATH=<Qt-prefix>
-cmake --build build/Audio2TextQt --config Release
+python configs/source_roots.py init-seeds --quiet
+python configs/source_roots.py materialize --quiet
+python configs/qt_workflow.py config --configuration Release --qt-prefix <Qt-prefix>
+python configs/qt_workflow.py build --configuration Release
 ```
 
 On macOS, the CMake target builds `SonaFolioQt.app`; `configs/qt_workflow.py`
@@ -28,6 +30,20 @@ FreeCM exposes Qt client variants on macOS and Windows. The `Run` action include
 launches the build output. Set `AUDIO2TEXTQT_QT_PREFIX` or `CMAKE_PREFIX_PATH` to
 the Qt 6 prefix if Qt is not already discoverable from PATH or the existing CMake
 cache.
+
+`source_roots.lock.jsonc.in` pins GeoControls by its HTTPS remote and full commit.
+FreeCM prepares its source root under ignored `build/`; CMake consumes that root
+without downloading or vendoring controls. Existing machine-local locks must add the
+GeoControls entries from the template before initialization. Manual sibling checkout
+paths belong only in the ignored local lock's `depsManualPath.GeoControls`.
+
+The client uses `GeoControls` for all interactive controls and `GeoControls.AppShell`
+for its application window. Qt Quick Controls is imported under `QQC` only for enums
+and attached layout/overlay contracts. The Basic style provides input behavior; buttons,
+text fields, editing menus, tabs, popups, scroll bars and split handles use GeoControls
+presentation. File/folder choosers use its public native-dialog entry points.
+Theme initialization and static module registration are shared by the app and its
+Quick Test runner; resource URLs remain available in installed packages.
 
 The `Package` action includes `Mac Qt Client ZIP` on macOS and `Windows Qt Client
 ZIP` on Windows. macOS packaging runs `macdeployqt`, copies `ffmpeg` and `ffprobe`

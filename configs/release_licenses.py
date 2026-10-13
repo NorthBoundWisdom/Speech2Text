@@ -58,9 +58,28 @@ def _required_files(staging: Path) -> set[str]:
     return required
 
 
-def stage_release_licenses(staging: Path, manifest_path: Path | None) -> None:
+def stage_release_licenses(
+    staging: Path, manifest_path: Path | None, *, geocontrols: tuple[Path, str] | None = None
+) -> None:
     copy_project_licenses(staging / 'licenses')
     required = _required_files(staging)
+    embedded_files: set[str] = set()
+    if geocontrols is not None:
+        source, revision = geocontrols
+        license_text = source / 'LICENSE'
+        if not license_text.is_file() or not license_text.read_text(encoding='utf-8').startswith('MIT License\n'):
+            raise ValueError('The resolved GeoControls revision must provide its MIT license.')
+        host_binaries = {
+            path.relative_to(staging).as_posix()
+            for path in staging.rglob('*')
+            if path.is_file() and path.name in {'SonaFolioQt', 'SonaFolioQt.exe'}
+        }
+        if not host_binaries:
+            raise ValueError('GeoControls attribution requires the Qt client executable.')
+        for name in host_binaries:
+            _contained(staging, name)
+        embedded_files = {name for name in required if 'GeoControls' in Path(name).parts}
+        required -= embedded_files
     if required and manifest_path is None:
         raise ValueError('Native release requires --third-party-materials manifest.json; see doc/RELEASE_LICENSES.md.')
     if manifest_path is None:
@@ -74,6 +93,11 @@ def stage_release_licenses(staging: Path, manifest_path: Path | None) -> None:
         covered: set[str] = set()
         names: set[str] = set()
         for component in document['components']:
+            # The host inventories its statically linked controls separately from Qt.
+            component = {**component, 'files': [row for row in component.get('files', [])
+                                               if row['path'] not in embedded_files]}
+            if not component['files']:
+                continue
             name = component.get('name', '')
             license_id = component.get('license', '')
             if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,100}', name) or name in names:
@@ -117,10 +141,26 @@ def stage_release_licenses(staging: Path, manifest_path: Path | None) -> None:
                                'files': rows, 'license_files': license_files, 'source_materials': sources})
         if missing := required - covered:
             raise ValueError('Unattributed runtime files: ' + ', '.join(sorted(missing)[:12]))
+    if geocontrols is not None:
+        source, revision = geocontrols
+        target = staging / 'licenses' / 'GeoControls' / 'LICENSE'
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source / 'LICENSE', target)
+        components.append({
+            'name': 'GeoControls', 'version': revision, 'license': 'MIT',
+            'linkage': 'static', 'embedded_in': sorted(host_binaries),
+            'files': [{'path': name, 'sha256': _sha(_contained(staging, name))}
+                      for name in sorted(embedded_files)],
+            'license_files': [{'path': target.relative_to(staging).as_posix(), 'sha256': _sha(target)}],
+            'source_materials': [],
+        })
     (staging / 'third-party-components.json').write_text(json.dumps({'schema_version': 1, 'components': components}, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     sbom = {'bomFormat': 'CycloneDX', 'specVersion': '1.6', 'version': 1,
             'components': [{'type': 'library', 'name': c['name'], 'version': c['version'],
                             'licenses': [{'expression': c['license']}],
-                            'properties': [{'name': 'audio2text:files', 'value': json.dumps(c['files'])}]}
+                            'properties': [{'name': 'audio2text:files', 'value': json.dumps(c['files'])}]
+                            + ([{'name': 'sonafolio:linkage', 'value': 'static'},
+                                {'name': 'sonafolio:embedded-in', 'value': json.dumps(c['embedded_in'])}]
+                               if c.get('linkage') == 'static' else [])}
                            for c in components]}
     (staging / 'sbom.cdx.json').write_text(json.dumps(sbom, indent=2) + '\n', encoding='utf-8')

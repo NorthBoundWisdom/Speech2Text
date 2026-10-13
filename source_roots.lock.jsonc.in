@@ -28,6 +28,13 @@
     "ARCHIVE_ID": "1"
   },
   "depsMode": "pinned",
-  "depsManualPath": {},
-  "dependencies": {}
+  "depsManualPath": {
+    "GeoControls": ""
+  },
+  "dependencies": {
+    "GeoControls": {
+      "remote": "https://github.com/NorthBoundWisdom/GeoControls.git",
+      "commit": "146b65e96d6dda707d25346e4e5f06ed79c4113e"
+    }
+  }
 }

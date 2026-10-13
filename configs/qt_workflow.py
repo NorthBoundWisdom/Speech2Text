@@ -19,6 +19,7 @@ if FREECM_ROOT.exists() and str(FREECM_ROOT) not in sys.path:
     sys.path.insert(0, str(FREECM_ROOT))
 
 from configs.release_licenses import stage_release_licenses  # noqa: E402
+from configs.source_roots_lib import WORKFLOW  # noqa: E402
 
 QT_PROJECT_DIR = REPO_ROOT / "qt" / "Audio2TextQt"
 DEFAULT_BUILD_DIR = REPO_ROOT / "build" / "Audio2TextQt"
@@ -30,6 +31,7 @@ PRODUCT_NAME = "SonaFolioQt"
 PACKAGE_PLATFORM = "Windows"
 SOURCE_ROOTS_LOCK_NAMES = ("source_roots.lock.jsonc", "source_roots.lock.jsonc.in")
 PACKAGE_IGNORE_PATTERNS = (
+    "test-bin",
     "*.exp",
     "*.ilk",
     "*.lastbuildstate",
@@ -308,7 +310,13 @@ def _find_qt_deploy_tool(explicit: str | None, build_dir: Path) -> Path:
     )
 
 
+def _geocontrols_release_source() -> tuple[Path, str]:
+    roots = WORKFLOW.resolve_source_roots(quiet=True)
+    return roots.root_for_dependency('GeoControls'), roots.resolved_commits_by_dependency['GeoControls']
+
+
 def _configure(args: argparse.Namespace, build_dir: Path) -> None:
+    roots = WORKFLOW.resolve_source_roots(materialize=True, allow_network=True)
     # --config only selects a configuration for multi-config generators. Ninja
     # and Makefiles need the build type at configure time to enable optimization.
     command: list[str | Path] = [
@@ -318,6 +326,7 @@ def _configure(args: argparse.Namespace, build_dir: Path) -> None:
         "-B",
         build_dir,
         f"-DCMAKE_BUILD_TYPE={args.configuration}",
+        f"-DGEOCONTROLS_SOURCE_ROOT={roots.root_for_dependency('GeoControls')}",
     ]
     if args.generator:
         command.extend(["-G", args.generator])
@@ -355,6 +364,7 @@ def _build(args: argparse.Namespace, build_dir: Path, *, configure_if_missing: b
             "--target",
             TARGET_NAME,
             "Audio2TextQtLanguageSettingsTests",
+            "Audio2TextQtWorkspaceTests",
         ]
     )
 
@@ -768,7 +778,8 @@ def _package_windows(args: argparse.Namespace, build_dir: Path) -> Path:
         platform="Windows",
     )
     stage_release_licenses(
-        staging_dir, Path(args.third_party_materials) if args.third_party_materials else None
+        staging_dir, Path(args.third_party_materials) if args.third_party_materials else None,
+        geocontrols=_geocontrols_release_source(),
     )
     created = _create_package_archive(staging_dir, archive_path)
     print(f"Package: {created}", flush=True)
@@ -843,7 +854,8 @@ def _package_macos(args: argparse.Namespace, build_dir: Path) -> Path:
         platform="macOS",
     )
     stage_release_licenses(
-        staging_dir, Path(args.third_party_materials) if args.third_party_materials else None
+        staging_dir, Path(args.third_party_materials) if args.third_party_materials else None,
+        geocontrols=_geocontrols_release_source(),
     )
     created = _create_package_archive(staging_dir, archive_path)
     print(f"Package: {created}", flush=True)

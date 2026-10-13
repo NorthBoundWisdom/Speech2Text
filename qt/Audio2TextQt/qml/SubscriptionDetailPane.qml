@@ -1,12 +1,13 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls as QQC
+import GeoControls 1.0
 import QtQuick.Layouts
 
-Pane {
+CustomPane {
     id: root
     padding: 0
     background: Rectangle {
-        color: themeController.panel
+        color: Theme.baseColor
     }
 
     property var subscription: libraryController.selectedSubscription
@@ -15,16 +16,16 @@ Pane {
 
     function displayUrl(sub) {
         if (!sub)
-            return "No URL"
+            return "No URL";
         if (sub.feedURL && sub.feedURL.length > 0)
-            return sub.feedURL
+            return sub.feedURL;
         if (sub.url && sub.url.length > 0)
-            return sub.url
-        return "No URL"
+            return sub.url;
+        return "No URL";
     }
 
     function emptyAware(value) {
-        return value && value.length > 0 ? value : "None"
+        return value && value.length > 0 ? value : "None";
     }
 
     ColumnLayout {
@@ -39,40 +40,38 @@ Pane {
             ColumnLayout {
                 spacing: 2
                 Layout.fillWidth: true
-                Label {
+                CustomLabel {
                     text: root.hasSubscription ? root.subscription.title : "Subscriptions"
-                    color: themeController.text
+                    color: Theme.textColor
                     font.pixelSize: 20
                     font.weight: Font.DemiBold
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
-                Label {
-                    text: root.hasSubscription
-                        ? root.subscription.count + " episodes · " + root.subscription.unprocessedCount + " unprocessed"
-                        : (libraryController.subscriptions.length === 0 ? "No subscriptions yet" : libraryController.subscriptions.length + " subscriptions")
-                    color: themeController.muted
+                CustomLabel {
+                    text: root.hasSubscription ? root.subscription.count + " episodes · " + root.subscription.unprocessedCount + " unprocessed" : (libraryController.subscriptions.length === 0 ? "No subscriptions yet" : libraryController.subscriptions.length + " subscriptions")
+                    color: Theme.placeholderTextColor
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
             }
 
-            Button {
+            CustomButton {
                 text: "Refresh"
                 enabled: root.hasSubscription && !jobController.running
                 onClicked: jobController.refreshSubscriptions(false, root.subscription.id, 20)
             }
-            Button {
+            CustomButton {
                 text: "History"
                 enabled: root.hasSubscription && !jobController.running
                 onClicked: jobController.refreshSubscriptions(false, root.subscription.id, 0)
             }
-            Button {
+            CustomButton {
                 text: "Remove"
                 enabled: root.hasSubscription && !jobController.running
                 onClicked: jobController.removeSubscription(root.subscription.id)
             }
-            Button {
+            CustomButton {
                 text: "Refresh All"
                 enabled: libraryController.subscriptions.length > 0 && !jobController.running
                 onClicked: jobController.refreshSubscriptions(true, "", 20)
@@ -82,10 +81,10 @@ Pane {
         Rectangle {
             Layout.fillWidth: true
             height: 1
-            color: themeController.border
+            color: Theme.dividerColor
         }
 
-        ScrollView {
+        CustomScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
@@ -108,8 +107,17 @@ Pane {
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 12
-                            Label { text: root.subscription.count; color: themeController.text; font.pixelSize: 24; font.weight: Font.DemiBold }
-                            Label { text: "Episodes"; color: themeController.muted; font.pixelSize: 12 }
+                            CustomLabel {
+                                text: root.subscription.count
+                                color: Theme.textColor
+                                font.pixelSize: 24
+                                font.weight: Font.DemiBold
+                            }
+                            CustomLabel {
+                                text: "Episodes"
+                                color: Theme.placeholderTextColor
+                                font.pixelSize: 12
+                            }
                         }
                     }
                     Rectangle {
@@ -120,8 +128,17 @@ Pane {
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 12
-                            Label { text: root.subscription.unprocessedCount; color: themeController.accent; font.pixelSize: 24; font.weight: Font.DemiBold }
-                            Label { text: "Unprocessed"; color: themeController.muted; font.pixelSize: 12 }
+                            CustomLabel {
+                                text: root.subscription.unprocessedCount
+                                color: Theme.highlightColor
+                                font.pixelSize: 24
+                                font.weight: Font.DemiBold
+                            }
+                            CustomLabel {
+                                text: "Unprocessed"
+                                color: Theme.placeholderTextColor
+                                font.pixelSize: 12
+                            }
                         }
                     }
                     Rectangle {
@@ -132,8 +149,17 @@ Pane {
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 12
-                            Label { text: root.subscription.processedCount; color: themeController.success; font.pixelSize: 24; font.weight: Font.DemiBold }
-                            Label { text: "Processed"; color: themeController.muted; font.pixelSize: 12 }
+                            CustomLabel {
+                                text: root.subscription.processedCount
+                                color: Theme.successColor
+                                font.pixelSize: 24
+                                font.weight: Font.DemiBold
+                            }
+                            CustomLabel {
+                                text: "Processed"
+                                color: Theme.placeholderTextColor
+                                font.pixelSize: 12
+                            }
                         }
                     }
                 }
@@ -143,9 +169,9 @@ Pane {
                     Layout.fillWidth: true
                     spacing: 10
 
-                    Label {
+                    CustomLabel {
                         text: "Current Episodes"
-                        color: themeController.text
+                        color: Theme.textColor
                         font.pixelSize: 15
                         font.weight: Font.DemiBold
                     }
@@ -156,7 +182,7 @@ Pane {
                         delegate: Rectangle {
                             radius: 8
                             color: "#f7f8fa"
-                            border.color: themeController.border
+                            border.color: Theme.dividerColor
                             Layout.fillWidth: true
                             height: 78
 
@@ -165,9 +191,9 @@ Pane {
                                 anchors.margins: 10
                                 spacing: 10
 
-                                Label {
+                                CustomLabel {
                                     text: modelData.hasProcessed ? "OK" : "NEW"
-                                    color: modelData.hasProcessed ? themeController.success : themeController.accent
+                                    color: modelData.hasProcessed ? Theme.successColor : Theme.highlightColor
                                     font.pixelSize: 11
                                     font.weight: Font.DemiBold
                                     Layout.preferredWidth: 32
@@ -176,44 +202,44 @@ Pane {
                                 ColumnLayout {
                                     spacing: 3
                                     Layout.fillWidth: true
-                                    Label {
+                                    CustomLabel {
                                         text: modelData.title
-                                        color: themeController.text
+                                        color: Theme.textColor
                                         font.weight: modelData.isRead ? Font.Normal : Font.DemiBold
                                         elide: Text.ElideRight
                                         Layout.fillWidth: true
                                     }
-                                    Label {
+                                    CustomLabel {
                                         text: modelData.status + " · " + modelData.queueStatus + (modelData.modifiedAt ? " · " + modelData.modifiedAt : "")
-                                        color: themeController.muted
+                                        color: Theme.placeholderTextColor
                                         font.pixelSize: 12
                                         elide: Text.ElideRight
                                         Layout.fillWidth: true
                                     }
-                                    Label {
+                                    CustomLabel {
                                         text: modelData.sourceURL || modelData.mediaURL || ""
-                                        color: themeController.muted
+                                        color: Theme.placeholderTextColor
                                         font.pixelSize: 11
                                         elide: Text.ElideMiddle
                                         Layout.fillWidth: true
                                     }
                                 }
 
-                                Button {
+                                CustomButton {
                                     text: "Open"
                                     onClicked: {
-                                        libraryController.selectedSource = "library"
-                                        libraryController.selectItem(modelData.id)
+                                        libraryController.selectedSource = "library";
+                                        libraryController.selectItem(modelData.id);
                                     }
                                 }
                             }
                         }
                     }
 
-                    Label {
+                    CustomLabel {
                         visible: root.episodes.length === 0
                         text: "No episodes imported for this subscription yet."
-                        color: themeController.muted
+                        color: Theme.placeholderTextColor
                         Layout.fillWidth: true
                     }
                 }
@@ -223,9 +249,9 @@ Pane {
                     Layout.fillWidth: true
                     spacing: 10
 
-                    Label {
+                    CustomLabel {
                         text: "Channel Metadata"
-                        color: themeController.text
+                        color: Theme.textColor
                         font.pixelSize: 15
                         font.weight: Font.DemiBold
                     }
@@ -236,16 +262,56 @@ Pane {
                         rowSpacing: 8
                         Layout.fillWidth: true
 
-                        Label { text: "Source"; color: themeController.muted }
-                        Label { text: root.emptyAware(root.subscription.source); color: themeController.text; elide: Text.ElideRight; Layout.fillWidth: true }
-                        Label { text: "Group"; color: themeController.muted }
-                        Label { text: root.emptyAware(root.subscription.groupName); color: themeController.text; elide: Text.ElideRight; Layout.fillWidth: true }
-                        Label { text: "Feed"; color: themeController.muted }
-                        Label { text: root.displayUrl(root.subscription); color: themeController.text; elide: Text.ElideMiddle; Layout.fillWidth: true }
-                        Label { text: "Created"; color: themeController.muted }
-                        Label { text: root.emptyAware(root.subscription.createdAt); color: themeController.text; elide: Text.ElideRight; Layout.fillWidth: true }
-                        Label { text: "Last Checked"; color: themeController.muted }
-                        Label { text: root.emptyAware(root.subscription.lastCheckedAt); color: themeController.text; elide: Text.ElideRight; Layout.fillWidth: true }
+                        CustomLabel {
+                            text: "Source"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
+                            text: root.emptyAware(root.subscription.source)
+                            color: Theme.textColor
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
+                        }
+                        CustomLabel {
+                            text: "Group"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
+                            text: root.emptyAware(root.subscription.groupName)
+                            color: Theme.textColor
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
+                        }
+                        CustomLabel {
+                            text: "Feed"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
+                            text: root.displayUrl(root.subscription)
+                            color: Theme.textColor
+                            elide: Text.ElideMiddle
+                            Layout.fillWidth: true
+                        }
+                        CustomLabel {
+                            text: "Created"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
+                            text: root.emptyAware(root.subscription.createdAt)
+                            color: Theme.textColor
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
+                        }
+                        CustomLabel {
+                            text: "Last Checked"
+                            color: Theme.placeholderTextColor
+                        }
+                        CustomLabel {
+                            text: root.emptyAware(root.subscription.lastCheckedAt)
+                            color: Theme.textColor
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
+                        }
                     }
                 }
 
@@ -253,9 +319,9 @@ Pane {
                     Layout.fillWidth: true
                     spacing: 10
 
-                    Label {
+                    CustomLabel {
                         text: "Add Subscription"
-                        color: themeController.text
+                        color: Theme.textColor
                         font.pixelSize: 15
                         font.weight: Font.DemiBold
                     }
@@ -263,26 +329,31 @@ Pane {
                     RowLayout {
                         Layout.fillWidth: true
                         spacing: 8
-                        TextField {
+                        CustomTextField {
                             id: subscriptionUrl
+                            alignRightWhenFocused: false
                             placeholderText: "Xiaoyuzhou, Apple Podcast, or RSS URL"
                             Layout.fillWidth: true
                         }
-                        TextField {
+                        CustomTextField {
                             id: subscriptionGroup
+                            alignRightWhenFocused: false
                             text: root.hasSubscription ? root.subscription.groupName : "Default"
                             placeholderText: "Group"
                             Layout.preferredWidth: 130
                         }
-                        SpinBox {
+                        CustomSpinBox {
                             id: subscriptionLimit
-                            from: 0
-                            to: 500
-                            value: 20
-                            ToolTip.visible: hovered
-                            ToolTip.text: "0 means no explicit limit"
+                            decimals: 0
+                            realFrom: 0
+                            realTo: 500
+                            realValue: 20
+                            CustomToolTip {
+                                visible: parent.hovered
+                                text: "0 means no explicit limit"
+                            }
                         }
-                        Button {
+                        CustomButton {
                             text: "Add"
                             enabled: subscriptionUrl.text.trim().length > 0 && !jobController.running
                             onClicked: jobController.addSubscription(subscriptionUrl.text, subscriptionGroup.text, subscriptionLimit.value)

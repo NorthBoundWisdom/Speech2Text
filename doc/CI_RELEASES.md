@@ -45,6 +45,11 @@ This lets contributors exercise Windows and Linux packaging before publishing a 
 
 ## Runtime boundary
 
+Qt CI and tag builds materialize the exact GeoControls revision from
+`source_roots.lock.jsonc.in` through FreeCM before CMake configuration. Its reusable controls,
+window shell and icons are linked into the client, and the deployed launch check verifies that
+no developer QML search path is needed. Packages include its MIT license and revision inventory.
+
 Qt packages contain the client and shared Qt runtime. Python CLI, FFmpeg, CUDA and model weights
 remain external. Install/configure the CLI and FFmpeg before requesting transcription; configure
 `atot` in the Qt Settings. Library reading does not require ASR. Linux Qt availability does not

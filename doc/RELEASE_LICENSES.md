@@ -11,6 +11,11 @@ or Windows. Use a directory outside the repository (or under ignored build/) for
 Without a reviewed manifest, native runtime packaging fails before an archive is created.
 A failed gate leaves staging available for inspection; it is not a release.
 
+Qt packaging also inventories the statically linked MIT GeoControls dependency. Its license
+is copied from the resolved source root, and its exact revision, host binary paths, resource hashes
+and license hash are recorded in the component inventory and CycloneDX SBOM. This attribution
+is separate from Qt's vendor modules and does not change their licenses.
+
 The manifest must identify the exact deployed Qt plugins/frameworks, FFmpeg/ffprobe, their linked
 libraries and optional Windows Python, Python packages and Microsoft runtimes. Inventories and
 license metadata supplied by the actual vendors/builds are the starting point; do not infer LGPL

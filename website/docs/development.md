@@ -15,11 +15,16 @@ python3 configs/ios_workflow.py build --platform ios --scheme Audio2Text-iOS --c
 macOS 原生包在 `build/app/SonaFolio.app`；iOS 命令验证模拟器构建。Qt 使用本机 Qt SDK 与 CMake：
 
 ```bash
+python3 configs/source_roots.py init-seeds --quiet
+python3 configs/source_roots.py materialize --quiet
 python3 configs/qt_workflow.py config --configuration Release --qt-prefix <Qt-prefix>
 python3 configs/qt_workflow.py smoke --configuration Release
 ```
 
 替换实际 SDK 路径，不提交机器绝对路径。生产 ASR 后端的变更需要质量门与语义审阅，不因“能编译”就晋升。
+
+
+Qt 控件通过 FreeCM 从 `source_roots.lock.jsonc.in` 固定的 GeoControls 提交引入；窗口、按钮、输入框、菜单、弹窗、滚动条和分栏使用共享控件。依赖源码保存在忽略的 `build/` 中，Qt 安装包包含其 MIT 许可。已有本地 lock 的开发者需先合并模板中的 GeoControls 条目。
 
 ## 测试与文档
 

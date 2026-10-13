@@ -1,34 +1,50 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Dialogs
+import QtQuick.Controls as QQC
+import GeoControls 1.0
 import QtQuick.Layouts
 
-Dialog {
+CustomDialog {
     id: root
     title: "Import"
     modal: true
     width: 620
     height: 430
-    standardButtons: Dialog.NoButton
+    standardButtons: QQC.Dialog.NoButton
 
     property string selectedMode: "xiaoyuzhou"
 
-    FileDialog {
+    CustomFileDialog {
         id: localFileDialog
         title: "Local audio"
         onAccepted: localPath.text = selectedFile
     }
 
     ColumnLayout {
+        objectName: "importDialogBody"
         anchors.fill: parent
         spacing: 12
 
-        TabBar {
+        CustomTabBar {
+            id: importTabs
             Layout.fillWidth: true
-            onCurrentIndexChanged: root.selectedMode = ["xiaoyuzhou", "local", "subscription"][currentIndex]
-            TabButton { text: "Xiaoyuzhou" }
-            TabButton { text: "Local File" }
-            TabButton { text: "Subscription" }
+            onTargetIndexChanged: root.selectedMode = ["xiaoyuzhou", "local", "subscription"][targetIndex]
+            CustomTabButton {
+                text: "Xiaoyuzhou"
+                tabBar: importTabs
+                targetIndex: 0
+            }
+            CustomTabButton {
+                objectName: "localImportTab"
+                text: "Local File"
+                tabBar: importTabs
+                targetIndex: 1
+            }
+            CustomTabButton {
+                objectName: "subscriptionImportTab"
+                text: "Subscription"
+                tabBar: importTabs
+                targetIndex: 2
+            }
         }
 
         StackLayout {
@@ -38,19 +54,20 @@ Dialog {
 
             ColumnLayout {
                 spacing: 10
-                TextField {
+                CustomTextField {
                     id: episodeUrl
+                    alignRightWhenFocused: false
                     placeholderText: "Episode URL"
                     Layout.fillWidth: true
                 }
-                ComboBox {
+                CustomComboBox {
                     id: importGroup
                     editable: true
                     model: libraryController.groups
                     textRole: "title"
                     Layout.fillWidth: true
                 }
-                CheckBox {
+                CustomCheckBox {
                     id: downloadAudio
                     text: "Download audio"
                     checked: true
@@ -61,19 +78,20 @@ Dialog {
                 spacing: 10
                 RowLayout {
                     Layout.fillWidth: true
-                    TextField {
+                    CustomTextField {
                         id: localPath
+                        alignRightWhenFocused: false
                         placeholderText: "Audio file"
                         Layout.fillWidth: true
                     }
-                    Button {
+                    CustomButton {
                         text: "Browse"
                         onClicked: localFileDialog.open()
                     }
                 }
-                Label {
+                CustomLabel {
                     text: "Local files are transcribed through the same atot service and published into the configured library."
-                    color: themeController.muted
+                    color: Theme.placeholderTextColor
                     wrapMode: Text.WordWrap
                     Layout.fillWidth: true
                 }
@@ -81,23 +99,26 @@ Dialog {
 
             ColumnLayout {
                 spacing: 10
-                TextField {
+                CustomTextField {
                     id: subscriptionUrl
+                    alignRightWhenFocused: false
                     placeholderText: "RSS or podcast URL"
                     Layout.fillWidth: true
                 }
-                ComboBox {
+                CustomComboBox {
                     id: subscriptionGroup
                     editable: true
                     model: libraryController.groups
                     textRole: "title"
                     Layout.fillWidth: true
                 }
-                SpinBox {
+                CustomSpinBox {
                     id: subscriptionLimit
-                    from: 1
-                    to: 500
-                    value: 20
+                    objectName: "importSubscriptionLimit"
+                    decimals: 0
+                    realFrom: 1
+                    realTo: 500
+                    realValue: 20
                     Layout.preferredWidth: 140
                 }
             }
@@ -105,37 +126,38 @@ Dialog {
 
         RowLayout {
             Layout.fillWidth: true
-            Button {
+            CustomButton {
                 text: "List"
                 visible: root.selectedMode === "subscription"
                 onClicked: jobController.listSubscriptions()
             }
-            Button {
+            CustomButton {
                 text: "Refresh All"
                 visible: root.selectedMode === "subscription"
                 onClicked: jobController.refreshSubscriptions(true, "", subscriptionLimit.value)
             }
-            Item { Layout.fillWidth: true }
-            Button {
+            Item {
+                Layout.fillWidth: true
+            }
+            CustomButton {
                 text: "Cancel"
                 onClicked: root.close()
             }
-            Button {
+            CustomButton {
                 text: "Run"
                 highlighted: true
                 enabled: !jobController.running
                 onClicked: {
                     if (root.selectedMode === "xiaoyuzhou") {
-                        jobController.importXiaoyuzhou(episodeUrl.text, importGroup.editText || importGroup.currentText, downloadAudio.checked)
+                        jobController.importXiaoyuzhou(episodeUrl.text, importGroup.editText || importGroup.currentText, downloadAudio.checked);
                     } else if (root.selectedMode === "local") {
-                        jobController.transcribeAudio(localPath.text)
+                        jobController.transcribeAudio(localPath.text);
                     } else {
-                        jobController.addSubscription(subscriptionUrl.text, subscriptionGroup.editText || subscriptionGroup.currentText, subscriptionLimit.value)
+                        jobController.addSubscription(subscriptionUrl.text, subscriptionGroup.editText || subscriptionGroup.currentText, subscriptionLimit.value);
                     }
-                    root.close()
+                    root.close();
                 }
             }
         }
     }
 }
-

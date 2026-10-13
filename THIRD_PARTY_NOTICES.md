@@ -17,6 +17,12 @@ its dependencies, optional model weights, downloaded media, or externally suppli
   GPL and other third-party code. See https://doc.qt.io/qt-6/licensing.html and
   https://doc.qt.io/qt-6/licenses-used-in-qt.html. The release inventory must describe the actual
   deployed libraries, plugins and resources, including their notices and corresponding sources.
+- **GeoControls**: MIT, Copyright (c) 2026 Shanghai Astroform Software Ltd. The Qt client
+  embeds its controls, application shell and icon resources from the exact revision in
+  `source_roots.lock.jsonc.in`. The upstream license is available at
+  https://github.com/NorthBoundWisdom/GeoControls/blob/main/LICENSE and is copied into
+  Qt package licenses with a pinned-revision component record. It is not part of the
+  Python wheel, Swift client or ASR runtime.
 - **FFmpeg/ffprobe**: the license depends on build options and linked components. Builds with
   `--enable-gpl` or `--enable-version3` have different obligations; a build with `--enable-nonfree`
   must not be redistributed. See https://ffmpeg.org/legal.html. Native release packaging records

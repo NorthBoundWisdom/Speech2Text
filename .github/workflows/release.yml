@@ -78,6 +78,10 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1
         if: runner.os == 'Windows'
       - run: python -m pip install cmake ninja
+      - name: Resolve pinned GeoControls sources
+        run: |
+          python configs/source_roots.py init-seeds --quiet
+          python configs/source_roots.py materialize --quiet
       - name: Build Qt Linux ICU ABI dependency
         if: runner.os == 'Linux'
         run: python configs/ci_release.py icu

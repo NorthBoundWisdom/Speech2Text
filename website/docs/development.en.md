@@ -15,11 +15,16 @@ python3 configs/ios_workflow.py build --platform ios --scheme Audio2Text-iOS --c
 Mac output is build/app/SonaFolio.app; iOS validates the simulator. Qt uses your SDK/CMake:
 
 ```bash
+python3 configs/source_roots.py init-seeds --quiet
+python3 configs/source_roots.py materialize --quiet
 python3 configs/qt_workflow.py config --configuration Release --qt-prefix <Qt-prefix>
 python3 configs/qt_workflow.py smoke --configuration Release
 ```
 
 Use actual local SDK paths without committing them. Backend promotion needs gates/semantic review, not only compilation.
+
+
+Qt controls come from the GeoControls revision pinned in `source_roots.lock.jsonc.in`, materialized by FreeCM under ignored `build/`. The window, buttons, fields, menus, popups, scroll bars and split view use shared controls. Qt packages include its MIT license. Existing local locks need the template’s GeoControls entries before initialization.
 
 ## Checks and documentation
 

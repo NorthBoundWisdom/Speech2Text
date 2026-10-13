@@ -1,9 +1,11 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls as QQC
+import GeoControls 1.0
+import GeoControls.AppShell 1.0
 import QtQuick.Layouts
 import QtCore
 
-ApplicationWindow {
+ApplicationShell {
     id: root
     visible: true
     width: 1320
@@ -11,56 +13,49 @@ ApplicationWindow {
     minimumWidth: 980
     minimumHeight: 620
     title: "SonaFolio"
-    color: themeController.window
-
-    palette {
-        window: themeController.window
-        windowText: themeController.text
-        base: themeController.panel
-        alternateBase: themeController.panelAlt
-        text: themeController.text
-        button: themeController.panelAlt
-        buttonText: themeController.text
-        highlight: themeController.accent
-        highlightedText: "#ffffff"
-        placeholderText: themeController.muted
-    }
-
-
     ColumnLayout {
+        objectName: "workspaceBody"
         anchors.fill: parent
         spacing: 0
 
-        ToolBar {
+        CustomToolBar {
             Layout.fillWidth: true
             RowLayout {
                 anchors.fill: parent
-                ToolButton {
+                CustomToolButton {
+                    display: QQC.AbstractButton.TextOnly
+                    focusPolicy: Qt.StrongFocus
+                    defaultPadding: Fonts.size8
                     text: "Sources"
                     checkable: true
                     checked: !workspace.sourceCollapsed
                     Accessible.name: workspace.sourceCollapsed ? "Show Sources" : "Hide Sources"
-                    ToolTip.visible: hovered
-                    ToolTip.text: Accessible.name
+                    tooltip: Accessible.name
                     onClicked: workspace.toggleSources()
                 }
-                ToolButton {
+                CustomToolButton {
+                    display: QQC.AbstractButton.TextOnly
+                    focusPolicy: Qt.StrongFocus
+                    defaultPadding: Fonts.size8
                     text: "Episode List"
                     checkable: true
                     checked: !workspace.listCollapsed
                     Accessible.name: workspace.listCollapsed ? "Show Episode List" : "Hide Episode List"
-                    ToolTip.visible: hovered
-                    ToolTip.text: Accessible.name
+                    tooltip: Accessible.name
                     onClicked: workspace.toggleList()
                 }
-                ToolButton {
+                CustomToolButton {
+                    display: QQC.AbstractButton.TextOnly
+                    focusPolicy: Qt.StrongFocus
+                    defaultPadding: Fonts.size8
                     text: "Status"
                     Accessible.name: "Application Status"
-                    ToolTip.visible: hovered
-                    ToolTip.text: "View processing and library status"
+                    tooltip: "View processing and library status"
                     onClicked: statusPopup.open()
                 }
-                Item { Layout.fillWidth: true }
+                Item {
+                    Layout.fillWidth: true
+                }
             }
         }
 
@@ -84,12 +79,16 @@ ApplicationWindow {
                     onLogsRequested: logDialog.open()
                 }
             }
-            listContent: Component { ItemListColumn {} }
-            detailContent: Component { DetailPane {} }
+            listContent: Component {
+                ItemListColumn {}
+            }
+            detailContent: Component {
+                DetailPane {}
+            }
         }
     }
 
-    Popup {
+    CustomPopup {
         id: statusPopup
         parent: root.contentItem
         x: 10
@@ -97,8 +96,8 @@ ApplicationWindow {
         width: 360
         height: Math.min(440, statusDetails.implicitHeight + topPadding + bottomPadding)
         modal: false
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-        ScrollView {
+        closePolicy: QQC.Popup.CloseOnEscape | QQC.Popup.CloseOnPressOutside
+        CustomScrollView {
             id: statusScroll
             anchors.fill: parent
             contentWidth: availableWidth
@@ -110,16 +109,19 @@ ApplicationWindow {
                 errorText: jobController.lastError
                 queuedCount: jobController.queuedJobCount
                 libraryMessage: libraryController.statusMessage
-                textColor: themeController.text
-                mutedColor: themeController.muted
-                errorColor: themeController.danger
-                surfaceColor: themeController.panelAlt
-                onLogsRequested: { statusPopup.close(); logDialog.open() }
+                textColor: Theme.textColor
+                mutedColor: Theme.placeholderTextColor
+                errorColor: Theme.errorColor
+                surfaceColor: Theme.alternateBaseColor
+                onLogsRequested: {
+                    statusPopup.close();
+                    logDialog.open();
+                }
             }
         }
     }
 
-    Dialog {
+    CustomDialog {
         id: logDialog
         title: "Task log"
         modal: false
@@ -128,8 +130,11 @@ ApplicationWindow {
         y: 42
         width: Math.min(760, root.width - 20)
         height: Math.min(480, root.height - 60)
-        standardButtons: Dialog.Close
-        JobLogPane { anchors.fill: parent; expanded: true }
+        standardButtons: QQC.Dialog.Close
+        JobLogPane {
+            anchors.fill: parent
+            expanded: true
+        }
     }
 
     Settings {
@@ -161,9 +166,8 @@ ApplicationWindow {
     Connections {
         target: libraryController
         function onErrorRaised(message) {
-            jobController.clearLog()
-            console.warn(message)
+            jobController.clearLog();
+            console.warn(message);
         }
     }
-
 }

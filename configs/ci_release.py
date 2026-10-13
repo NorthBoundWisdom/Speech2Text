@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from configs.release_licenses import _required_files, _sha, stage_release_licenses  # noqa: E402
+from configs.source_roots_lib import WORKFLOW  # noqa: E402
 
 VENDORS = ROOT / "configs" / "ci-vendors.json"
 OUTPUT = ROOT / "build" / "release"
@@ -423,6 +424,7 @@ def write_build_record(output: Path, kind: str, version: str) -> None:
 
 def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
     version, numeric = release_version(version)
+    roots = WORKFLOW.resolve_source_roots(materialize=True, allow_network=True)
     OUTPUT.mkdir(parents=True, exist_ok=True)
     build = ROOT / "build" / "ci-qt"
     stage = ROOT / "build" / "ci-qt-stage"
@@ -439,6 +441,7 @@ def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
         "-DCMAKE_BUILD_TYPE=Release",
         f"-DCMAKE_PREFIX_PATH={qt_prefix}",
         f"-DAUDIO2TEXTQT_RELEASE_VERSION={numeric}",
+        f"-DGEOCONTROLS_SOURCE_ROOT={roots.root_for_dependency('GeoControls')}",
     )
     run("cmake", "--build", build, "--parallel", "3")
     run("ctest", "--test-dir", build, "--output-on-failure")
@@ -472,7 +475,10 @@ def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
         timeout=45,
     )
     manifest = write_material_manifest(stage, materials)
-    stage_release_licenses(stage, manifest)
+    stage_release_licenses(stage, manifest, geocontrols=(
+        roots.root_for_dependency('GeoControls'),
+        roots.resolved_commits_by_dependency['GeoControls'],
+    ))
     if sys.platform == "darwin":
         for name in ("licenses", "third-party-components.json", "sbom.cdx.json"):
             shutil.move(str(stage / name), str(license_stage / name))

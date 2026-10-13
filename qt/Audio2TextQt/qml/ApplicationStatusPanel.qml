@@ -1,8 +1,9 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls as QQC
+import GeoControls 1.0
 import QtQuick.Layouts
 
-Pane {
+CustomPane {
     id: root
     objectName: "applicationStatusPanel"
     padding: 10
@@ -12,15 +13,18 @@ Pane {
     property string errorText: ""
     property int queuedCount: 0
     property string libraryMessage: ""
-    property color textColor: "#272b2b"
-    property color mutedColor: "#626963"
-    property color accentColor: "#1677ff"
-    property color errorColor: "#c53030"
-    property color surfaceColor: "#f3f5f8"
-    signal logsRequested()
+    property color textColor: Theme.textColor
+    property color mutedColor: Theme.placeholderTextColor
+    property color accentColor: Theme.highlightColor
+    property color errorColor: Theme.errorColor
+    property color surfaceColor: Theme.alternateBaseColor
+    signal logsRequested
     Accessible.name: "Application status"
 
-    background: Rectangle { radius: 7; color: root.surfaceColor }
+    background: Rectangle {
+        radius: 7
+        color: root.surfaceColor
+    }
 
     ColumnLayout {
         id: content
@@ -29,13 +33,13 @@ Pane {
         RowLayout {
             Layout.fillWidth: true
             spacing: 6
-            BusyIndicator {
+            CustomBusyIndicator {
                 running: root.running
                 visible: running
                 Layout.preferredWidth: 18
                 Layout.preferredHeight: 18
             }
-            Label {
+            CustomLabel {
                 objectName: "activityStatusTitle"
                 text: root.running ? root.stage : (root.errorText.length > 0 ? "Task failed" : root.stage)
                 color: root.errorText.length > 0 ? root.errorColor : root.textColor
@@ -44,17 +48,18 @@ Pane {
                 Layout.fillWidth: true
                 Layout.minimumWidth: 0
             }
-            ToolButton {
+            CustomToolButton {
+                display: QQC.AbstractButton.TextOnly
+                focusPolicy: Qt.StrongFocus
                 text: "\u2261"
                 Accessible.name: "View task log"
-                ToolTip.visible: hovered
-                ToolTip.text: Accessible.name
+                tooltip: "View task log"
                 Layout.preferredWidth: 26
                 Layout.preferredHeight: 24
                 onClicked: root.logsRequested()
             }
         }
-        Label {
+        CustomLabel {
             objectName: "queuedStatus"
             visible: root.queuedCount > 0
             text: root.queuedCount + " queued"
@@ -62,7 +67,7 @@ Pane {
             wrapMode: Text.Wrap
             Layout.fillWidth: true
         }
-        Label {
+        CustomLabel {
             objectName: "taskErrorStatus"
             visible: root.errorText.length > 0
             text: root.errorText
@@ -71,21 +76,27 @@ Pane {
             wrapMode: Text.Wrap
             Layout.fillWidth: true
         }
-        ProgressBar {
+        CustomProgressBar {
             visible: root.running
             indeterminate: root.running
             Layout.fillWidth: true
             Layout.preferredHeight: 5
         }
-        Rectangle { visible: root.libraryMessage.length > 0; Layout.fillWidth: true; implicitHeight: 1; color: root.mutedColor; opacity: 0.2 }
-        Label {
+        Rectangle {
+            visible: root.libraryMessage.length > 0
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: root.mutedColor
+            opacity: 0.2
+        }
+        CustomLabel {
             visible: root.libraryMessage.length > 0
             text: "Library"
             color: root.textColor
             font.weight: Font.DemiBold
             Layout.fillWidth: true
         }
-        Label {
+        CustomLabel {
             objectName: "libraryStatusDetail"
             visible: root.libraryMessage.length > 0
             text: root.libraryMessage

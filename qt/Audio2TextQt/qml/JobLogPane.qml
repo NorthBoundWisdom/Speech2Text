@@ -1,16 +1,17 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls as QQC
+import GeoControls 1.0
 import QtQuick.Layouts
 
-Pane {
+CustomPane {
     id: root
     padding: 0
 
     property bool expanded: false
 
     background: Rectangle {
-        color: themeController.panelAlt
-        border.color: themeController.border
+        color: Theme.alternateBaseColor
+        border.color: Theme.dividerColor
     }
 
     ColumnLayout {
@@ -23,20 +24,20 @@ Pane {
             Layout.leftMargin: 10
             Layout.rightMargin: 10
 
-            Label {
+            CustomLabel {
                 text: "Task log"
-                color: themeController.text
+                color: Theme.textColor
                 font.weight: Font.DemiBold
                 Layout.fillWidth: true
             }
-            Button {
+            CustomButton {
                 text: "Clear"
                 visible: root.expanded
                 onClicked: jobController.clearLog()
             }
         }
 
-        TextArea {
+        CustomTextArea {
             visible: root.expanded
             readOnly: true
             selectByMouse: true
@@ -44,11 +45,11 @@ Pane {
             text: jobController.logText
             font.family: Qt.application.font.family
             font.pixelSize: 12
-            color: themeController.text
+            color: Theme.textColor
             Layout.fillWidth: true
             Layout.fillHeight: true
             background: Rectangle {
-                color: "#f8fafc"
+                color: Theme.contentSurfaceColor
             }
         }
     }

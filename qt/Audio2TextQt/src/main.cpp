@@ -1,7 +1,7 @@
 #include "JobController.h"
+#include "GeoControlsSetup.h"
 #include "LibraryController.h"
 #include "SettingsController.h"
-#include "ThemeController.h"
 
 #include <QtCore/QCommandLineOption>
 #include <QtCore/QCommandLineParser>
@@ -127,19 +127,16 @@ int main(int argc, char *argv[])
     const QString rawVcpkgRoot = rawOptionValue(argc, argv, "--vcpkg-root");
 
     qInstallMessageHandler(messageHandler);
+    QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
+    QQuickStyle::setStyle("Basic");
     QGuiApplication app(argc, argv);
+    initializeGeoControls();
     QCoreApplication::setOrganizationName("Audio2Text");
     QCoreApplication::setOrganizationDomain("audio2text.local");
     QCoreApplication::setApplicationName("SonaFolio");
     QCoreApplication::setApplicationVersion(AUDIO2TEXTQT_VERSION);
     QGuiApplication::setFont(applicationFont());
     QGuiApplication::setWindowIcon(QIcon(":/Audio2TextQt/resources/app-icon.png"));
-
-#ifdef Q_OS_WIN
-    QQuickStyle::setStyle("FluentWinUI3");
-#else
-    QQuickStyle::setStyle("Fusion");
-#endif
 
     QCommandLineParser parser;
     parser.setApplicationDescription("SonaFolio Qt/QML client");
@@ -173,7 +170,6 @@ int main(int argc, char *argv[])
     }
     LibraryController library(&settings);
     JobController jobs(&settings, &library);
-    ThemeController theme;
     const bool smokeQuit = rawSmokeQuit || parser.isSet("smoke-quit");
     const bool libraryProbe = rawLibraryProbe || parser.isSet("library-probe");
 
@@ -192,6 +188,7 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
+    configureGeoControlsEngine(&engine);
     QObject::connect(&engine, &QQmlApplicationEngine::warnings, &engine, [](const QList<QQmlError> &warnings) {
         for (const QQmlError &warning : warnings)
         {
@@ -202,7 +199,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("settingsController", &settings);
     engine.rootContext()->setContextProperty("libraryController", &library);
     engine.rootContext()->setContextProperty("jobController", &jobs);
-    engine.rootContext()->setContextProperty("themeController", &theme);
     engine.load(QUrl("qrc:/Audio2TextQt/qml/Main.qml"));
 
     if (engine.rootObjects().isEmpty())

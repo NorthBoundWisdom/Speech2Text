@@ -6,6 +6,35 @@ import pytest
 from configs.release_licenses import stage_release_licenses
 
 
+def test_qt_inventory_includes_embedded_geocontrols(tmp_path):
+    staged, path, _ = manifest(tmp_path)
+    executable = staged / 'SonaFolioQt.exe'
+    executable.write_bytes(b'MZhost-with-static-controls')
+    source = tmp_path / 'GeoControls'
+    source.mkdir()
+    license_file = source / 'LICENSE'
+    license_file.write_text('MIT License\n\nSynthetic license fixture.\n')
+    revision = 'a' * 40
+    stage_release_licenses(staged, path, geocontrols=(source, revision))
+    inventory = json.loads((staged / 'third-party-components.json').read_text())
+    controls = next(c for c in inventory['components'] if c['name'] == 'GeoControls')
+    assert controls['version'] == revision
+    assert controls['license'] == 'MIT'
+    assert controls['linkage'] == 'static'
+    assert controls['embedded_in'] == [executable.name]
+    assert controls['files'] == []
+    # Ad-hoc signing changes the host executable after inventory generation.
+    assert (staged / 'licenses' / 'GeoControls' / 'LICENSE').read_bytes() == license_file.read_bytes()
+    sbom = json.loads((staged / 'sbom.cdx.json').read_text())
+    assert any(c['name'] == 'GeoControls' and c['version'] == revision for c in sbom['components'])
+
+
+def test_qt_packaging_rejects_geocontrols_without_license(tmp_path):
+    staged, path, _ = manifest(tmp_path)
+    with pytest.raises(ValueError, match='MIT license'):
+        stage_release_licenses(staged, path, geocontrols=(tmp_path / 'missing', 'a' * 40))
+
+
 def manifest(tmp_path, *, license='GPL-3.0-or-later'):
     staged = tmp_path / 'stage'
     staged.mkdir()

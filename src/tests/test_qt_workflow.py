@@ -21,6 +21,12 @@ def test_qt_configure_sets_build_type_and_refreshes_qt_discovery(
         ]
     )
     commands = []
+    class Roots:
+        def root_for_dependency(self, name):
+            assert name == "GeoControls"
+            return tmp_path / "GeoControls"
+
+    monkeypatch.setattr(qt_workflow.WORKFLOW, "resolve_source_roots", lambda **_: Roots())
     monkeypatch.setattr(qt_workflow, "_find_qt_prefix", lambda *_: tmp_path / "Qt")
     monkeypatch.setattr(qt_workflow, "_run", commands.append)
 
@@ -29,6 +35,7 @@ def test_qt_configure_sets_build_type_and_refreshes_qt_discovery(
     assert f"-DCMAKE_BUILD_TYPE={configuration}" in commands[0]
     assert "-UQt6*_DIR" in commands[0]
     assert "-UQT_FEATURE_*" in commands[0]
+    assert f"-DGEOCONTROLS_SOURCE_ROOT={tmp_path / 'GeoControls'}" in commands[0]
 
 
 def test_qt_workflow_package_command_defaults_to_release_zip() -> None:

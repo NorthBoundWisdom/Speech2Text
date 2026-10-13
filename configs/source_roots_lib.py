@@ -25,7 +25,14 @@ BUILD_SETTING_KEYS = (
     "ARCHIVE_ID",
 )
 
-SOURCE_ROOT_SPECS: tuple[DependencyRootSpec, ...] = ()
+SOURCE_ROOT_SPECS: tuple[DependencyRootSpec, ...] = (
+    DependencyRootSpec(
+        dependency_name="GeoControls",
+        repo_name="GeoControls",
+        env_key="GEOCONTROLS_SOURCE_ROOT",
+        required_relative_paths=("CMakeLists.txt", "Controls/CMakeLists.txt", "AppShell/CMakeLists.txt"),
+    ),
+)
 KNOWN_SOURCE_ROOT_SPECS: tuple[DependencyRootSpec, ...] = SOURCE_ROOT_SPECS
 
 WORKFLOW = DependencyRootWorkflow(
