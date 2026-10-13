@@ -162,9 +162,12 @@ summary path. Replacing a nonempty summary requires an explicit regeneration req
 
 ## Repository Language
 
-- Use English for documentation, website pages, UI labels, diagnostics, comments, and general examples.
+- Default the public website, user handbook, and main README to Chinese, following the verified
+  Chinese podcast workflow. Keep source prose, UI labels, diagnostics, comments, and configuration
+  identifiers in English. English engineering references and original research measurements may remain.
 - Preserve reviewed translations, ASR prompts/rules, multilingual fixtures, and original benchmark
   input identifiers. `language-assets.json` documents exact resources and embedded-line exceptions.
-- New non-English language data requires an explicit policy entry with a concrete language-processing
-  or translation purpose; do not whitelist whole source directories or ordinary product prose.
+- Register Chinese-first documentation and localized resources as exact files in language-assets.json.
+  New language data also needs a concrete translation or language-processing purpose; never whitelist
+  whole source directories. Language options do not establish validation parity with Chinese.
 - Run `python configs/check_repository_language.py`; CI and Pages enforce the same policy.

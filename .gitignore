@@ -33,3 +33,6 @@ app/.build/
 .mypy_cache/
 
 /aqtinstall.log
+
+# Local settings screenshot contains private filesystem paths.
+/doc/assets/screenshot-2.png

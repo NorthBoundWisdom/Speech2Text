@@ -1,5 +1,5 @@
 site_name: SonaFolio
-site_description: Local-first podcast transcription and knowledge library for macOS, iOS, and Windows.
+site_description: 面向中文播客的本地转写与知识资料库，支持可读转写、字幕、Codex 总结回写与跨设备阅读。
 site_url: https://northboundwisdom.github.io/sonafolio/
 repo_url: https://github.com/NorthBoundWisdom/sonafolio
 repo_name: NorthBoundWisdom/sonafolio
@@ -9,9 +9,10 @@ strict: true
 use_directory_urls: true
 hooks:
   - hooks/build_metadata.py
+  - hooks/screenshots.py
 theme:
   name: material
-  language: en
+  language: zh
   font: false
   logo: assets/icon.png
   favicon: assets/icon.png
@@ -30,17 +31,17 @@ theme:
       accent: custom
       toggle:
         icon: material/weather-night
-        name: Switch to dark mode
+        name: 切换深色模式
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
       primary: custom
       accent: custom
       toggle:
         icon: material/weather-sunny
-        name: Switch to light mode
+        name: 切换浅色模式
 plugins:
   - search:
-      lang: [en]
+      lang: [zh, en]
 extra_css:
   - stylesheets/sonafolio.css
 markdown_extensions:
@@ -54,17 +55,29 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
 nav:
-  - Home: index.md
-  - Get started:
-      - Download and install: install.md
-      - Your first transcript: quick-start.md
-  - Handbook:
-      - Library and subscriptions: guides/library.md
-      - Codex summaries: guides/agent-summary.md
-      - CLI and automation: guides/cli.md
-      - QA and repair: guides/quality.md
-      - Privacy and data: guides/privacy.md
-      - Common questions: faq.md
-  - Project:
-      - Branding and compatibility: naming.md
-      - Development: development.md
+  - 官网: index.md
+  - 开始使用:
+      - 下载与安装: install.md
+      - 模型与媒体工具: models.md
+      - 第一次中文转写: quick-start.md
+  - 中文手册:
+      - 手册导航: handbook.md
+      - 桌面工作区: guides/workspace.md
+      - 导入来源: guides/import.md
+      - 中文本地转写: guides/transcription.md
+      - 语言设置: guides/languages.md
+      - 字幕与翻译: guides/subtitles.md
+      - 资料库与订阅: guides/library.md
+      - Codex 与 MCP 回写: guides/agent-summary.md
+      - 可选云 API 总结: guides/cloud-summary.md
+      - 设置与配置: guides/settings.md
+      - iPhone 与 iPad 阅读: guides/ios.md
+      - 存储与备份: guides/storage.md
+      - QA 与修复: guides/quality.md
+      - CLI 与自动化: guides/cli.md
+      - 故障排查: guides/troubleshooting.md
+      - 隐私与数据: guides/privacy.md
+      - 常见问题: faq.md
+  - 项目:
+      - 命名与兼容: naming.md
+      - 开发与参与: development.md

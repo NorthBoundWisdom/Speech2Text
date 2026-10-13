@@ -1,4 +1,4 @@
-"""Enforce English repository prose with reviewed language-data exceptions."""
+"""Enforce English source prose with reviewed documentation and language-data exceptions."""
 from __future__ import annotations
 
 import hashlib
@@ -22,7 +22,7 @@ def check_text(path: str, text: str, policy: dict) -> list[str]:
         return []
     approved = set(policy["embedded"].get(path, {}).get("line_hashes", []))
     return [
-        f"{path}:{number}: Chinese outside a reviewed translation or ASR language asset"
+        f"{path}:{number}: Chinese outside reviewed documentation, translation, or ASR language assets"
         for number, line in enumerate(text.splitlines(), 1)
         if CHINESE.search(line) and line_hash(line) not in approved
     ]
@@ -57,4 +57,4 @@ if __name__ == "__main__":
     failures = validate()
     if failures:
         raise SystemExit("\n".join(failures))
-    print("English repository policy passed; reviewed language assets are preserved.")
+    print("Repository language policy passed; reviewed documentation and language assets are preserved.")

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from html import escape
+import json
 import os
 from pathlib import Path
 import re
@@ -27,10 +28,11 @@ def metadata_html() -> str:
         raise ValueError("Website build time must include a timezone.")
     label = built_at.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     url = f"https://github.com/NorthBoundWisdom/sonafolio/commit/{sha}"
+    labels = json.loads((ROOT / "website/locales/zh.json").read_text(encoding="utf-8"))
     return (
-        '<aside class="build-provenance" aria-label="Website build information">'
-        f'<span>Website build · {escape(label)}</span> '
-        f'<a href="{url}">Source {sha[:7]}</a>'
+        f'<aside class="build-provenance" aria-label="{escape(labels["build_aria"])}">'
+        f'<span>{escape(labels["build_label"])} · {escape(label)}</span> '
+        f'<a href="{url}">{escape(labels["source_label"])} {sha[:7]}</a>'
         f'<span class="build-title">{escape(title)}</span></aside>'
     )
 

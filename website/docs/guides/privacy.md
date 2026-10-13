@@ -1,33 +1,31 @@
-# Privacy and data
+# 隐私与数据边界
 
-## Local processing
+本地 ASR、来源导入、iCloud、agent 和云 API 是不同数据流。知道启用了哪一步，才能判断内容何时离开本机。
 
-Local ASR reads media and weights and writes transcripts, subtitles, QA, and logs without uploading
-audio. Link imports, RSS refresh, and manual model downloads contact their source services.
+## 本地处理
 
-The default root is `~/Documents/SpeechToTextData/`: `model/` stores weights, `materials/` stores
-media, `work/` stores processing artifacts, and `cache/` stores logs and tools. The JSON/Markdown
-library can use local storage or optional iCloud Drive.
+本地 ASR 读取媒体与权重，写转写、字幕、QA 和日志，不上传音频。链接导入、RSS 刷新与手动模型下载会访问对应来源服务。默认数据位置见[存储说明](storage.md)。
 
-## Optional network flows
-
-| Feature | Data leaving the machine |
+| 可选功能 | 离开本机的数据 |
 | --- | --- |
-| iCloud Drive library | Episode JSON, transcripts, summaries, and state under OS sync policy |
-| MCP / Codex summaries | Agent-read transcript, QA, and summary text enters the client conversation |
-| Cloud API summaries | Text and supporting metadata go to your endpoint; original media/weights are not sent |
+| iCloud Drive | 权威库中的单集 JSON、文档及状态，按系统同步 |
+| MCP/Codex | agent 读到的转写、QA 和总结进入其会话 |
+| 云 API 总结/翻译 | 文本和相关上下文发送到你配置的服务 |
 
-MCP itself does not call a model API. Whether the client's model runs locally is its own configuration.
+MCP 服务本身不调模型 API；客户端是否本地推理由其自身配置决定。本地 stdio 不是“全部数据只在本机”的保证。
 
-## Credentials and logs
+## 凭据与公开材料
 
-macOS uses Keychain, Windows CLI uses Credential Manager, and iOS uses device Keychain. Public
-configuration does not return plaintext keys; no silent plaintext credential-store substitute exists.
-Logs redact common secrets and bearer tokens but cannot detect every private detail in arbitrary text.
-Review actual contents before sharing logs, screenshots, or transcripts.
+CLI/原生客户端使用相应系统凭据机制；建议 Qt Key 通过 CLI 写入系统存储，不在公开文件或参数里填写。Key 不应出现在转写、截图、日志附件和 issue 中。
 
-The website configures no analytics or remote fonts. Search indexes and static resources are deployed
-with the site. GitHub Pages still handles page requests, and external links follow their destination
-service policies.
+日志会脱敏常见秘密模式，但不能识别任意私人内容。分享前检查真实内容，自动脱敏不构成完整隐私保证。云输入包也应在调用前检查。
 
-[Complete source privacy statement](https://github.com/NorthBoundWisdom/sonafolio/blob/main/doc/PRIVACY.md)
+## 资料库与备份
+
+iCloud 会同步变化和删除，不代替独立备份。清理模型、音频、work 和权威库有不同后果，参见[备份与迁移](storage.md)。保留兼容目录名不等于旧数据必须公开。
+
+## 网站
+
+网站没有配置分析追踪或远程字体，搜索索引和资源随静态站点发布。GitHub Pages 仍处理页面请求；外部链接遵循目标服务策略。公开截图使用用户提供的已审核界面图，含本机私人路径的设置图未发布。
+
+[源码隐私说明](https://github.com/NorthBoundWisdom/sonafolio/blob/main/doc/PRIVACY.md) · [总结路径](../handbook.md#choose-a-summary-path)

@@ -1,286 +1,136 @@
 # SonaFolio
 
-Local-first podcast transcription and knowledge library for macOS, iOS, and Windows.
+面向中文播客的本地转写与知识资料库。把听到的内容留下来：保留来源，生成转写、字幕与总结，再分类、核对和继续阅读。
 
-[Website and handbook](https://northboundwisdom.github.io/sonafolio/) · [Releases](https://github.com/NorthBoundWisdom/sonafolio/releases) · [Documentation](doc/README.md)
+## 中文官网与使用手册
 
-SonaFolio turns podcasts and audio/video files into readable transcripts, subtitles, and a local
-knowledge library. The CLI remains `atot`. Existing data, package names, and application identities
-are preserved; see [branding and compatibility](doc/BRANDING.md).
+### [打开 SonaFolio 官网](https://northboundwisdom.github.io/sonafolio/) · [完整中文手册](https://northboundwisdom.github.io/sonafolio/handbook/)
 
-| Platform | Current support |
+[下载与安装](https://northboundwisdom.github.io/sonafolio/install/) · [第一次中文转写](https://northboundwisdom.github.io/sonafolio/quick-start/) · [Codex 总结回写](https://northboundwisdom.github.io/sonafolio/guides/agent-summary/) · [故障排查](https://northboundwisdom.github.io/sonafolio/guides/troubleshooting/) · [English README](README.en.md)
+
+**已经验证的主路径：Apple Silicon Mac + MLX Whisper + `large-v3-turbo` + 中文播客。** 多语言设置可用，不表示各语言都经过同等效果验证。CLI 保留 `atot`；既有资料、包名和内部身份保持兼容。
+
+![SonaFolio 订阅与处理队列](doc/assets/screenshot-1.png)
+
+截图来自当前源码构建，数量与节目标题是示例资料库状态。发布的 v0.9.0 早于新增列宽/折叠与语言控件，使用这些功能需当前源码构建。下载能力以[对应 release](https://github.com/NorthBoundWisdom/sonafolio/releases)为准。
+
+## 平台与边界
+
+| 平台 | 当前能力 |
 | --- | --- |
-| macOS / Apple Silicon | SwiftUI app, Qt client, CLI/TUI; stable MLX Whisper ASR |
-| Windows / x64 | Qt client and CLI; faster-whisper ASR with separately configured CUDA or explicit CPU mode |
-| iOS / iPadOS 17+ | Library reader and subscription management; no on-device ASR |
-| Linux / x86_64 | Qt AppImage client; no stable Linux ASR backend |
+| macOS / Apple Silicon | 原生 SwiftUI、Qt、CLI/TUI；中文稳定主路径采用 MLX Whisper |
+| Windows / x64 | Qt 与 CLI；faster-whisper 需独立 CUDA 配置或显式 CPU |
+| iOS / iPadOS 17+ | 阅读与订阅管理；不运行本机 ASR |
+| Linux / x86_64 | Qt AppImage 客户端；无稳定晋升 Linux ASR 后端 |
 
-The default model alias is `large-v3-turbo`. Local ASR does not upload audio. Cloud summaries are an
-optional text-only stage. Codex can summarize through MCP using its own model, without a SonaFolio
-API key; text read by the agent becomes part of its conversation.
+本地 ASR 不上传音频；来源导入会联网。Codex 可通过 MCP 使用会话模型生成总结，不要求 SonaFolio Key。可选云 API 是另外的文本处理路径。iCloud、agent、云服务有不同数据边界。
 
-## Quick start
-
-Clone the repository and initialize its build infrastructure:
+## 快速开始
 
 ```bash
 git clone --recurse-submodules https://github.com/NorthBoundWisdom/sonafolio.git
 cd sonafolio
 python3 configs/setup_local_app.py
-```
-
-Python 3.10+ is required. On macOS, activate the managed environment and check dependencies:
-
-```bash
 source ~/Documents/SpeechToTextData/env/bin/activate
 atot doctor
 atot models
 ```
 
-macOS ASR requires Apple Silicon. Install FFmpeg, for example with `brew install ffmpeg`, and place
-model files manually under the data-root `model/` directory. The default macOS model is:
-
-```text
-~/Documents/SpeechToTextData/model/whisper-large-v3-turbo/
-  config.json
-  weights.safetensors
-```
-
-On Windows, use `python` instead of `python3` and run:
+Python 3.10+；Windows 用 python 替换 python3，通过托管环境的 exe 检查：
 
 ```powershell
 & "$env:USERPROFILE\Documents\SpeechToTextData\env\Scripts\atot.exe" doctor
 & "$env:USERPROFILE\Documents\SpeechToTextData\env\Scripts\atot.exe" models
 ```
 
-The default Windows model is `model/faster-whisper-large-v3-turbo/`, with device `cuda` and compute
-type `int8_float16`. CUDA is never silently replaced with CPU. Explicit CPU mode:
+安装器不含模型。按[模型教程](https://northboundwisdom.github.io/sonafolio/models/)手动准备权重，macOS 通过 `brew install ffmpeg` 等方式提供 ffmpeg/ffprobe。Windows 可使用 PATH/vcpkg，CUDA/cuDNN 需与实际 CTranslate2 wheel 匹配，不会静默改为 CPU。
 
-```powershell
-$env:ATOT_FASTER_WHISPER_DEVICE = "cpu"
-$env:ATOT_FASTER_WHISPER_COMPUTE_TYPE = "int8"
-```
-
-Use PATH or vcpkg to provide `ffmpeg.exe` and `ffprobe.exe`:
-
-```powershell
-vcpkg install "ffmpeg[ffmpeg,ffprobe]:x64-windows"
-```
-
-A CTranslate2 wheel may require CUDA 12 DLLs even when CUDA 13 is installed. Follow the explicit
-`doctor` errors for compatible CUDA/cuDNN dependencies. Windows setup does not require Swift or Xcode.
-
-## CLI reference
-
-With the environment activated, `atot` opens the TUI. Scripted workflows use `atot exec ...`:
+## 已验证中文流程的 CLI 入口
 
 ```bash
-atot --help
-atot exec transcribe path/to/episode.m4a --model large-v3-turbo --language zh --local-only
-atot exec transcribe path/to/episode.m4a --json --watch
-atot exec import "https://www.xiaoyuzhoufm.com/episode/<episode-id>" --local-only
-atot exec qa path/to/work-dir
-atot exec repair path/to/work-dir --plan-only
-atot status --task-id <task-id>
-atot resume <task-id>
-atot config list
-atot config get cloud.model
-atot config set workflow.default_cloud_summary false
-```
-
-The old top-level `transcribe`, `import-xiaoyuzhou`, `srt`, `qa`, `repair`, and `cloud` aliases were
-removed in CLI v2. Use the corresponding `exec` commands. Individual `--help` pages describe options.
-
-Automatic chunking uses fixed windows for short audio and silence-aware boundaries for longer
-inputs. Explicit settings are available for reproducible experiments:
-
-```bash
-atot exec transcribe path/to/episode.m4a \
-  --chunking smart --chunk-length 900 --max-chunk-length 1200 --overlap 10
-```
-
-Use `--chunking fixed` for fixed windows, `--silence-threshold -30` for an explicit silence threshold,
-and `--force-transcribe` to rerun ASR instead of reusing matching cached chunks.
-
-### Transcription and summary languages
-
-In either desktop app, open **Settings > Local ASR**. Check one spoken language to set a language
-hint, or several for mixed-language transcription. Leave all unchecked for automatic detection.
-Multiple selections enable automatic detection with context hints; they do not restrict detection to
-a language whitelist. Transcription preserves each spoken language rather than translating it.
-
-**Summary Output Language** defaults to Chinese and controls summary text, headings, short titles,
-and MCP/Codex instructions. It takes priority over conflicting language requests in saved custom
-prompts. Saving language settings requires no API key and does not regenerate existing documents.
-Subtitle translation remains a separate setting.
-
-The shared configuration and CLI also support these settings:
-
-```bash
-atot config set local.languages '["zh", "en"]'
-atot config set summary.language en
-atot exec transcribe path/to/episode.m4a --language zh --language en --local-only
-atot exec transcribe path/to/episode.m4a --language auto --local-only
-```
-
-`local.languages = []` means auto; an omitted `--language` uses the saved selection. Existing explicit
-`local.language` values remain supported and are migrated when settings are saved. New configurations
-use auto detection. `summary.language` is a single language code, defaulting to `zh`. Both source and
-summary selectors offer Chinese/Mandarin, English, Japanese, Korean, Cantonese, German, French,
-Spanish, Russian, Portuguese, Italian, Arabic, Hindi, Vietnamese, Thai, and Indonesian.
-
-### Subtitles and translation
-
-```bash
-atot exec srt path/to/video.mp4
-atot exec srt path/to/video.mp4 --language zh --language en
-atot exec srt path/to/video.mp4 --language auto
-```
-
-The command writes `video.srt` beside the source and reusable intermediate files under `cache/srt/`.
-Existing subtitles require `--overwrite`. Repeated source languages enable automatic ASR language
-detection. Optional subtitle translation is configured through `[translation]` settings; a Chinese
-target writes `video.zh.srt`. Local translation models must also be placed manually under `model/`.
-
-### Imports and subscriptions
-
-Xiaoyuzhou imports preserve metadata, download media into local materials, and optionally transcribe:
-
-```bash
-atot exec import "https://www.xiaoyuzhoufm.com/episode/<episode-id>" --data-only
-atot exec subscriptions add "https://www.xiaoyuzhoufm.com/podcast/<podcast-id>" --group-name Default
-atot exec subscriptions list
-atot exec subscriptions refresh --all
+atot exec transcribe path/to/episode.m4a --model large-v3-turbo --language zh --local-only --json
+atot exec import "https://www.xiaoyuzhoufm.com/episode/<episode-id>" --language zh --local-only --json
+atot exec srt path/to/video.mp4 --language zh --json
+atot exec qa path/to/work-dir --json
+atot exec repair path/to/work-dir --plan-only --json
 atot exec library status --json
 ```
 
-`--data-only` skips transcription. `--no-download` skips media download for recovery workflows.
-`--group-name` sets a logical library group; `--folder-name` and `--audio-name` customize generated
-names. Subscription refresh imports recent metadata without automatically downloading or processing.
-Scheduling is delegated to external tools.
+替换路径与 ID，使用任务返回的实际工作目录。重要人名、数字、引用与结论需复听；QA 通过不保证逐字准确。
 
-## Data and privacy
+无参数 atot 打开 TUI，脚本使用 exec。旧顶层 transcribe/import-xiaoyuzhou 等别名已移除。重建转写使用 `--force`，不是 --force-transcribe。更多选项以各自 --help 为准。
 
-The default runtime root is `~/Documents/SpeechToTextData/`. The CLI accepts `ATOT_DATA_ROOT`; Qt's
-`--data-root` is passed to its workflow service.
-
-```text
-SpeechToTextData/
-  env/                 Python runtime
-  model/               Manually installed models
-  materials/           Local media and private import metadata
-  work/                Transcription, QA, repair and cloud artifacts
-  cache/               Logs, tools and temporary indexes
-  Audio2TextLibrary/   Authoritative library in local-storage mode
+```bash
+atot exec transcribe path/to/episode.m4a --language zh --local-only --force
+atot status --task-id <task-id> --json
+atot resume <task-id> --json
 ```
 
-In iCloud mode, the authoritative library defaults to
-`~/Library/Mobile Documents/com~apple~CloudDocs/Audio2Text/Audio2TextLibrary/`. iOS accesses the same
-folder through a Files bookmark. Compatibility folder names remain unchanged.
+当前 resume 查询持久化任务状态，不自动重跑任务。--watch 可提供事件，脚本仍需判断最终结果与退出码。
 
-`episode.json` contains metadata and reading state; `documents/transcript.md` and
-`documents/summary.md` contain readable documents. Deleted episodes receive tombstones so subscription
-refresh does not reimport them. Models, audio, user libraries, credentials, caches, and generated
-transcripts are not source files and must stay out of Git.
+## 语言设置
 
-MCP, iCloud, and optional cloud API calls have separate data boundaries. See [privacy](doc/PRIVACY.md),
-[library layout](doc/LIBRARY_LAYOUT.md), and [QA and repair](doc/QUALITY_LOOP.md).
+当前源码在 Swift/Qt 的 **Settings → Local ASR** 中提供转写复选框和总结输出语言。中文流程勾选 Chinese / Mandarin；不选自动识别，多选自动加混合语言提示，保留原文，不构成严格语言白名单。
 
-## Agent summaries through MCP
+```bash
+atot config set local.languages '["zh"]'
+atot config set summary.language zh
+atot exec transcribe path/to/audio.m4a --language zh --language en --local-only
+```
 
-Register the local stdio service with Codex:
+新配置的转写默认自动、总结默认中文；已有明确语言保留。旧 local.language 兼容读取，当前保存迁移为数组。改变设置不自动重生成旧文档。总结设置统一影响正文、标题和 MCP 指引，字幕翻译独立配置。
+
+## 订阅与资料库
+
+```bash
+atot exec subscriptions add "https://example.org/feed.xml" --group-name Research --limit 10 --json
+atot exec subscriptions list --json
+atot exec subscriptions refresh --all --json
+atot exec subscriptions refresh --id <subscription-id> --full-history --json
+```
+
+刷新获取元数据，不自动下载和处理全系列。权威库包含 JSON、Markdown、分组/阅读状态与删除 tombstone；媒体与 work 留在本机。删除与归档不同，见[资料库教程](https://northboundwisdom.github.io/sonafolio/guides/library/)和[备份说明](https://northboundwisdom.github.io/sonafolio/guides/storage/)。
+
+默认数据根目录 `~/Documents/SpeechToTextData/`，模型唯一正常存储位置是其 model/。本地权威库在 Audio2TextLibrary/，iCloud 模式在兼容的 Audio2Text/Audio2TextLibrary/。不要为品牌变更直接改名用户目录。
+
+## Codex / MCP 总结回写
 
 ```bash
 codex mcp add sonafolio -- "$HOME/Documents/SpeechToTextData/env/bin/atot" mcp
 codex mcp get sonafolio
 ```
 
-On Windows:
+Windows 使用用户 Documents 下 env/Scripts/atot.exe 的实际路径。连接名称可以自定义，旧 audio2text 注册不失效。
 
-```powershell
-codex mcp add sonafolio -- "$env:USERPROFILE\Documents\SpeechToTextData\env\Scripts\atot.exe" mcp
-```
+要求 agent 读取完整转写和 QA，按 get_episode 返回的当前哈希和输出语言，通过 write_summary 发布。非空总结仅在明确重新生成请求后覆盖；版本冲突需要重新读取。MCP 不调用模型 API，不暴露 Key、媒体、任意路径或删除操作。
 
-The client registration name is arbitrary; existing `audio2text` connections continue to work.
-Request a summary for episodes with transcripts but no summary, ask the agent to read the complete
-transcript and QA, and publish through `write_summary` with current document hashes.
+原生 App 可复制 **Copy Codex summary write-back instructions** 后粘贴给 agent。它不会自动给 Codex 发消息。`atot serve --stdio` 是 GUI 内部协议，不是 MCP。完整说明见[中文 MCP 教程](https://northboundwisdom.github.io/sonafolio/guides/agent-summary/)。
 
-The four MCP tools are `list_episodes`, `get_episode`, `read_document`, and `write_summary`. They do
-not expose credentials, media, arbitrary file paths, configuration changes, or deletion. A nonempty
-summary may be replaced only after an explicit regeneration request. Version conflicts require
-rereading the documents. The server does not call a model API.
-
-`atot serve --stdio` is the GUI's internal JSON protocol, not MCP. The legacy HTTP service is
-loopback-only and requires its own `ATOT_HTTP_TOKEN`; use MCP for ordinary agent summaries.
-
-## Optional cloud text processing
-
-Cloud preparation does not call an API by default:
+## 可选云 API
 
 ```bash
-atot exec cloud prepare path/to/work-dir
-atot exec cloud summarize path/to/work-dir
+atot exec cloud prepare path/to/work-dir --json
+atot exec cloud summarize path/to/work-dir --call-api --mode auto --json
 ```
 
-Enable API execution explicitly after configuring an endpoint, model, securely stored key, and
-transcript-upload permission:
+prepare 不调用 API；模型总结需明确 --call-api，并已配置 endpoint、model、安全存储 Key 与文本发送权限。未调用模型的 scaffold 不等于模型总结。隐藏输入与 Responses 协议边界见[云总结教程](https://northboundwisdom.github.io/sonafolio/guides/cloud-summary/)。
+
+## 构建与发布
 
 ```bash
-atot config set cloud.api_base '"https://api.example.com/v1"'
-atot config set cloud.api_key --stdin
-atot exec cloud summarize path/to/work-dir --call-api
-```
-
-Use hidden input for keys; never place them in shell arguments or public files. Default app processing
-and its primary shortcuts execute local transcription and QA, without requiring cloud credentials.
-
-## Clients and builds
-
-Build the Swift macOS app from the repository root:
-
-```bash
-python3 configs/ios_workflow.py build --platform mac --scheme Audio2TextApp --configuration debug --distribution local
-python3 configs/ios_workflow.py run --platform mac --scheme Audio2TextApp
-```
-
-The app bundle is `build/app/SonaFolio.app`, with the compatibility entrypoint
-`Contents/MacOS/Audio2TextCli`. Internal Swift targets and the generated `Audio2Text.xcodeproj` retain
-stable names. iOS builds use `--platform ios --scheme Audio2Text-iOS`.
-
-Qt requires Qt 6.8+; CI validates Qt 6.12.0. Configure an external `atot` executable in Settings:
-
-```bash
+python3 configs/ios_workflow.py build --platform mac --scheme Audio2TextApp --configuration debug --distribution ad-hoc
+python3 configs/ios_workflow.py build --platform ios --scheme Audio2Text-iOS --configuration debug
 python3 configs/qt_workflow.py config --configuration Release --qt-prefix <Qt-prefix>
 python3 configs/qt_workflow.py smoke --configuration Release
 ```
 
-See the [Swift guide](app/README.md), [Qt guide](qt/Audio2TextQt/README.md), and
-[development guide](doc/TECHNICAL_GUIDE.md) for complete build and packaging instructions.
+macOS 本地包在 build/app/SonaFolio.app。tag 发布四个平台客户端包，模型不随包分发；macOS ad-hoc 无公证，Windows 未签名，iOS 没有自动 IPA 分发。
 
-## CI and releases
+[文档索引](doc/README.md) · [Swift 参考](app/README.md) · [Qt 参考](qt/Audio2TextQt/README.md) · [CI 发布](doc/CI_RELEASES.md) · [网站维护](doc/WEBSITE.md)
 
-GitHub Actions checks Python, Swift, and Qt on macOS, Windows, and Linux. Push a version tag to build
-Windows Qt EXE, Linux Qt AppImage, macOS Qt DMG, and macOS Swift DMG installers. All four packages
-must pass provenance, licensing, and hash checks before GitHub Release publication:
+## 手动模型下载清单
 
-```bash
-git tag v0.9.1
-git push origin v0.9.1
-```
-
-Manual Native release runs build artifacts without publishing. macOS currently uses ad-hoc signatures
-without notarization; Windows installers are unsigned. Qt packages include Qt libraries but not the
-CLI, FFmpeg, CUDA, or model weights. Swift packages include the CLI wheel and use the existing runtime
-setup flow. Linux client availability does not imply stable Linux ASR support.
-
-[Release workflow](doc/CI_RELEASES.md) · [License materials](doc/RELEASE_LICENSES.md) · [Website maintenance](doc/WEBSITE.md)
-
-## Manual model download inventory
-
-All model aliases, required files, and manual URLs are maintained in
-[src/atot/data/model_inventory.json](src/atot/data/model_inventory.json). Experimental aliases are not
-promoted defaults. Agents must not download weights automatically. After changing the inventory, run
-`python src/scripts/validate_model_inventory.py` to verify this table.
+别名、文件与链接以 [model_inventory.json](src/atot/data/model_inventory.json) 为准。候选条目不等于生产默认。代理不自动下载模型，修改清单后执行 `python src/scripts/validate_model_inventory.py`。
 
 | Model | Local path | URL |
 |---|---|---|
@@ -319,15 +169,12 @@ promoted defaults. Agents must not download weights automatically. After changin
 | `faster-whisper-large-v3` | `model/faster-whisper-large-v3/preprocessor_config.json` | `https://huggingface.co/Systran/faster-whisper-large-v3/resolve/main/preprocessor_config.json?download=true` |
 | `faster-whisper-large-v3` | `model/faster-whisper-large-v3/tokenizer.json` | `https://huggingface.co/Systran/faster-whisper-large-v3/resolve/main/tokenizer.json?download=true` |
 | `faster-whisper-large-v3` | `model/faster-whisper-large-v3/vocabulary.json` | `https://huggingface.co/Systran/faster-whisper-large-v3/resolve/main/vocabulary.json?download=true` |
-## Related projects and feature comparison
 
-This is the **2026-10-12** source/documentation snapshot, translated without refreshing its historical
-measurements. Stars and push dates are static GitHub API observations; dates use UTC+8. They do not
-measure quality or release freshness. We have not run a shared accuracy, speed, or summary-quality
-benchmark across these projects. "Not documented" means the reviewed documentation did not promise
-that capability, not that it is unsupported. Model licenses are separate from repository licenses.
+## 同类项目对比
 
-| Project | Stars | Last push (UTC+8) | Focus | Declared repository license |
+已有九个项目与功能维度的完整对比保留在 [English README 的 Related projects](README.en.md#related-projects)，包含来源和时间快照。历史 Stars 与推送时间不作为实时活跃度数据，产品能力应再核对对应项目。
+
+| 项目 | Stars 快照 | 推送日期快照 (UTC+8) | Focus | Declared repository license |
 | --- | ---: | --- | --- | --- |
 | [Buzz](https://github.com/chidiwilliams/buzz) | 21,948 | 2026-10-11 | Desktop transcription, live audio and subtitles | MIT |
 | [Vibe](https://github.com/thewh1teagle/vibe) | 7,759 | 2026-10-06 | Local transcription, multiple models and AI analysis | MIT |
@@ -339,7 +186,7 @@ that capability, not that it is unsupported. Model licenses are separate from re
 | [MediaBrief](https://github.com/EvilIrving/mediabrief) | 1 | 2026-09-09 | macOS media links, subtitles and summaries | MIT |
 | [Lumina](https://github.com/brentonmallen1/lumina) | 0 | 2026-07-02 | Self-hosted extraction, summaries and Q&A | README states MIT |
 
-| Project | Interface / ASR | RSS and discovery | Summaries | Exports |
+| 项目 | 界面 / ASR | RSS / 发现 | 总结 | 导出 |
 | --- | --- | --- | --- | --- |
 | **SonaFolio** | SwiftUI, Qt, iOS reader, CLI; MLX Whisper / faster-whisper | Xiaoyuzhou, RSS, manual refresh | Codex MCP; optional text API | Markdown, JSON, SRT/VTT |
 | [Buzz][compare-buzz] | Desktop; multiple Whisper backends and live microphone | Directory watching; RSS not documented | AI summary plugin | TXT, SRT, VTT |
@@ -352,7 +199,7 @@ that capability, not that it is unsupported. Model licenses are separate from re
 | [MediaBrief][compare-mediabrief] | Apple Silicon app; source subtitles first, then mlx-whisper | RSS / YouTube channels and queues | Configurable LLM API | Markdown, TXT, DOCX/PDF, subtitles |
 | [Lumina][compare-lumina] | Self-hosted Web; faster-whisper/Whisper/Canary/Qwen Audio | Automatic RSS monitoring | Ollama, multiple summary modes | TXT, SRT, VTT |
 
-| Project | Automation | Knowledge management | Diarization | Quality and recovery |
+| 项目 | Automation | Knowledge management | Diarization | Quality and recovery |
 | --- | --- | --- | --- | --- |
 | **SonaFolio** | CLI, internal JSON, paged MCP, versioned writes; external scheduling | Title search, groups, read/star state, iCloud; no built-in cross-episode semantic Q&A | Not in stable backends | QA, correction audit, targeted repair, hash checks |
 | [Buzz][compare-buzz] | CLI, plugins, queue, directory watching; MCP not documented | Transcript search and playback | Supported | Speech separation, transcript viewer |
@@ -387,7 +234,8 @@ and [reference](https://github.com/Community-Access/podharvest/blob/main/docs/RE
 [compare-mediabrief]: https://github.com/EvilIrving/mediabrief/blob/main/README.md
 [compare-lumina]: https://github.com/brentonmallen1/lumina/blob/main/README.md
 
-## Development and repository maintenance
+
+## 开发检查与许可
 
 ```bash
 python -m ruff check .
@@ -399,18 +247,6 @@ python configs/check_docs.py
 python configs/check_repository_language.py
 ```
 
-Source lives in `src/atot/`, platform adapters in `backends/`, candidate comparisons in `candidate/`,
-shared language rules and model inventory in `data/`, and thin validators in `src/scripts/`.
-Swift and Qt clients live in `app/` and `qt/`; `website/` contains the English handbook and Pages site.
-Historical experiment measurements stay in `doc/experiments/`; completed evidence belongs in
-`doc/ROADMAP_STATUS.md`. Keep `TODO.md` only while concrete unfinished work exists.
+官网、用户手册与本 README 默认中文，代码和通用界面保持英文。语言政策对中文文档、翻译和 ASR 资产逐文件记录，历史实验保留原始测量，公共源码不包含本机路径、音频、模型、Key 或私人资料库。
 
-## License
-
-Original source uses [MIT](LICENSE). Dependencies, models, and media retain their own terms; see
-[third-party notices](THIRD_PARTY_NOTICES.md) and [release licensing](doc/RELEASE_LICENSES.md).
-
-The repository uses English documentation and default interfaces. Reviewed translations, Chinese ASR
-prompts/rules, multilingual fixtures, and original benchmark input names remain as language data.
-`language-assets.json` records their scope; CI rejects new Chinese prose or UI outside those entries.
-FreeCM is an independently maintained third-party submodule.
+原始代码采用 [MIT](LICENSE)。第三方组件、模型和媒体有各自条款，参见[第三方声明](THIRD_PARTY_NOTICES.md)和[发布许可](doc/RELEASE_LICENSES.md)。FreeCM 独立维护。

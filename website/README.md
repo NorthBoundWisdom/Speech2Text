@@ -1,14 +1,14 @@
-# SonaFolio website source
+# SonaFolio 中文官网源码
 
-The [website and handbook](https://northboundwisdom.github.io/sonafolio/) use MkDocs Material,
-following the organization and Pages deployment model of the [Ravo handbook](https://northboundwisdom.github.io/Ravo/).
-SonaFolio's pages, styles, and build hook are maintained in this repository.
+[官网](https://northboundwisdom.github.io/sonafolio/)与[中文手册](https://northboundwisdom.github.io/sonafolio/handbook/)由 MkDocs Material 构建，通过 GitHub Pages 托管。默认中文内容围绕已经验证的中文播客流程；界面按钮与命令使用实际名称。
 
-English user pages live in `docs/`, configuration in `mkdocs.yml`, and generated output in the
-repository's ignored `build/website/` directory. The home-page library is explicitly labeled as an
-illustration, not private user data or transcription-accuracy evidence.
+- `docs/`：中文产品页与按任务组织的手册。
+- `mkdocs.yml`：中文导航、搜索和主题。
+- `screenshots.json`：确切公开截图映射，原图来自 doc/assets。
+- `locales/zh.json`：构建信息的中文标签。
+- `hooks/`：构建来源信息及截图资产接入。
+- `tests/`：metadata 与资产发布约束。
 
-[Preview, validation, and deployment](../doc/WEBSITE.md)
+生成文件写入仓库外层的忽略目录 build/website，不进 Git。截图是真实当前源码界面，下载包以对应 release 为准。未审核的私人路径截图不进入网站。
 
-Describe currently exposed behavior and actual data boundaries. Release packages may lag source;
-capabilities follow their release notes. When no release exists, direct users to source builds.
+[预览、验证、发布和维护](../doc/WEBSITE.md) · [中文文档地图](../doc/README.md)

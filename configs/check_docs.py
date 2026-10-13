@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from html.parser import HTMLParser
 import argparse
+import json
 import re
 from urllib.parse import unquote, urlsplit
 
@@ -12,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def current_documents() -> list[Path]:
     return sorted([
-        ROOT / "README.md", ROOT / "AGENTS.md", ROOT / "app/README.md",
+        ROOT / "README.md", ROOT / "README.en.md", ROOT / "AGENTS.md", ROOT / "app/README.md",
         ROOT / "qt/Audio2TextQt/README.md", ROOT / "website/README.md",
         *ROOT.glob("doc/*.md"), ROOT / "doc/experiments/README.md",
         *ROOT.glob("website/docs/**/*.md"),
@@ -21,6 +22,8 @@ def current_documents() -> list[Path]:
 
 def validate() -> list[str]:
     errors: list[str] = []
+    screenshots = json.loads((ROOT / "website/screenshots.json").read_text(encoding="utf-8"))
+    virtual_assets = { (ROOT / "website/docs" / target).resolve(): ROOT / source for target, source in screenshots.items() }
     for path in current_documents():
         if not path.is_file():
             errors.append(f"Missing document: {path.relative_to(ROOT)}")
@@ -35,7 +38,7 @@ def validate() -> list[str]:
             if target.scheme or target.netloc or not target.path:
                 continue
             destination = path.parent / unquote(target.path)
-            if not destination.exists():
+            if not destination.exists() and not virtual_assets.get(destination.resolve(), destination).exists():
                 errors.append(f"Broken local link: {path.relative_to(ROOT)} -> {target.path}")
         if "github.com/NorthBoundWisdom/Speech2Text" in source:
             errors.append(f"Old repository URL: {path.relative_to(ROOT)}")
