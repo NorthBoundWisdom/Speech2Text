@@ -23,7 +23,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from configs.release_licenses import _required_files, _sha, stage_release_licenses  # noqa: E402
-from configs.source_roots_lib import WORKFLOW  # noqa: E402
 
 VENDORS = ROOT / "configs" / "ci-vendors.json"
 OUTPUT = ROOT / "build" / "release"
@@ -459,6 +458,8 @@ def write_build_record(output: Path, kind: str, version: str) -> None:
 
 
 def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
+    from configs.source_roots_lib import WORKFLOW
+
     version, numeric = release_version(version)
     roots = WORKFLOW.resolve_source_roots(materialize=True, allow_network=True)
     OUTPUT.mkdir(parents=True, exist_ok=True)
