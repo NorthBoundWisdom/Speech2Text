@@ -362,6 +362,8 @@ def clean_qt_environment() -> dict[str, str]:
         "QML_IMPORT_PATH",
         "DYLD_LIBRARY_PATH",
         "DYLD_FRAMEWORK_PATH",
+        "LD_LIBRARY_PATH",
+        "LD_PRELOAD",
         "QT_ROOT_DIR",
         "QTDIR",
         "QT_DIR",
@@ -371,6 +373,40 @@ def clean_qt_environment() -> dict[str, str]:
     environment["QT_QPA_PLATFORM"] = "offscreen"
     environment["QT_QUICK_BACKEND"] = "software"
     return environment
+
+
+def deploy_icu_runtime(stage: Path, prefix: Path) -> None:
+    version = json.loads(VENDORS.read_text())["icu"]["version"]
+    major = version.split('.', 1)[0]
+    source = prefix / 'lib'
+    destination = stage / 'lib'
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in ('icudata', 'icuuc', 'icui18n'):
+        soname = f'lib{name}.so.{major}'
+        library = source / soname
+        resolved = library.resolve()
+        if not library.is_file() or not resolved.is_relative_to(source.resolve()):
+            raise ValueError(f'The verified ICU build is missing {soname}.')
+        shutil.copy2(resolved, destination / resolved.name)
+        alias = destination / soname
+        if alias.name != resolved.name:
+            if alias.is_symlink():
+                alias.unlink()
+            elif alias.exists():
+                raise ValueError(f'Unexpected existing ICU alias: {alias.name}')
+            alias.symlink_to(resolved.name)
+
+
+def create_linux_launcher(stage: Path) -> Path:
+    launcher = stage / 'AppRun'
+    launcher.write_text(
+        '#!/bin/sh\nset -eu\n'
+        'ATOT_APPDIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)\n'
+        'export LD_LIBRARY_PATH="$ATOT_APPDIR/lib"\n'
+        'exec "$ATOT_APPDIR/bin/SonaFolioQt" "$@"\n'
+    )
+    launcher.chmod(0o755)
+    return launcher
 
 
 def adhoc_sign(app: Path) -> None:
@@ -466,6 +502,8 @@ def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
             asset = OUTPUT / f"SonaFolioQt-v{version}-Windows-x64-Setup.exe"
         else:
             shutil.copy2(materials / "appimage_runtime", stage / "appimage-runtime")
+            deploy_icu_runtime(stage, ROOT / 'build/icu-install')
+            executable = create_linux_launcher(stage)
     run(
         executable,
         "--smoke-quit",
@@ -512,10 +550,6 @@ def package_qt(version: str, qt_prefix: Path, materials: Path) -> Path:
             "[Desktop Entry]\nType=Application\nName=SonaFolio\nExec=SonaFolioQt\nIcon=SonaFolioQt\nCategories=AudioVideo;Audio;\n"
         )
         shutil.copy2(ROOT / "qt/Audio2TextQt/resources/app-icon.png", stage / "SonaFolioQt.png")
-        (stage / "AppRun").write_text(
-            '#!/bin/sh\nset -eu\nATOT_APPDIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)\nexec "$ATOT_APPDIR/bin/SonaFolioQt" "$@"\n'
-        )
-        (stage / "AppRun").chmod(0o755)
         tool = materials / "appimagetool"
         run(
             tool,

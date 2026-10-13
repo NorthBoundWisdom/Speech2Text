@@ -1,4 +1,5 @@
 import json
+import sys
 import tarfile
 from io import BytesIO
 
@@ -77,8 +78,33 @@ def test_smoke_environment_does_not_use_developer_qt_paths(monkeypatch):
     monkeypatch.setenv("QT_PLUGIN_PATH", "/tmp/developer-qt")
     monkeypatch.setenv("QML_IMPORT_PATH", "/tmp/developer-qml")
     monkeypatch.setenv("DYLD_FRAMEWORK_PATH", "/tmp/developer-frameworks")
+    monkeypatch.setenv("LD_LIBRARY_PATH", "/tmp/developer-icu")
     environment = ci_release.clean_qt_environment()
     assert "QT_PLUGIN_PATH" not in environment
     assert "QML_IMPORT_PATH" not in environment
     assert "DYLD_FRAMEWORK_PATH" not in environment
+    assert "LD_LIBRARY_PATH" not in environment
     assert environment["QT_QPA_PLATFORM"] == "offscreen"
+
+
+@pytest.mark.skipif(sys.platform == 'win32', reason='Linux SONAME symlink deployment')
+def test_linux_package_includes_icu_sonames_and_versioned_libraries(tmp_path):
+    prefix = tmp_path / 'icu'
+    source = prefix / 'lib'
+    source.mkdir(parents=True)
+    stage = tmp_path / 'AppDir'
+    for name in ('icudata', 'icuuc', 'icui18n'):
+        real = source / f'lib{name}.so.73.2'
+        real.write_bytes(b'\x7fELFsynthetic-icu')
+        (source / f'lib{name}.so.73').symlink_to(real.name)
+    ci_release.deploy_icu_runtime(stage, prefix)
+    for name in ('icudata', 'icuuc', 'icui18n'):
+        soname = stage / 'lib' / f'lib{name}.so.73'
+        assert soname.is_symlink()
+        assert soname.read_bytes() == b'\x7fELFsynthetic-icu'
+        assert soname.resolve().is_relative_to(stage.resolve())
+
+
+def test_linux_package_rejects_missing_required_icu(tmp_path):
+    with pytest.raises(ValueError, match='verified ICU build'):
+        ci_release.deploy_icu_runtime(tmp_path / 'stage', tmp_path / 'icu')
