@@ -95,7 +95,9 @@ def exec_transcribe(
     name: str | None = typer.Option(None, "--name", help="Output folder name."),
     backend: str | None = typer.Option(None, "--backend", help="ASR backend."),
     model: str | None = typer.Option(None, "--model", help="Model alias."),
-    language: str | None = typer.Option(None, "--language", help="Source language hint."),
+    language: list[str] | None = typer.Option(
+        None, "--language", help="Repeat for mixed-language hints; auto clears hints."
+    ),
     profile: str | None = typer.Option(None, "--profile", help="Decode profile."),
     prompt_file: Path | None = typer.Option(None, "--prompt-file", help="Prompt/context file."),
     glossary_file: Path | None = typer.Option(None, "--glossary-file", help="Glossary JSON file."),
@@ -133,7 +135,7 @@ def exec_transcribe(
         name=name,
         backend=backend,
         model=model,
-        language=language,
+        languages=language,
         profile=profile,
         prompt_file=prompt_file,
         glossary_file=glossary_file,
@@ -163,7 +165,9 @@ def exec_import(
     audio_name: str | None = typer.Option(None, "--audio-name", help="Override audio filename."),
     backend: str | None = typer.Option(None, "--backend", help="ASR backend."),
     model: str | None = typer.Option(None, "--model", help="Model alias."),
-    language: str | None = typer.Option(None, "--language", help="Source language hint."),
+    language: list[str] | None = typer.Option(
+        None, "--language", help="Repeat for mixed-language hints; auto clears hints."
+    ),
     profile: str | None = typer.Option(None, "--profile", help="Decode profile."),
     no_download: bool = typer.Option(False, "--no-download", help="Skip audio download."),
     force: bool = typer.Option(False, "--force", help="Redownload and replace imported audio."),
@@ -189,7 +193,7 @@ def exec_import(
         transcribe=transcribe,
         backend=backend,
         model=model,
-        language=language,
+        languages=language,
         profile=profile,
         local_only=local_only,
     )
@@ -467,8 +471,11 @@ def config_get(
 
 @config_app.command("set")
 def config_set(
-    key: str = typer.Argument(...), value: str | None = typer.Argument(None),
-    stdin: bool = typer.Option(False, "--stdin", help="Read a cloud API key from stdin without shell history."),
+    key: str = typer.Argument(...),
+    value: str | None = typer.Argument(None),
+    stdin: bool = typer.Option(
+        False, "--stdin", help="Read a cloud API key from stdin without shell history."
+    ),
 ) -> None:
     if stdin:
         if key != "cloud.api_key" or value is not None:
@@ -487,7 +494,9 @@ def config_set(
 
 @config_app.command("path")
 def config_path_cmd(ctx: typer.Context) -> None:
-    console.print(str(load_atot_config(overrides=_config_overrides(ctx), include_api_key=False).path))
+    console.print(
+        str(load_atot_config(overrides=_config_overrides(ctx), include_api_key=False).path)
+    )
 
 
 @config_app.command("edit")
@@ -596,7 +605,17 @@ def _looks_like_interactive_prompt(argv: list[str]) -> bool:
     first = argv[0]
     if first.startswith("-"):
         return False
-    known_commands = {"exec", "resume", "status", "doctor", "models", "config", "serve", "mcp", "library"}
+    known_commands = {
+        "exec",
+        "resume",
+        "status",
+        "doctor",
+        "models",
+        "config",
+        "serve",
+        "mcp",
+        "library",
+    }
     removed_v1_commands = {
         "transcribe",
         "prepare",

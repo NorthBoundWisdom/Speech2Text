@@ -172,8 +172,8 @@ def _append_with_budget(parts: list[str], text: str, *, remaining: int) -> int:
     return 0
 
 
-def _term_prompt(terms: list[str], *, max_chars: int) -> str | None:
-    prefix = "重点人名、机构名和术语："
+def _term_prompt(terms: list[str], *, max_chars: int, language: str | None = "zh") -> str | None:
+    prefix = "重点人名、机构名和术语：" if language == "zh" else "Names and terms: "
     suffix = "。"
     budget = max_chars - len(prefix) - len(suffix)
     if budget <= 0:
@@ -215,9 +215,14 @@ def make_prompt(
     *,
     topic_summary: str | None = None,
     max_chars: int = DEFAULT_PROMPT_MAX_CHARS,
+    language: str | None = "zh",
 ) -> str | None:
     max_chars = max(1, max_chars)
-    suffix = PUNCTUATION_PROMPT_SUFFIX[:max_chars]
+    suffix = (
+        PUNCTUATION_PROMPT_SUFFIX
+        if language == "zh"
+        else "Use natural punctuation for each spoken language."
+    )[:max_chars]
     remaining = max_chars - len(suffix)
     parts: list[str] = []
     if base_prompt:
@@ -228,7 +233,7 @@ def make_prompt(
         )
     if glossary and remaining > 0:
         terms = glossary_terms(glossary)
-        term_prompt = _term_prompt(terms, max_chars=remaining)
+        term_prompt = _term_prompt(terms, max_chars=remaining, language=language)
         if term_prompt:
             remaining = _append_with_budget(parts, term_prompt, remaining=remaining)
     body = "\n".join(p for p in parts if p).strip()

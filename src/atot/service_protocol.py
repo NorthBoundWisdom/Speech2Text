@@ -51,6 +51,7 @@ def dispatch_service_method(method: str, params: dict[str, Any], service: Workfl
             backend=params.get("backend"),
             model=params.get("model"),
             language=params.get("language"),
+            languages=params.get("languages"),
             profile=params.get("profile"),
             prompt_file=_optional_path(params.get("prompt_file")),
             glossary_file=_optional_path(params.get("glossary_file")),
@@ -79,6 +80,7 @@ def dispatch_service_method(method: str, params: dict[str, Any], service: Workfl
             backend=params.get("backend"),
             model=params.get("model"),
             language=params.get("language"),
+            languages=params.get("languages"),
             profile=params.get("profile"),
             local_only=_optional_bool(params.get("local_only")),
         )
@@ -129,7 +131,7 @@ def dispatch_service_method(method: str, params: dict[str, Any], service: Workfl
     if method == "srt":
         return service.run_srt(
             [_path(item) for item in params.get("inputs", [])],
-            languages=[str(item) for item in params.get("languages", [])] or None,
+            languages=params.get("languages"),
             backend=str(params["backend"]) if params.get("backend") else None,
             output=_optional_path(params.get("output")),
             output_dir=_optional_path(params.get("output_dir")),

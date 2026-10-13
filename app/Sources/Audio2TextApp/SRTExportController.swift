@@ -147,10 +147,10 @@ final class SRTExportController: ObservableObject {
         }
     }
 
-    func buildArguments(input: URL, settings _: AppSettings) -> [String] {
+    func buildArguments(input: URL, settings: AppSettings) -> [String] {
         return AtotServiceClient.srt(
             input: input,
-            sourceLanguages: ["auto"],
+            sourceLanguages: settings.transcriptionLanguages,
             overwrite: overwrite,
             json: true
         )

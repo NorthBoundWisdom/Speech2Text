@@ -47,13 +47,6 @@
         "ff5f199f70ffc2892dc521c89cae03efc805aa63ae061f97c8c98b7934b67b49"
       ]
     },
-    "app/Sources/Audio2TextApp/JobControllerCloudArtifacts.swift": {
-      "reason": "Chinese ASR prompts, linguistic patterns, output validation, or compatible topic filename",
-      "line_hashes": [
-        "3d99b7bdb84e91eb29d9e70feacdcb301b3975cb7ce01a61f2ade96c4bd67ae9",
-        "f91a7c156758ce7ac455ea7403de63bbb712ddd052c01962250511995447bfda"
-      ]
-    },
     "app/Sources/Audio2TextApp/LocalAudioImporter.swift": {
       "reason": "Chinese ASR prompts, linguistic patterns, output validation, or compatible topic filename",
       "line_hashes": [
@@ -351,13 +344,7 @@
     "src/atot/cloud/chunking.py": {
       "reason": "Chinese ASR prompts, linguistic patterns, output validation, or compatible topic filename",
       "line_hashes": [
-        "36ac9f1a2082ee9a93342969a439274666febebb2c3d78f9a6d09a8c0db0d61d",
-        "54289a40a22119ff9752d8ac4c252a3cb2dffd55eb7193662e28ab111921e087",
-        "5718e12ef39456460e3a8fa30ba9f159fc43140634c247cd813bb81f18db7945",
-        "76d3bcada5293b77e2eeb9402d91fd8a7f6b49ff6fa09a1d730d361c6f858835",
-        "8c2b71cdec8f71bd1353aa74f0cdaaa04ab23bbef49343c5184eb21357567b04",
-        "a45eafef7d0c6e1bcf390a91e1365ed60d63be70e9bb945f24a723349939e273",
-        "fa9493f2a01989e0a6159a431a74f3836b4224ba9ad3b7625a96d514147832f7"
+        "5718e12ef39456460e3a8fa30ba9f159fc43140634c247cd813bb81f18db7945"
       ]
     },
     "src/atot/cloud/metadata.py": {
@@ -376,25 +363,9 @@
     "src/atot/cloud/publish.py": {
       "reason": "Chinese ASR prompts, linguistic patterns, output validation, or compatible topic filename",
       "line_hashes": [
-        "00df6a586c44789612dea77893595d9140dffed18ee3bd0dbd72d6b25100b390",
-        "04225f827a198642c0789423f8949327802357d9da0a04f82bc1068ee95d4626",
-        "0f9ec90e361b29edbd769f9182a8e135d71916d1824e732efc33501ac1d697b9",
         "1165d361eab79c5b39e69df306683f38754726f23171466b8e201e146a4f412a",
-        "149ea95834bad4c24c6747f3bf7d080b7393979f914c55a470b7c89d4d28e62f",
-        "15f788a6303b9d7aafa8ffe64bf2655ec5f9d9e652b3a8a550651ddd044e7f06",
-        "1c7256e4e08da7a382f0bb7b77754a72656349d3ac92ea6c0092a1db892315a7",
-        "2ad60cd1e5b2f2824660976304e71227d3c585d373f8e8586385f0ef904b8243",
-        "3420d8ed0edffc18ab021f61333e5ae281afdfaa94ef4ced2632129960212309",
-        "49ba6eb0aed5f6cc3d4a5eb76c7171ddc17e169a7c8accfd14542fd6841d3ad4",
         "4a9d53be8ab5eb77bfe84647f586073d8fd0ddca55a4a06615a70be858c2c374",
-        "625ea95fa77470854881b9977f43802fde81ece9a09c8d58ddbf57fdb46f90f2",
-        "64d3f52c140a6b3887ac7cc067051f6c0651c773d1a7049e053e444983d76999",
-        "706f0ed94f7a65aa51a0d05edb51f7fb71156a2dc2a3e63e14c77fde3443b1c5",
-        "7348bf0d96ad92d901c80e3e35343a1b22174f3133ffe1d4fae31d4520c9e15e",
-        "afb213cd6cc2aca97dc6174db91114a6c7744455bd70300c2dc64b89798867ac",
-        "bd43e4434e6586ca870d17931b54ee3ba73ce4e74f93f8a3ff7eefb8f8f49a84",
-        "c1a7b935432dc4f736fe60de758d3471e05cd32fac4cc6ebf1595e8b7f0f5e58",
-        "eca35dcfd5da6d209f3091b0fc69b652cb2414f64dd67133bfd91eb307a9d0a6"
+        "afb213cd6cc2aca97dc6174db91114a6c7744455bd70300c2dc64b89798867ac"
       ]
     },
     "src/atot/cloud/review.py": {
@@ -408,15 +379,8 @@
       "reason": "Chinese ASR prompts, linguistic patterns, output validation, or compatible topic filename",
       "line_hashes": [
         "186cf5f14a925b54f075007abbf23db429e1b624b12cab78edc5453fc63c20d4",
-        "47427bc07fdc70c849cf93e567dd34cd61b362d67edff77e7bbaf34ac2735fd5",
-        "618b91aa48291e699e74ec598cd65e59aa8be9af6b122d29a511ee76525b6c29",
         "6d7cf9f4e34c69d4ce7e2781a5e368790eebfbc7e8d850eeabdaba1939eb1234",
-        "7e300eaccb6f8a33d2331c28667b24a61e82e3d332775134acb79c51ad7ca8dd",
-        "990c522b91cf36085555a96a3ade3718d828b2c3fa9ce284c62eaa8e690d584b",
-        "b86e64d7d72ac160275877c93faf8ea168b9ce2b81a9fe2b078dfb55ae5c0395",
-        "c6cdb82466d02ca2fc85ace8064a7d8b1a9e883d08e1b90d86af8f34db422db1",
-        "e3d75147edabfa8ec131872efacd0ea168a3dc86cafdafe488f329f2d9f135de",
-        "f50ed158fb615cad77744b5681683cdfe61f86d8be93a1e79fad1a267379dcdf"
+        "e3d75147edabfa8ec131872efacd0ea168a3dc86cafdafe488f329f2d9f135de"
       ]
     },
     "src/atot/context.py": {
@@ -441,7 +405,7 @@
         "4306226865cb04db58c46d3491a76897af7b6869cd31c048ca4724e05e4fe23b",
         "470e1545ed7b351e5976d1e915bc631eb72072866c72ecbe1a0b256257f5ec9e",
         "4bed99846f024322518d5759910559f6e7e2f06c17018c3fd8645b45c12f6dcf",
-        "72fcc67eed4235fc3d211d37e9c4d8c5dd92ee4c46ba81ef38f771a67b939301",
+        "9a9cb998671f09c2c80e50b0c6939d2f9589fd7ca6525c985492906ae8f6ac03",
         "b2c4fd7bea636bb4c8e7347c12734fd489930314bfdc6760a870bc1a5ec3aa7c",
         "b9a31760226b388f3995b44b862bfe2690aad80be6262d70ac008e534bb9b370",
         "f42073467632d0d97905ddc2dfbfce9b488d63b1db32e4bde70551faa94c39d1",
@@ -612,7 +576,6 @@
         "323952ab9b3c11cb89b476fbb273208a231397b08c68db95c73d9d9bdc4d939f",
         "4360f62957ec8326f7dac55bc9d579224a83b40264772c0f3cd7e6735fa7dd51",
         "45a4e1cee92dc50c05852663410bdd4d9684c23f7a56eb2ebf5e0b4e3a5703f5",
-        "45c659b47c01fda40af9788022fd5ca02811959ab48612bba71f7270e9ed3c9c",
         "4a8dfe575faa9333c790f968e0ea90eae1c7e9d2c38038f2ea66647d4062a93a",
         "54ddf3ecf689d81a1f6f08a8c2d8cb19c963e04ae84b87d931c3ebf906cbf679",
         "55f3ffe03b5c8834b8c3cc92fb257ca468e65ae805460deca649deae97a6226e",
@@ -621,13 +584,10 @@
         "636dfc83efc88dc745a43feae22c4c4743f4321d41bbd7abab924469bbe82b70",
         "6461c5d42fa69d0ab5bd96aa8dc7611a40b3dad5a557b4411941e81c32cd2d96",
         "64cec93736135ad1595364a8ab7dc41897b9933654720d3bf953d3543e1b022b",
-        "6aa7120cd7f7ac68b029dd5fdff57e7917be6d3c356a2583f61093c472df17d5",
         "6d6f7adb04ed1f50c6c47e0d11e5d5ceee4e6d35c58b369e340ef63b81c3e114",
-        "6de6eaca85c1f2d16a80b44da4c4ce05e8ddb6fca481c26f7ff1c1389072fca1",
         "6e148f7e9ef3fc6eeee82aa82d334928885bb7c06a7a379669ee37cb96b3dc83",
         "6fa00bf1ed8aab35ab6d8620ac05e406660652a5965d6764601c17fb407d0121",
         "73d4208fc119d82af70105585ebeb791ea670da02a023e0a367bde40c82f8a55",
-        "7b96888459164573fbdc83ca4324d048694e3dded030b83c889f5b1613cb3498",
         "7e93a62be44b6680f884deeccce81948cf663fc2c5ca28bae672c9271704c88b",
         "82a61e595464417d96d325f908c4baafa67efbd11dc243ddae55893b33cb39b5",
         "834c9c78aa3cd739b91f6cd0db75a72c8d71b179a2bea4388560aed403242df0",
@@ -651,6 +611,7 @@
         "b4bcfba36c9381b677c26985427725976d0ea730cc4e647eb2fc13723cbe6947",
         "b5e49540d4df6c505a521f806965f33c04200358b505af48e7759486ab4f0ca1",
         "b7b695e95ecd73da49eae904325a0acc3743f367e8c7bec76ff80b118ef046de",
+        "bb12d2e9f8df60ec131e958d9b1cf33f2fc216fcfcaf21ccaecbbaf58a9f94c0",
         "bc428b669307c6b50efbe70525d45cccf8969f802d372c791dc60fb5f76b1a82",
         "bdcad63f3fd313e5b75dac84b642e43f38aea60e32711cfcf23ba56028a70ddf",
         "bde7e2bb76c05c0fdb245277939fb22aaff7fcce905476c8396708aeaff2ac9e",

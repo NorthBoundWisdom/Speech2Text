@@ -19,7 +19,7 @@ final class SRTExportControllerTests: XCTestCase {
         XCTAssertEqual(request["method"] as? String, "srt")
         let params = request["params"] as? [String: Any]
         XCTAssertEqual(params?["inputs"] as? [String], ["/tmp/video.mp4"])
-        XCTAssertEqual(params?["languages"] as? [String], ["auto"])
+        XCTAssertEqual(params?["languages"] as? [String], [])
         XCTAssertEqual(params?["overwrite"] as? Bool, true)
         XCTAssertFalse(arguments.contains("import-local"))
     }

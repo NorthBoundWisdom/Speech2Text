@@ -18,6 +18,7 @@
         {"name": "backend", "type": "string"},
         {"name": "model", "type": "string"},
         {"name": "language", "type": "string"},
+        {"name": "languages", "type": "string_array"},
         {"name": "profile", "type": "string"},
         {"name": "prompt_file", "type": "path"},
         {"name": "glossary_file", "type": "path"},
@@ -51,6 +52,7 @@
         {"name": "backend", "type": "string"},
         {"name": "model", "type": "string"},
         {"name": "language", "type": "string"},
+        {"name": "languages", "type": "string_array"},
         {"name": "profile", "type": "string"},
         {"name": "local_only", "type": "boolean"}
       ]

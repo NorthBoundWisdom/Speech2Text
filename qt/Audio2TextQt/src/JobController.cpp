@@ -192,7 +192,7 @@ void JobController::exportSrtForFile(const QString &path, bool overwrite)
     }
     QVariantMap params;
     params["inputs"] = QVariantList{input};
-    params["languages"] = QVariantList{"auto"};
+    params["languages"] = m_settings->transcriptionLanguages();
     params["overwrite"] = overwrite;
     enqueueServiceJob("SRT", "srt", params, false);
 }

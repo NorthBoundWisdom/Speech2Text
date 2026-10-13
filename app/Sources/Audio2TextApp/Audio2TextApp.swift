@@ -157,7 +157,7 @@ struct Audio2TextCommands: Commands {
                     let prompt = """
                     Use the connected SonaFolio MCP server to summarize episode_id="\(item.id)" and publish the result.
                     Get the episode's current hashes and QA through get_episode, then page through the complete transcript with read_document.
-                    Use your current model to write a Chinese Markdown summary and retain useful timestamps; do not call the SonaFolio cloud API.
+                    Use your current model to write a Markdown summary in the output_language returned by get_episode (current setting: \(store.settings.summaryLanguage)) and retain useful timestamps; do not call the SonaFolio cloud API.
                     Pass transcript_sha256 and summary_sha256 to write_summary and set generator to Codex.
                     Replace a nonempty summary only after an explicit regeneration request; do not enable overwrite on your own.
                     """

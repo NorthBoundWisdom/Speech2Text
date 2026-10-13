@@ -76,7 +76,7 @@ extension JobController {
 
     func writeSummaryPromptFile(_ prompt: String, runtime: RuntimeContext) throws -> URL {
         try writeCloudPromptFile(
-            summaryPromptWithTitleInstruction(prompt),
+            prompt,
             defaultPrompt: AppSettings.defaultSummaryPrompt,
             filename: "app-summary.prompt.md",
             runtime: runtime
@@ -124,15 +124,4 @@ extension JobController {
         return promptURL
     }
 
-    private func summaryPromptWithTitleInstruction(_ prompt: String) -> String {
-        let instruction = """
-        输出格式要求：第一行必须是“# <具体中文总结标题>”，标题要基于本期内容生成；不要写成“播客结构化总结”、“中文播客摘要”、“Summary”或目录名如 work。第二行留空后再输出正文。
-        """
-        let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
-        let base = trimmed.isEmpty ? AppSettings.defaultSummaryPrompt : trimmed
-        if base.contains("第一行必须") && base.contains("总结标题") {
-            return base
-        }
-        return "\(base)\n\n\(instruction)"
-    }
 }

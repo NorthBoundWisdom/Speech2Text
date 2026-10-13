@@ -9,6 +9,7 @@ import time
 from typing import Any
 
 from .client import CloudClientOptions
+from ..languages import output_language_instruction
 from .output_state import CloudOutputOptions, _cloud_dir, _input_dir, _read_json_object
 from ..numeric import as_float
 from ..progress import update_cloud_summary_state
@@ -119,17 +120,6 @@ def _summary_text_from_chunk(text: str, *, limit: int = 180) -> str:
 
 def _text_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-def _chunk_api_prompt() -> str:
-    return (
-        "你将收到一个带时间范围的中文播客文本块。"
-        "转写中可能包含重复短语、占位字符（如“Ｂ”“Ｖ”）、乱码、空白句、半截句和相邻重复段。"
-        "请忽略明显噪声，只总结仍然可辨认的有效内容；如果某一段主要是噪声，不要编造。"
-        "必须只输出一个 JSON object，字段固定为 summary、terms、uncertainties。"
-        "summary 必须是中文字符串；terms 与 uncertainties 必须是数组。不要添加外部事实。"
-        "不要输出 Markdown，不要输出代码块，不要输出额外解释。"
-    )
 
 
 def _noise_signature(text: str) -> str:
@@ -275,7 +265,8 @@ def _call_chunk_cloud_once(
     if not options.call_api:
         return None
     return call_chat(
-        system_prompt=_chunk_api_prompt(),
+        system_prompt="Summarize this timestamped podcast chunk without inventing content. Ignore obvious noise and repetition. Output only a JSON object with summary (string), terms (array), uncertainties (array).\n\n"
+        + output_language_instruction(options.output_language),
         user_content=user_content,
         options=CloudClientOptions(),
         audit_path=_cloud_dir(options.output_dir.expanduser().resolve()) / audit_name,
@@ -350,6 +341,7 @@ def write_chunk_summaries(
             and existing.get("source") == "cloud_model"
             and existing.get("input") == relative_input
             and existing.get("input_sha256") == input_sha256
+            and existing.get("output_language", "zh") == options.output_language
             and existing.get("success") is not False
         ):
             outputs.append(f"chunk_summaries/{output_name}")
@@ -372,6 +364,7 @@ def write_chunk_summaries(
             "chunk": index,
             "input": relative_input,
             "input_sha256": input_sha256,
+            "output_language": options.output_language,
             "start": start,
             "end": end,
             "summary": str(

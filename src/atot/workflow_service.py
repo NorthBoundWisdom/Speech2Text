@@ -9,7 +9,7 @@ from .cloud.prepare import CloudPrepareOptions, prepare_cloud_input
 from .cloud.review import write_cloud_glossary_review, write_cloud_polish_suggestions
 from .cloud.summary_outputs import write_cloud_short_title, write_cloud_summary
 from .config_v2 import AtotConfig, load_atot_config
-from .languages import normalize_language_hint
+from .languages import resolve_languages
 from .library_store import (
     LibraryStore,
     library_episode_record_from_local_file,
@@ -76,6 +76,7 @@ class WorkflowService:
         backend: str | None = None,
         model: str | None = None,
         language: str | None = None,
+        languages: list[str] | None = None,
         profile: str | None = None,
         prompt_file: Path | None = None,
         glossary_file: Path | None = None,
@@ -91,6 +92,15 @@ class WorkflowService:
         cloud_summary: bool | None = None,
         recording_json: Path | None = None,
     ) -> dict[str, Any]:
+        if language is not None and languages is not None:
+            raise ValueError("Specify language or languages, not both.")
+        effective_language, requested_languages = resolve_languages(
+            languages
+            if languages is not None
+            else [language]
+            if language is not None
+            else self.config.local.requested_languages
+        )
         task = self._create_task("transcribe", input_path.name, input_path=str(input_path))
         try:
             store = self._library_store()
@@ -108,9 +118,20 @@ class WorkflowService:
                     backend=backend or self.config.local.backend,
                     recording_json=recording_json,
                     model=model or self.config.local.asr_model,
-                    language=normalize_language_hint(language or self.config.local.language),
-                    prompt_file=prompt_file or DEFAULT_PROMPT_FILE,
-                    glossary_file=glossary_file or DEFAULT_GLOSSARY_FILE,
+                    language=effective_language,
+                    requested_languages=tuple(requested_languages),
+                    prompt_file=prompt_file
+                    if prompt_file is not None
+                    else DEFAULT_PROMPT_FILE
+                    if effective_language == "zh"
+                    else None,
+                    glossary_file=(
+                        glossary_file
+                        if glossary_file is not None
+                        else DEFAULT_GLOSSARY_FILE
+                        if effective_language == "zh"
+                        else None
+                    ),
                     rule_packs=tuple(rule_packs or ()) or None,
                     chunk_length=chunk_length or self.config.workflow.chunk_length,
                     chunking=chunking or self.config.workflow.chunking,
@@ -168,9 +189,12 @@ class WorkflowService:
         backend: str | None = None,
         model: str | None = None,
         language: str | None = None,
+        languages: list[str] | None = None,
         profile: str | None = None,
         local_only: bool | None = None,
     ) -> dict[str, Any]:
+        if language is not None and languages is not None:
+            raise ValueError("Specify language or languages, not both.")
         task = self._create_task("import", url, url=url)
         try:
             self._emit(task, "task.stage", stage="import", detail="fetching episode metadata")
@@ -194,6 +218,7 @@ class WorkflowService:
                     backend=backend,
                     model=model,
                     language=language,
+                    languages=languages,
                     profile=profile,
                     local_only=local_only,
                     force=force,
@@ -296,6 +321,7 @@ class WorkflowService:
             result = write_cloud_summary(
                 CloudOutputOptions(
                     output_dir=output,
+                    output_language=self.config.summary.language,
                     call_api=call_api,
                     prompt_file=prompt_file,
                     summary_mode=summary_mode,
@@ -322,7 +348,12 @@ class WorkflowService:
         try:
             self._emit(task, "task.stage", stage="cloud.title", detail="generating short title")
             result = write_cloud_short_title(
-                CloudOutputOptions(output_dir=output, call_api=call_api, prompt_file=prompt_file),
+                CloudOutputOptions(
+                    output_dir=output,
+                    call_api=call_api,
+                    prompt_file=prompt_file,
+                    output_language=self.config.summary.language,
+                ),
                 force=force,
             )
             self._emit(task, "task.finished", success=True, result=_compact_result(result))
@@ -349,7 +380,12 @@ class WorkflowService:
                 detail="generating glossary review",
             )
             result = write_cloud_glossary_review(
-                CloudOutputOptions(output_dir=output, call_api=call_api, prompt_file=prompt_file)
+                CloudOutputOptions(
+                    output_dir=output,
+                    call_api=call_api,
+                    prompt_file=prompt_file,
+                    output_language=self.config.summary.language,
+                )
             )
             self._emit(task, "task.finished", success=True, result=_compact_result(result))
             return {"task_id": task.task_id, **result}
@@ -373,7 +409,12 @@ class WorkflowService:
                 detail="generating transcript polish suggestions",
             )
             result = write_cloud_polish_suggestions(
-                CloudOutputOptions(output_dir=output, call_api=call_api, prompt_file=prompt_file)
+                CloudOutputOptions(
+                    output_dir=output,
+                    call_api=call_api,
+                    prompt_file=prompt_file,
+                    output_language=self.config.summary.language,
+                )
             )
             self._emit(task, "task.finished", success=True, result=_compact_result(result))
             return {"task_id": task.task_id, **result}
@@ -398,7 +439,7 @@ class WorkflowService:
             output=output,
             output_dir=output_dir,
             overwrite=overwrite,
-            language=languages or ["zh"],
+            language=languages if languages is not None else self.config.local.requested_languages,
             backend=backend or self.config.local.backend,
             recording_json=None,
             sample_rate=DEFAULT_SAMPLE_RATE,
@@ -500,12 +541,14 @@ class WorkflowService:
     def run_library_list_episodes(
         self, *, query: str = "", needs_summary: bool = False, offset: int = 0, limit: int = 20
     ) -> dict[str, Any]:
-        return AgentSummaryService(self._library_store()).list_episodes(
-            query=query, needs_summary=needs_summary, offset=offset, limit=limit
-        )
+        return AgentSummaryService(
+            self._library_store(), output_language=self.config.summary.language
+        ).list_episodes(query=query, needs_summary=needs_summary, offset=offset, limit=limit)
 
     def run_library_read_episode(self, episode_id: str) -> dict[str, Any]:
-        return AgentSummaryService(self._library_store()).get_episode(episode_id)
+        return AgentSummaryService(
+            self._library_store(), output_language=self.config.summary.language
+        ).get_episode(episode_id)
 
     def run_library_read_document(
         self,
@@ -516,7 +559,9 @@ class WorkflowService:
         max_chars: int = 8000,
         expected_sha256: str | None = None,
     ) -> dict[str, Any]:
-        return AgentSummaryService(self._library_store()).read_document(
+        return AgentSummaryService(
+            self._library_store(), output_language=self.config.summary.language
+        ).read_document(
             episode_id,
             document,
             offset=offset,
@@ -536,7 +581,9 @@ class WorkflowService:
     ) -> dict[str, Any]:
         task = self._create_task("agent-summary", "library.summary.write", episode_id=episode_id)
         try:
-            result = AgentSummaryService(self._library_store()).write_summary(
+            result = AgentSummaryService(
+                self._library_store(), output_language=self.config.summary.language
+            ).write_summary(
                 episode_id,
                 markdown,
                 transcript_sha256=transcript_sha256,

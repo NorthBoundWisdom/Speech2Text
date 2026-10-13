@@ -38,7 +38,7 @@ def transcribe_options_from_values(
         backend=getattr(values, "backend", default_asr_backend()),
         recording_json=getattr(values, "recording_json", None),
         model=config.local.asr_model,
-        language=normalize_language_hint(getattr(values, "language", "zh")),
+        language=normalize_language_hint(getattr(values, "language", "auto")),
         prompt_file=values.prompt_file if getattr(values, "prompt_file", None) else None,
         glossary_file=values.glossary_file if getattr(values, "glossary_file", None) else None,
         rule_packs=tuple(getattr(values, "rule_pack", None) or ()) or None,

@@ -120,7 +120,7 @@ struct SettingsView: View {
     private var localPane: some View {
         SettingsSectionPane(
             title: "Local ASR",
-            subtitle: "Choose the local transcription model and decoding profile."
+            subtitle: "Choose the transcription model, spoken languages, and summary output language."
         ) {
             settingsGroup {
                 modelSetupRow(
@@ -139,6 +139,30 @@ struct SettingsView: View {
                     .labelsHidden()
                     .frame(width: 220)
                 }
+                rowDivider
+                Text("Transcription Languages").font(.headline)
+                Text("No selection: automatic detection. One: language hint. Multiple: automatic detection with hints; preserve each spoken language. Hints do not restrict detection.")
+                    .font(.caption).foregroundStyle(.secondary)
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading) {
+                    ForEach(LanguageOption.all) { language in
+                        Toggle(language.title, isOn: Binding(
+                            get: { draft.transcriptionLanguages.contains(language.id) },
+                            set: { selected in
+                                draft.transcriptionLanguages.removeAll { $0 == language.id }
+                                if selected { draft.transcriptionLanguages.append(language.id) }
+                            }
+                        )).toggleStyle(.checkbox)
+                    }
+                }
+                Button("Automatic Detection") { draft.transcriptionLanguages = [] }
+                rowDivider
+                labeledField("Summary Output Language") {
+                    Picker("Summary Output Language", selection: $draft.summaryLanguage) {
+                        ForEach(LanguageOption.all) { Text($0.title).tag($0.id) }
+                    }.labelsHidden().frame(width: 220)
+                }
+                Text("Applies to summaries, headings, short titles, and MCP instructions. Overrides language requirements in custom prompts. No API key is required to save this setting.")
+                    .font(.caption).foregroundStyle(.secondary)
             }
         }
     }

@@ -75,7 +75,7 @@ struct SRTExportPanelView: View {
     private var statusView: some View {
         switch controller.state {
         case .idle:
-            Text("Source language: auto. Output: SRT beside the selected file.")
+            Text("Source languages: from Settings > Local ASR. Output: SRT beside the selected file.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         case .running:

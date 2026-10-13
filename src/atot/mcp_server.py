@@ -20,7 +20,9 @@ def create_mcp_server(
         return (
             service
             if service is not None
-            else WorkflowService(config=load_atot_config(overrides=config_overrides, include_api_key=False))
+            else WorkflowService(
+                config=load_atot_config(overrides=config_overrides, include_api_key=False)
+            )
         )
 
     readonly = ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False)
@@ -39,7 +41,7 @@ def create_mcp_server(
 
     @server.tool(annotations=readonly)
     def get_episode(episode_id: str) -> dict[str, Any]:
-        """Read metadata, QA status and transcript/summary version hashes before summarizing.
+        """Read metadata, output_language, QA status and document version hashes before summarizing.
 
         Empty summary_sha256 means the summary file does not exist. No API Key is required.
         """

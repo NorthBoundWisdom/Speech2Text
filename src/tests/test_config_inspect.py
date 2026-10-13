@@ -18,6 +18,7 @@ def test_config_inspect_reports_defaults_when_missing(tmp_path):
         "cloud",
         "library",
         "local",
+        "summary",
         "translation",
         "ui",
         "workflow",

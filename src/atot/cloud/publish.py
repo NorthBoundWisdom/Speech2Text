@@ -4,6 +4,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from ..languages import output_language_instruction
 from .client import CloudClientOptions, call_openai_compatible_chat, read_prompt_template
 from .metadata import episode_title_for_output
 from .output_state import (
@@ -237,34 +238,14 @@ def _write_publish_outputs(
     return ["title_candidates.json", "title_candidates.md", "social_copy.md"]
 
 
-def _short_title_prompt() -> str:
-    return (
-        "请只基于输入的中文播客摘要生成一个适合列表显示的中文短标题，不要补充外部事实。"
-        "必须输出成“主要嘉宾：一句话观点”格式；如果没有明确单一嘉宾，才允许输出成“主题：一句话观点”格式。"
-        "风格要像播客标题，而不是章节名、关键词列表或抽象名词堆砌。"
-        "正例：罗永浩：情绪稳定很重要。"
-        "正例：郑植：创作要走现实路。"
-        "反例：情绪稳定与表达。"
-        "反例：郑植创作现实路。"
-        "反例：AI 时代的表达。"
-        "要求："
-        "1. 标题里必须有一个明确的人名或主题短语放在冒号前。"
-        "2. 冒号后必须是一个完整观点、判断、态度或冲突，不要只写名词。"
-        "3. 尽量点明本期最有记忆点的一句话观点，而不是泛泛概括。"
-        "4. 控制在10到20个汉字。"
-        "5. 使用中文冒号“：”。"
-        "6. 不要使用书名号、引号、括号、序号、解释文字。"
-        "直接只输出标题本身。"
-    )
-
-
-def _clean_short_title(text: str, *, limit: int = 36) -> str:
+def _clean_short_title(text: str, *, limit: int = 36, language: str = "zh") -> str:
     raw = _strip_outer_markdown_fence(text).strip()
     if not raw:
         return ""
     title = next((compact_ws(line) for line in raw.splitlines() if line.strip()), "")
     title = title.strip(" #\"'“”‘’`")
-    title = title.replace(":", "：")
+    if language == "zh":
+        title = title.replace(":", "：")
     prefixes = ("短标题：", "标题：", "短标题:", "标题:")
     for prefix in prefixes:
         if title.startswith(prefix):
@@ -276,10 +257,10 @@ def _looks_like_summary_title(raw_response: str, title: str) -> bool:
     raw = _strip_outer_markdown_fence(raw_response).strip()
     if not raw:
         return False
-    summary_markers = ("主要内容", "核心观点", "关键要点", "重要名词", "结论", "金句")
     if any(marker in title for marker in ("结构化总结", "播客总结", "主要内容")):
         return True
-    return ("\n#" in raw or "\n##" in raw) and any(marker in raw for marker in summary_markers)
+    lines = [line for line in raw.splitlines() if line.strip()]
+    return len(lines) > 1 and any(line.lstrip().startswith("#") for line in lines)
 
 
 def _write_short_title_outputs(
@@ -338,16 +319,20 @@ def write_cloud_short_title(
         prompt = (
             read_prompt_template(options.prompt_file)
             if options.prompt_file
-            else _short_title_prompt()
+            else "Write one concise podcast list title based only on the supplied summary. Use Guest: complete viewpoint, or Topic: complete viewpoint when no main guest is known. Output only the title, no explanation."
         )
         cloud_text = (call_chat or call_openai_compatible_chat)(
-            system_prompt=prompt,
+            system_prompt=prompt + "\n\n" + output_language_instruction(options.output_language),
             user_content=summary,
             options=CloudClientOptions(),
             audit_path=cloud / "title.api_run.json",
         )
     source = "cloud_model" if cloud_text is not None else "local_scaffold"
-    title = _clean_short_title(cloud_text or "")
+    title = _clean_short_title(
+        cloud_text or "",
+        language=options.output_language,
+        limit=36 if options.output_language == "zh" else 100,
+    )
     if cloud_text is not None and _looks_like_summary_title(cloud_text, title):
         raise ValueError("Cloud title response looks like a summary, not a short title.")
     if not title:

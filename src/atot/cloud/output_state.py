@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import errno
 import os
 from pathlib import Path
@@ -16,6 +16,12 @@ except ModuleNotFoundError:  # pragma: no cover - Windows has no fcntl module.
     fcntl = None  # type: ignore[assignment]
 
 
+def configured_output_language() -> str:
+    from ..config_v2 import load_atot_config
+
+    return load_atot_config(include_api_key=False).summary.language
+
+
 @dataclass(frozen=True)
 class CloudOutputOptions:
     output_dir: Path
@@ -28,6 +34,7 @@ class CloudOutputOptions:
     stream_summary: bool = False
     retry_count: int = 2
     retry_backoff_seconds: float = 0.25
+    output_language: str = field(default_factory=configured_output_language)
 
 
 SUMMARY_OUTPUT_FILES = (
@@ -72,7 +79,9 @@ def _cloud_summary_lock(output_dir: Path) -> Iterator[None]:
         return
     with lock_path.open("a+", encoding="utf-8") as lock_file:
         try:
-            getattr(fcntl, "flock")(lock_file.fileno(), getattr(fcntl, "LOCK_EX") | getattr(fcntl, "LOCK_NB"))
+            getattr(fcntl, "flock")(
+                lock_file.fileno(), getattr(fcntl, "LOCK_EX") | getattr(fcntl, "LOCK_NB")
+            )
         except BlockingIOError as exc:
             raise RuntimeError(f"Cloud summary is already running for: {output_dir}") from exc
         lock_file.seek(0)

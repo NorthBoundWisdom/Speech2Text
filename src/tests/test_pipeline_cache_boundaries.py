@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from atot import pipeline as pipeline_module
 from atot.audio import ChunkSpec, prepare_audio_command
 from atot.backends import ASRTranscribeOptions
@@ -327,7 +329,8 @@ def test_correction_only_glossary_change_reuses_asr_cache_but_refreshes_postproc
     ).strip() == "本壳"
 
 
-def test_pipeline_records_backend_resolved_model_for_faster_whisper(tmp_path, monkeypatch):
+@pytest.mark.parametrize("languages", [(), ("zh",), ("zh", "en")])
+def test_pipeline_records_backend_resolved_model_for_faster_whisper(tmp_path, monkeypatch, languages):
     model_dir = tmp_path / "model" / "faster-whisper-large-v3-turbo"
     model_dir.mkdir(parents=True)
     for name in (
@@ -342,6 +345,7 @@ def test_pipeline_records_backend_resolved_model_for_faster_whisper(tmp_path, mo
     monkeypatch.setattr("atot.models.LOCAL_MODELS_DIR", tmp_path / "model")
 
     seen_models: list[str] = []
+    seen_options: list[ASRTranscribeOptions] = []
 
     class FakeBackend:
         name = "faster-whisper"
@@ -351,6 +355,7 @@ def test_pipeline_records_backend_resolved_model_for_faster_whisper(tmp_path, mo
 
         def transcribe(self, audio_path: Path, options: ASRTranscribeOptions):
             seen_models.append(options.model)
+            seen_options.append(options)
             return {"text": "你好", "segments": [{"start": 0.0, "end": 1.0, "text": "你好"}]}
 
     def fake_prepare(_input_path, output_path, *, sample_rate, overwrite):
@@ -400,11 +405,19 @@ def test_pipeline_records_backend_resolved_model_for_faster_whisper(tmp_path, mo
             output_dir=tmp_path / "out",
             backend="faster-whisper",
             model="large-v3-turbo",
+            language="zh" if languages == ("zh",) else None,
+            requested_languages=languages,
         )
     )
     chunk_payload = read_json(tmp_path / "out" / "episode" / "chunks" / "chunk_0000.json")
 
     assert seen_models == [str(model_dir)]
+    assert seen_options[0].language == ("zh" if languages == ("zh",) else None)
+    assert run["requested_languages"] == list(languages)
+    assert chunk_payload["requested_languages"] == list(languages)
+    if len(languages) > 1:
+        assert "Expected spoken languages: Chinese / Mandarin, English" in seen_options[0].prompt
+        assert "Transcribe each spoken language as spoken" in seen_options[0].prompt
     assert run["model"] == str(model_dir)
     assert run["model_source"] == "local"
     assert run["model_alias_or_input"] == "large-v3-turbo"

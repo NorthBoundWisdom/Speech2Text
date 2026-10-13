@@ -343,6 +343,41 @@ Dialog {
                         }
                     }
 
+                    SectionHeader { title: "Transcription Languages"; subtitle: "No selection: auto. One: language hint. Multiple: auto with hints, preserving original languages. Hints do not restrict detection." }
+                    GridLayout {
+                        columns: 3
+                        Layout.fillWidth: true
+                        Repeater {
+                            model: settingsController.languageOptions
+                            CheckBox {
+                                required property var modelData
+                                text: modelData.label
+                                checked: settingsController.transcriptionLanguages.indexOf(modelData.code) >= 0
+                                onToggled: {
+                                    let codes = settingsController.transcriptionLanguages.slice()
+                                    let index = codes.indexOf(modelData.code)
+                                    if (index >= 0) codes.splice(index, 1)
+                                    if (checked) codes.push(modelData.code)
+                                    settingsController.transcriptionLanguages = codes
+                                }
+                            }
+                        }
+                    }
+                    Button { text: "Automatic Detection"; onClicked: settingsController.transcriptionLanguages = [] }
+                    SectionHeader { title: "Summary Output Language"; subtitle: "Controls summaries, headings, short titles, and MCP instructions. Overrides conflicting custom prompt language requirements. No API key required to save." }
+                    ComboBox {
+                        model: settingsController.languageOptions
+                        textRole: "label"
+                        valueRole: "code"
+                        currentIndex: {
+                            for (let i = 0; i < model.length; i++)
+                                if (model[i].code === settingsController.summaryLanguage) return i
+                            return -1
+                        }
+                        onActivated: settingsController.summaryLanguage = currentValue
+                        Layout.preferredWidth: 240
+                    }
+
                     RowLayout {
                         Layout.fillWidth: true
                         Button {

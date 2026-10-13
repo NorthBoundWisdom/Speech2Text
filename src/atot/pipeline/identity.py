@@ -36,6 +36,7 @@ def _transcription_fingerprint(
         "prepared_audio_sha256": prepared_audio_sha256,
         "chunk_layout_sha256": chunk_layout_sha256,
         "language": options.language,
+        "requested_languages": list(options.requested_languages),
         "prompt_sha256": _sha256_text(prompt),
         "word_timestamps": options.word_timestamps,
         "condition_on_previous_text": options.condition_on_previous_text,

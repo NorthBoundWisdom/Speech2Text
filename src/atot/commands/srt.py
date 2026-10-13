@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass, field
+from dataclasses import dataclass, replace, field
 import hashlib
 import json
 from pathlib import Path
 from typing import Any
 
 from ..config import load_app_config
-from ..languages import normalize_language_hint
+from ..languages import normalize_language_hint, resolve_languages
 from ..paths import DEFAULT_GLOSSARY_FILE, DEFAULT_PROMPT_FILE, path_context
 from ..platform_defaults import default_asr_backend
 from ..pipeline import run_transcription
@@ -66,15 +66,7 @@ class SrtExportOptions:
 
 
 def requested_languages_from_args(values: list[str] | None) -> tuple[str | None, list[str]]:
-    requested = [item.strip() for item in (values or ["zh"]) if item and item.strip()]
-    if not requested:
-        requested = ["zh"]
-    requested = list(dict.fromkeys(requested))
-    normalized = [normalize_language_hint(item) for item in requested]
-    unique_normalized = [item for item in dict.fromkeys(normalized) if item is not None]
-    if None in normalized or len(unique_normalized) > 1:
-        return None, requested
-    return unique_normalized[0], requested
+    return resolve_languages(values if values is not None else [])
 
 
 def srt_job_dir(input_path: Path) -> Path:
@@ -178,11 +170,9 @@ def export_srt_for_input(
     runtime_args.language = asr_language
     runtime_args.local_only = True
     runtime_args.no_cloud_summary = True
-    remove_default_chinese_context_for_translation(
+    remove_default_chinese_context(
         runtime_args,
-        requested_languages=requested_languages,
         asr_language=asr_language,
-        target_language=target_language,
     )
     opts = transcribe_options_from_values(
         runtime_args,
@@ -190,6 +180,7 @@ def export_srt_for_input(
         output_dir=path_context().cache_dir / "srt",
         force_all=True,
     )
+    opts = replace(opts, requested_languages=tuple(requested_languages))
     run = run_transcription(opts)
     generated_srt = Path(str(run.get("job_dir", job_dir))) / "transcript.srt"
     if not generated_srt.exists():
@@ -345,28 +336,17 @@ def _detected_language_from_chunk_payloads(job_dir: Path) -> str | None:
     return sorted(counts.items(), key=lambda item: (-item[1], item[0]))[0][0]
 
 
-def remove_default_chinese_context_for_translation(
+def remove_default_chinese_context(
     args: argparse.Namespace,
     *,
-    requested_languages: list[str],
     asr_language: str | None,
-    target_language: str | None,
 ) -> None:
-    if target_language != "zh" or _translation_source_is_chinese(requested_languages, asr_language):
+    if asr_language == "zh":
         return
     if _same_path(getattr(args, "prompt_file", None), DEFAULT_PROMPT_FILE):
         args.prompt_file = None
     if _same_path(getattr(args, "glossary_file", None), DEFAULT_GLOSSARY_FILE):
         args.glossary_file = None
-
-
-def _translation_source_is_chinese(
-    requested_languages: list[str], asr_language: str | None
-) -> bool:
-    if asr_language == "zh":
-        return True
-    normalized = [normalize_language_hint(item) for item in requested_languages]
-    return normalized == ["zh"]
 
 
 def _same_path(left: Path | None, right: Path) -> bool:

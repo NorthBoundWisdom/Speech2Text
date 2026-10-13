@@ -78,6 +78,7 @@ def build_initial_run_info(
         "model_source": model_source(model_repo),
         "model_alias_or_input": options.model,
         "language": options.language,
+        "requested_languages": list(options.requested_languages),
         "prompt_file": str(options.prompt_file or ""),
         "prompt_sources": context.prompt_sources,
         "topic_prompt_summary_file": str(context_files.topic_prompt_summary_file or ""),

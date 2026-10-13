@@ -345,7 +345,18 @@ def _configure(args: argparse.Namespace, build_dir: Path) -> None:
 def _build(args: argparse.Namespace, build_dir: Path, *, configure_if_missing: bool) -> None:
     if configure_if_missing or not (build_dir / "CMakeCache.txt").exists():
         _configure(args, build_dir)
-    _run(["cmake", "--build", build_dir, "--config", args.configuration, "--target", TARGET_NAME])
+    _run(
+        [
+            "cmake",
+            "--build",
+            build_dir,
+            "--config",
+            args.configuration,
+            "--target",
+            TARGET_NAME,
+            "Audio2TextQtLanguageSettingsTests",
+        ]
+    )
 
 
 def _executable_candidates(build_dir: Path, configuration: str) -> list[Path]:
@@ -437,13 +448,24 @@ def _copy_ffmpeg_tools(staging_dir: Path, explicit_dir: str | None) -> None:
     for tool_name in FFMPEG_TOOL_NAMES:
         source = _find_ffmpeg_tool(tool_name, explicit_dir)
         tool_dirs.add(source.parent)
-        build_info = subprocess.run([str(source), "-version"], check=True, capture_output=True, text=True).stdout
-        license_info = subprocess.run([str(source), "-L"], check=True, capture_output=True, text=True).stdout
+        build_info = subprocess.run(
+            [str(source), "-version"], check=True, capture_output=True, text=True
+        ).stdout
+        license_info = subprocess.run(
+            [str(source), "-L"], check=True, capture_output=True, text=True
+        ).stdout
         if "--enable-nonfree" in build_info:
             raise ValueError("FFmpeg --enable-nonfree builds cannot be redistributed.")
         # Keep version/license output for reviewers; no machine-specific configure paths.
-        public_config = " ".join(flag for flag in build_info.split() if flag.startswith("--enable-") or flag.startswith("--disable-"))
-        (staging_dir / f"{tool_name}.build.txt").write_text(build_info.splitlines()[0] + "\n" + public_config + "\n" + license_info, encoding="utf-8")
+        public_config = " ".join(
+            flag
+            for flag in build_info.split()
+            if flag.startswith("--enable-") or flag.startswith("--disable-")
+        )
+        (staging_dir / f"{tool_name}.build.txt").write_text(
+            build_info.splitlines()[0] + "\n" + public_config + "\n" + license_info,
+            encoding="utf-8",
+        )
         shutil.copy2(source, staging_dir / tool_name)
     for tool_dir in sorted(tool_dirs):
         for dll in sorted(tool_dir.glob("*.dll")):
@@ -549,7 +571,8 @@ def _qt_project_version() -> str:
     content = cmake_lists.read_text(encoding="utf-8")
     match = re.search(
         rf"project\s*\(\s*{re.escape(TARGET_NAME)}\b[^)]*?\bVERSION\s+([^\s)]+)",
-        content, flags=re.DOTALL,
+        content,
+        flags=re.DOTALL,
     )
     if match is not None and match[1] == "${AUDIO2TEXTQT_RELEASE_VERSION}":
         match = re.search(r'set\(AUDIO2TEXTQT_RELEASE_VERSION "([0-9.]+)"', content)
@@ -612,13 +635,20 @@ def _stage_python_runtime(staging_dir: Path, source_dir: str | None) -> None:
         raise SystemExit(
             f"SonaFolio Qt: Python runtime source does not contain python.exe: {source}"
         )
-    unexpected = [child.name for child in source.iterdir()
-                  if child.name.lower() not in {"lib", "dlls", "libs", "include", "scripts", "doc", "tcl", "tools", "__pycache__"}
-                  and child.name.lower() not in {"python.exe", "pythonw.exe", "license.txt"}
-                  and not re.fullmatch(r"python(?:3|\d{2,3})(?:_d)?\.(?:dll|zip|_pth)", child.name.lower())
-                  and not re.fullmatch(r"(?:vcruntime|msvcp)\d+(?:_\d+)?\.dll", child.name.lower())]
+    unexpected = [
+        child.name
+        for child in source.iterdir()
+        if child.name.lower()
+        not in {"lib", "dlls", "libs", "include", "scripts", "doc", "tcl", "tools", "__pycache__"}
+        and child.name.lower() not in {"python.exe", "pythonw.exe", "license.txt"}
+        and not re.fullmatch(r"python(?:3|\d{2,3})(?:_d)?\.(?:dll|zip|_pth)", child.name.lower())
+        and not re.fullmatch(r"(?:vcruntime|msvcp)\d+(?:_\d+)?\.dll", child.name.lower())
+    ]
     if unexpected:
-        raise SystemExit("Use a clean Python distribution; unexpected runtime root files: " + ", ".join(unexpected))
+        raise SystemExit(
+            "Use a clean Python distribution; unexpected runtime root files: "
+            + ", ".join(unexpected)
+        )
     if any(path.is_symlink() for path in source.rglob("*")):
         raise SystemExit("Python runtime source must not contain symlinks.")
     runtime_dir = staging_dir / "python"
@@ -737,7 +767,9 @@ def _package_windows(args: argparse.Namespace, build_dir: Path) -> Path:
         include_python_runtime=args.include_python_runtime,
         platform="Windows",
     )
-    stage_release_licenses(staging_dir, Path(args.third_party_materials) if args.third_party_materials else None)
+    stage_release_licenses(
+        staging_dir, Path(args.third_party_materials) if args.third_party_materials else None
+    )
     created = _create_package_archive(staging_dir, archive_path)
     print(f"Package: {created}", flush=True)
     return created
@@ -750,18 +782,32 @@ def _verify_macos_dependency_paths(app: Path) -> None:
             continue
         with path.open("rb") as handle:
             magic = handle.read(4)
-        if magic not in {b"\xcf\xfa\xed\xfe", b"\xce\xfa\xed\xfe", b"\xfe\xed\xfa\xcf",
-                         b"\xfe\xed\xfa\xce", b"\xca\xfe\xba\xbe", b"\xbe\xba\xfe\xca",
-                         b"\xca\xfe\xba\xbf", b"\xbf\xba\xfe\xca"}:
+        if magic not in {
+            b"\xcf\xfa\xed\xfe",
+            b"\xce\xfa\xed\xfe",
+            b"\xfe\xed\xfa\xcf",
+            b"\xfe\xed\xfa\xce",
+            b"\xca\xfe\xba\xbe",
+            b"\xbe\xba\xfe\xca",
+            b"\xca\xfe\xba\xbf",
+            b"\xbf\xba\xfe\xca",
+        }:
             continue
-        result = subprocess.run(["otool", "-L", str(path)], check=True, capture_output=True, text=True)
+        result = subprocess.run(
+            ["otool", "-L", str(path)], check=True, capture_output=True, text=True
+        )
         for line in result.stdout.splitlines():
             if "(compatibility version" not in line:
                 continue
             dependency = line.strip().split(" (", 1)[0]
-            if dependency.startswith("/") and not dependency.startswith(("/System/Library/", "/usr/lib/")):
+            if dependency.startswith("/") and not dependency.startswith(
+                ("/System/Library/", "/usr/lib/")
+            ):
                 raise ValueError(
-                    "Nonportable macOS dependency in " + path.name + ": " + Path(dependency).name
+                    "Nonportable macOS dependency in "
+                    + path.name
+                    + ": "
+                    + Path(dependency).name
                     + ". Deploy and rewire matching libraries before release; include them in the license manifest."
                 )
 
@@ -796,7 +842,9 @@ def _package_macos(args: argparse.Namespace, build_dir: Path) -> Path:
         _qt_project_version(),
         platform="macOS",
     )
-    stage_release_licenses(staging_dir, Path(args.third_party_materials) if args.third_party_materials else None)
+    stage_release_licenses(
+        staging_dir, Path(args.third_party_materials) if args.third_party_materials else None
+    )
     created = _create_package_archive(staging_dir, archive_path)
     print(f"Package: {created}", flush=True)
     return created
@@ -837,7 +885,10 @@ def _add_common_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 def _add_package_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--third-party-materials", help="Reviewed redistribution manifest, including license texts and matching sources.")
+    parser.add_argument(
+        "--third-party-materials",
+        help="Reviewed redistribution manifest, including license texts and matching sources.",
+    )
     parser.add_argument("--package-dir", default=_repo_relative(DEFAULT_PACKAGE_DIR))
     parser.add_argument(
         "--package-staging-dir",

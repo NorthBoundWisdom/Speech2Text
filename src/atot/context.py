@@ -114,6 +114,7 @@ def build_prompt_context(
     prompt_file: Path | None,
     glossary_file: Path | None,
     rule_packs: tuple[str, ...] | list[str] | None = None,
+    language: str | None = "zh",
 ) -> PromptContext:
     topic_path = input_path.parent / DEFAULT_TOPIC_FILE
     topic_text = read_text(topic_path)
@@ -128,7 +129,7 @@ def build_prompt_context(
     episode_glossary = extract_episode_glossary(topic_text, rule_packs=rule_pack_request)
     glossary = merge_glossaries(base_glossary, episode_glossary)
     summary = topic_prompt_summary(topic_text)
-    effective_prompt = make_prompt(prompt_text, glossary)
+    effective_prompt = make_prompt(prompt_text, glossary, language=language)
     return PromptContext(
         topic_path=topic_path,
         topic_text=topic_text,

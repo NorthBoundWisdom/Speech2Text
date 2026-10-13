@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Callable
 
@@ -25,6 +25,7 @@ from ..formats import (
 )
 from ..job import JobLayout, build_job_layout, chunk_json_path, resolve_job_dir
 from ..models import model_source, short_model_name
+from ..languages import mixed_language_context
 from ..paths import path_context
 from ..platform_defaults import default_asr_backend
 from .asr import (
@@ -128,7 +129,7 @@ class TranscribeOptions:
     backend: str = field(default_factory=default_asr_backend)
     recording_json: Path | None = None
     model: str = "large-v3-turbo"
-    language: str | None = "zh"
+    language: str | None = None
     prompt_file: Path | None = None
     glossary_file: Path | None = None
     chunk_length: float = 20 * 60
@@ -153,6 +154,7 @@ class TranscribeOptions:
     profile: str | None = None
     rule_packs: tuple[str, ...] | list[str] | None = None
     progress_callback: Callable[[dict[str, Any]], None] | None = None
+    requested_languages: tuple[str, ...] = ()
 
 
 _job_dir = resolve_job_dir
@@ -320,6 +322,7 @@ def _transcribe_chunk_payloads(
                 "model": model_repo,
                 "model_source": model_source(model_repo),
                 "language": options.language,
+                "requested_languages": list(options.requested_languages),
                 "audio_duration": audio_duration,
                 "chunk": spec.to_json(),
                 "runtime_seconds": time.perf_counter() - chunk_started,
@@ -430,9 +433,18 @@ def run_transcription(options: TranscribeOptions) -> dict[str, Any]:
     context = build_prompt_context(
         input_path,
         prompt_file=options.prompt_file,
+        language=options.language,
         glossary_file=options.glossary_file,
         rule_packs=options.rule_packs,
     )
+    language_context = mixed_language_context(options.requested_languages)
+    if language_context:
+        context = replace(
+            context,
+            effective_prompt="\n\n".join(
+                part for part in (context.effective_prompt, language_context) if part
+            ),
+        )
     context_files = write_context_files(job.job_dir, context, glossary_file=options.glossary_file)
 
     media_probe, prepare_command, prepared_audio, audio_duration, force_prepare = (

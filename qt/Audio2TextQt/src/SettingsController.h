@@ -26,6 +26,9 @@ class SettingsController : public QObject
     Q_PROPERTY(QString cloudTemperature READ cloudTemperature WRITE setCloudTemperature NOTIFY settingsChanged)
     Q_PROPERTY(QString cloudMaxTokens READ cloudMaxTokens WRITE setCloudMaxTokens NOTIFY settingsChanged)
     Q_PROPERTY(QString cloudModelOptions READ cloudModelOptions WRITE setCloudModelOptions NOTIFY settingsChanged)
+    Q_PROPERTY(QStringList transcriptionLanguages READ transcriptionLanguages WRITE setTranscriptionLanguages NOTIFY settingsChanged)
+    Q_PROPERTY(QString summaryLanguage READ summaryLanguage WRITE setSummaryLanguage NOTIFY settingsChanged)
+    Q_PROPERTY(QVariantList languageOptions READ languageOptions CONSTANT)
     Q_PROPERTY(QString summaryPrompt READ summaryPrompt WRITE setSummaryPrompt NOTIFY settingsChanged)
     Q_PROPERTY(QString titlePrompt READ titlePrompt WRITE setTitlePrompt NOTIFY settingsChanged)
     Q_PROPERTY(bool cloudConfigured READ cloudConfigured NOTIFY settingsChanged)
@@ -79,6 +82,12 @@ public:
     QString cloudModelOptions() const;
     void setCloudModelOptions(const QString &value);
 
+    QStringList transcriptionLanguages() const;
+    void setTranscriptionLanguages(const QStringList &value);
+    QString summaryLanguage() const;
+    void setSummaryLanguage(const QString &value);
+    QVariantList languageOptions() const;
+
     QString summaryPrompt() const;
     void setSummaryPrompt(const QString &value);
 
@@ -125,6 +134,8 @@ private:
     QString m_cloudTemperature = "1";
     QString m_cloudMaxTokens = "8192";
     QString m_cloudModelOptions = "gpt-5.4-mini, gpt-5.4, gpt-5.5, gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna";
+    QStringList m_transcriptionLanguages;
+    QString m_summaryLanguage = "zh";
     QString m_summaryPrompt;
     QString m_titlePrompt;
 };

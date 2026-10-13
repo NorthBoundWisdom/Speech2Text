@@ -2,13 +2,15 @@ import Foundation
 
 struct AppSettings: Equatable {
     var configurationError: String = ""
-    static let defaultSummaryPrompt = """
+    static let defaultSummaryPrompt = "Summarize only the supplied podcast transcript as structured Markdown. Start with a specific episode title, then cover main content, core ideas, key points, unfamiliar terms, conclusions, and memorable quotes. Do not add external facts or output a reasoning trace."
+    static let defaultTitlePrompt = "Write one concise podcast list title based only on the summary. Use Guest: complete viewpoint, or Topic: complete viewpoint when no main guest is known. Output only the title, without explanation."
+    static let legacySummaryPrompt = """
     请只基于输入的中文播客转写稿生成结构化 Markdown 总结，不要补充外部事实。
     第一行必须是“# <具体中文总结标题>”，标题要基于本期内容生成；不要写成“播客结构化总结”、“中文播客摘要”、“Summary”或目录名如 work。
     请覆盖：主要内容、核心观点、关键要点、重要名词（较生僻的请给出解释）、结论、金句提炼。
     直接输出最终 Markdown，不要输出思考过程。
     """
-    static let defaultTitlePrompt = """
+    static let legacyTitlePrompt = """
     请只基于输入的中文播客摘要生成一个适合列表显示的中文短标题，不要补充外部事实。
     必须输出成“主要嘉宾：一句话观点”格式；如果没有明确单一嘉宾，才允许输出成“主题：一句话观点”格式。
     风格要像播客标题，而不是章节名、关键词列表或抽象名词堆砌。
@@ -29,6 +31,8 @@ struct AppSettings: Equatable {
 
     var localASRModel: String = LocalASRModel.defaultAlias
     var localASRProfile: String = LocalASRProfile.defaultName
+    var transcriptionLanguages: [String] = []
+    var summaryLanguage: String = "zh"
     var apiBase: String = CloudConfigFile.defaultBaseURL
     var cloudModel: String = CloudConfigFile.defaultModel
     var summaryPrompt: String = AppSettings.defaultSummaryPrompt

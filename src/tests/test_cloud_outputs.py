@@ -266,7 +266,7 @@ def test_cloud_summary_can_call_configured_text_api(tmp_path, monkeypatch):
     assert "chunk_summaries/chunk_0001.summary.json" in episode_call["user_content"]
     assert calls[0]["audit_path"].name == "chunk_0001.api_run.json"
     assert calls[-1]["audit_path"].name == "title.api_run.json"
-    assert "短标题" in calls[-1]["system_prompt"]
+    assert "podcast list title" in calls[-1]["system_prompt"]
 
 
 def test_cloud_summary_replaces_generic_work_heading(tmp_path, monkeypatch):
@@ -348,7 +348,8 @@ def test_cloud_short_title_uses_custom_prompt_file(tmp_path, monkeypatch):
     )
 
     assert result["title"] == "新的标题"
-    assert calls[0]["system_prompt"] == "自定义标题提示词"
+    assert calls[0]["system_prompt"].startswith("自定义标题提示词")
+    assert "Output language: Chinese / Mandarin (zh)" in calls[0]["system_prompt"]
 
 
 def test_cloud_short_title_rejects_summary_shaped_response(tmp_path, monkeypatch):
@@ -403,6 +404,8 @@ def test_cloud_summary_can_call_api_directly_from_readable_transcript(tmp_path, 
 
     def fake_call(**kwargs):
         calls.append(kwargs)
+        if kwargs["audit_path"].name == "title.api_run.json":
+            return "Research: evidence matters"
         return "# Direct Summary\n\n直接摘要"
 
     monkeypatch.setattr("atot.cloud.summary_outputs.call_openai_compatible_chat", fake_call)
@@ -582,10 +585,10 @@ def test_chunk_summary_ignores_custom_summary_prompt_file(tmp_path, monkeypatch)
         call for call in calls if call["audit_path"].name == "summarize.api_run.json"
     )
     assert summary_call["system_prompt"].startswith("这是用户自定义 summary prompt")
-    assert "第一行必须" in summary_call["system_prompt"]
+    assert "The first line must" in summary_call["system_prompt"]
     title_call = next(call for call in calls if call["audit_path"].name == "title.api_run.json")
     assert title_call["system_prompt"] != "这是用户自定义 summary prompt"
-    assert "短标题" in title_call["system_prompt"]
+    assert "podcast list title" in title_call["system_prompt"]
 
 
 def test_chunk_user_content_cleanup_drops_repetition_noise():
@@ -654,6 +657,8 @@ def test_cloud_summary_strips_outer_markdown_code_fence(tmp_path, monkeypatch):
     write_text_atomic(output / "transcript.readable.md", "# Readable\n\n这是可读转写稿。")
 
     def fake_call(**kwargs):
+        if kwargs["audit_path"].name == "title.api_run.json":
+            return "Research: evidence matters"
         return "```markdown\n# Direct Summary\n\n直接摘要\n```"
 
     monkeypatch.setattr("atot.cloud.summary_outputs.call_openai_compatible_chat", fake_call)
@@ -802,3 +807,85 @@ def test_glossary_review_writes_editor_items(tmp_path):
     assert "Term | Category | Scope" in (output / "cloud" / "glossary_editor_items.md").read_text(
         encoding="utf-8"
     )
+
+
+@pytest.mark.parametrize("mode", ["direct", "chunked"])
+def test_summary_language_controls_all_cloud_stages(tmp_path, mode):
+    output = _write_cloud_input(tmp_path)
+    write_text_atomic(
+        output / "transcript.readable.md", "# Source transcript\n\n[00:00:00] Source content."
+    )
+    prompt = tmp_path / "prompt.md"
+    prompt.write_text("Always write in Chinese. Include evidence and uncertainty.")
+    calls = []
+
+    def fake_call(**kwargs):
+        calls.append(kwargs)
+        if "chunk_" in kwargs["audit_path"].name:
+            return '{"summary":"Key evidence","terms":[],"uncertainties":[]}'
+        if kwargs["audit_path"].name == "title.api_run.json":
+            return "Research: evidence changes our view"
+        return "# Evidence Changes Our View\n\n## Key Ideas\n\n[00:00:00] Evidence and uncertainty."
+
+    write_cloud_summary(
+        CloudOutputOptions(
+            output_dir=output,
+            output_language="en",
+            call_api=True,
+            summary_mode=mode,
+            prompt_file=prompt,
+        ),
+        call_chat=fake_call,
+    )
+    assert calls
+    for call in calls:
+        assert "Output language: English (en)" in call["system_prompt"]
+        assert "overrides conflicting language requirements" in call["system_prompt"]
+    summary_call = next(
+        c
+        for c in calls
+        if "chunk_" not in c["audit_path"].name and c["audit_path"].name != "title.api_run.json"
+    )
+    assert summary_call["system_prompt"].startswith(prompt.read_text())
+    assert (output / "cloud/summary.md").read_text().startswith("# Evidence Changes Our View")
+    assert (
+        output / "cloud/short_title.txt"
+    ).read_text().strip() == "Research: evidence changes our view"
+
+
+def test_chunk_cache_is_partitioned_by_output_language(tmp_path):
+    from atot.cloud.chunking import write_chunk_summaries
+
+    output = _write_cloud_input(tmp_path)
+    calls = []
+
+    def fake_call(**kwargs):
+        calls.append(kwargs)
+        return '{"summary":"Evidence","terms":[],"uncertainties":[]}'
+
+    for language in ["zh", "zh", "en", "en"]:
+        write_chunk_summaries(
+            output,
+            options=CloudOutputOptions(output_dir=output, call_api=True, output_language=language),
+            source="cloud_model",
+            call_chat=fake_call,
+        )
+    assert len(calls) == 2
+    assert (
+        read_json(output / "cloud/chunk_summaries/chunk_0001.summary.json")["output_language"]
+        == "en"
+    )
+
+
+
+def test_english_summary_response_is_rejected_as_short_title(tmp_path):
+    from atot.cloud.publish import write_cloud_short_title
+
+    output = _write_cloud_input(tmp_path)
+    write_text_atomic(output / "cloud/summary.md", "# Research Findings\n\nEvidence.")
+    with pytest.raises(ValueError, match="looks like a summary"):
+        write_cloud_short_title(
+            CloudOutputOptions(output_dir=output, output_language="en", call_api=True),
+            force=True,
+            call_chat=lambda **kwargs: "# Research Findings\n\n## Main Ideas\n\nEvidence.",
+        )

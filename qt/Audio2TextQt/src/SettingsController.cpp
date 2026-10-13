@@ -11,7 +11,7 @@
 
 namespace
 {
-QString defaultSummaryPrompt()
+QString legacySummaryPrompt()
 {
     return QStringLiteral(
         "请只基于输入的中文播客转写稿生成结构化 Markdown 总结，不要补充外部事实。\n"
@@ -20,7 +20,7 @@ QString defaultSummaryPrompt()
         "直接输出最终 Markdown，不要输出思考过程。");
 }
 
-QString defaultTitlePrompt()
+QString legacyTitlePrompt()
 {
     return QStringLiteral(
         "请只基于输入的中文播客摘要生成一个适合列表显示的中文短标题，不要补充外部事实。\n"
@@ -39,6 +39,29 @@ QString defaultTitlePrompt()
         "5. 使用中文冒号“：”。\n"
         "6. 不要使用书名号、引号、括号、序号、解释文字。\n"
         "直接只输出标题本身。");
+}
+
+QString defaultSummaryPrompt()
+{
+    return QStringLiteral("Summarize only the supplied podcast transcript as structured Markdown. Start with a specific episode title, then cover main content, core ideas, key points, unfamiliar terms, conclusions, and memorable quotes. Do not add external facts or output a reasoning trace.");
+}
+
+QString defaultTitlePrompt()
+{
+    return QStringLiteral("Write one concise podcast list title based only on the summary. Use Guest: complete viewpoint, or Topic: complete viewpoint when no main guest is known. Output only the title, without explanation.");
+}
+
+QStringList normalizeLanguageCodes(const QStringList &values)
+{
+    const QMap<QString, QString> aliases{{"jp", "ja"}, {"cn", "zh"}, {"mandarin", "zh"}, {"chinese", "zh"}, {"japanese", "ja"}, {"english", "en"}, {"korean", "ko"}, {"cantonese", "yue"}};
+    QStringList codes;
+    for (const QString &value : values) {
+        const QString code = value.trimmed().toLower();
+        if (code.isEmpty() || code == "auto" || code == "detect") return {};
+        codes.append(aliases.value(code, code));
+    }
+    codes.removeDuplicates();
+    return codes;
 }
 
 QString tomlQuotedString(const QString &value)
@@ -555,6 +578,35 @@ void SettingsController::setCloudModelOptions(const QString &value)
     emit settingsChanged();
 }
 
+QStringList SettingsController::transcriptionLanguages() const { return m_transcriptionLanguages; }
+void SettingsController::setTranscriptionLanguages(const QStringList &value) {
+    const auto codes = normalizeLanguageCodes(value);
+    if (m_transcriptionLanguages == codes) return;
+    m_transcriptionLanguages = codes;
+    saveConfigFile();
+    emit settingsChanged();
+}
+QString SettingsController::summaryLanguage() const { return m_summaryLanguage; }
+void SettingsController::setSummaryLanguage(const QString &value) {
+    const auto codes = normalizeLanguageCodes({value});
+    if (codes.size() != 1 || m_summaryLanguage == codes.first()) return;
+    m_summaryLanguage = codes.first();
+    saveConfigFile();
+    emit settingsChanged();
+}
+QVariantList SettingsController::languageOptions() const {
+    return {
+        QVariantMap{{"code", "zh"}, {"label", "Chinese / Mandarin"}}, QVariantMap{{"code", "en"}, {"label", "English"}},
+        QVariantMap{{"code", "ja"}, {"label", "Japanese"}}, QVariantMap{{"code", "ko"}, {"label", "Korean"}},
+        QVariantMap{{"code", "yue"}, {"label", "Cantonese"}}, QVariantMap{{"code", "de"}, {"label", "German"}},
+        QVariantMap{{"code", "fr"}, {"label", "French"}}, QVariantMap{{"code", "es"}, {"label", "Spanish"}},
+        QVariantMap{{"code", "ru"}, {"label", "Russian"}}, QVariantMap{{"code", "pt"}, {"label", "Portuguese"}},
+        QVariantMap{{"code", "it"}, {"label", "Italian"}}, QVariantMap{{"code", "ar"}, {"label", "Arabic"}},
+        QVariantMap{{"code", "hi"}, {"label", "Hindi"}}, QVariantMap{{"code", "vi"}, {"label", "Vietnamese"}},
+        QVariantMap{{"code", "th"}, {"label", "Thai"}}, QVariantMap{{"code", "id"}, {"label", "Indonesian"}}
+    };
+}
+
 QString SettingsController::summaryPrompt() const
 {
     return m_summaryPrompt;
@@ -625,6 +677,8 @@ void SettingsController::resetDefaults()
     m_cloudTemperature = "1";
     m_cloudMaxTokens = "8192";
     m_cloudModelOptions = "gpt-5.4-mini, gpt-5.4, gpt-5.5, gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna";
+    m_transcriptionLanguages.clear();
+    m_summaryLanguage = "zh";
     m_summaryPrompt = defaultSummaryPrompt();
     m_titlePrompt = defaultTitlePrompt();
     save();
@@ -785,6 +839,8 @@ void SettingsController::load()
     m_localOnly = m_settings.value("localOnly", true).toBool();
     m_cloudChunkMinutes = m_settings.value("cloudChunkMinutes", 20.0).toDouble();
     m_modelAlias = m_settings.value("modelAlias", "large-v3-turbo").toString();
+    m_transcriptionLanguages.clear();
+    m_summaryLanguage = "zh";
     m_summaryPrompt = defaultSummaryPrompt();
     m_titlePrompt = defaultTitlePrompt();
     loadCloudConfig();
@@ -814,6 +870,8 @@ void SettingsController::updateValue(QString &field, const QString &value)
 
 void SettingsController::loadCloudConfig()
 {
+    m_transcriptionLanguages.clear();
+    m_summaryLanguage = "zh";
     m_cloudApiBase.clear();
     m_cloudApiKey.clear();
     m_cloudModel = "gpt-5.4-mini";
@@ -837,6 +895,13 @@ void SettingsController::loadCloudConfig()
     }
     const QString text = QString::fromUtf8(file.readAll());
 
+    const QString languageArray = readTomlValue(text, "local", "languages");
+    const QString legacyLanguage = parseTomlString(readTomlValue(text, "local", "language"));
+    m_transcriptionLanguages = normalizeLanguageCodes(!languageArray.isEmpty()
+        ? parseTomlArrayAsText(languageArray).split(',', Qt::SkipEmptyParts)
+        : legacyLanguage.isEmpty() ? QStringList{} : QStringList{legacyLanguage});
+    const QString summaryLanguage = parseTomlString(readTomlValue(text, "summary", "language"));
+    m_summaryLanguage = summaryLanguage.isEmpty() ? "zh" : normalizeLanguageCodes({summaryLanguage}).value(0);
     const QString localModel = parseTomlString(readTomlValue(text, "local", "asr_model")).trimmed();
     if (!localModel.isEmpty())
     {
@@ -887,11 +952,11 @@ void SettingsController::loadCloudConfig()
     }
     if (!summary.isEmpty())
     {
-        m_summaryPrompt = summary;
+        m_summaryPrompt = summary == legacySummaryPrompt() ? defaultSummaryPrompt() : summary;
     }
     if (!title.isEmpty())
     {
-        m_titlePrompt = title;
+        m_titlePrompt = title == legacyTitlePrompt() ? defaultTitlePrompt() : title;
     }
 }
 
@@ -911,6 +976,23 @@ bool SettingsController::saveConfigFile() const
         text = QString::fromUtf8(input.readAll());
     }
 
+    // Migrate only the superseded source-language key, retaining all other sections.
+    QString activeSection;
+    QStringList retained;
+    const QRegularExpression header(QStringLiteral("^\\s*\\[\\s*([^\\]]+)\\s*\\]\\s*(?:#.*)?$"));
+    const QRegularExpression legacyKey(keyPattern("language"));
+    for (const QString &line : text.split('\n')) {
+        const auto match = header.match(line);
+        if (match.hasMatch()) activeSection = match.captured(1).trimmed();
+        if (activeSection == "local" && legacyKey.match(line).hasMatch()) continue;
+        retained.append(line);
+    }
+    text = retained.join('\n');
+
+    QStringList encodedLanguages;
+    for (const QString &code : m_transcriptionLanguages) encodedLanguages.append(tomlQuotedString(code));
+    setTomlValue(text, "local", "languages", "[" + encodedLanguages.join(", ") + "]");
+    setTomlValue(text, "summary", "language", tomlQuotedString(m_summaryLanguage));
     setTomlValue(text, "local", "asr_model", tomlQuotedString(m_modelAlias.trimmed().isEmpty() ? QStringLiteral("large-v3-turbo") : m_modelAlias.trimmed()));
     setTomlValue(text, "cloud", "api_base", tomlQuotedString(m_cloudApiBase.trimmed()));
     setTomlValue(text, "cloud", "api_key", tomlQuotedString(m_cloudApiKey.trimmed()));

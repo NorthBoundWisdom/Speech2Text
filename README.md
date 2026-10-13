@@ -102,6 +102,33 @@ atot exec transcribe path/to/episode.m4a \
 Use `--chunking fixed` for fixed windows, `--silence-threshold -30` for an explicit silence threshold,
 and `--force-transcribe` to rerun ASR instead of reusing matching cached chunks.
 
+### Transcription and summary languages
+
+In either desktop app, open **Settings > Local ASR**. Check one spoken language to set a language
+hint, or several for mixed-language transcription. Leave all unchecked for automatic detection.
+Multiple selections enable automatic detection with context hints; they do not restrict detection to
+a language whitelist. Transcription preserves each spoken language rather than translating it.
+
+**Summary Output Language** defaults to Chinese and controls summary text, headings, short titles,
+and MCP/Codex instructions. It takes priority over conflicting language requests in saved custom
+prompts. Saving language settings requires no API key and does not regenerate existing documents.
+Subtitle translation remains a separate setting.
+
+The shared configuration and CLI also support these settings:
+
+```bash
+atot config set local.languages '["zh", "en"]'
+atot config set summary.language en
+atot exec transcribe path/to/episode.m4a --language zh --language en --local-only
+atot exec transcribe path/to/episode.m4a --language auto --local-only
+```
+
+`local.languages = []` means auto; an omitted `--language` uses the saved selection. Existing explicit
+`local.language` values remain supported and are migrated when settings are saved. New configurations
+use auto detection. `summary.language` is a single language code, defaulting to `zh`. Both source and
+summary selectors offer Chinese/Mandarin, English, Japanese, Korean, Cantonese, German, French,
+Spanish, Russian, Portuguese, Italian, Arabic, Hindi, Vietnamese, Thai, and Indonesian.
+
 ### Subtitles and translation
 
 ```bash

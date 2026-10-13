@@ -16,6 +16,7 @@ from .config import (
 from .credentials import STORE, resolve_api_key, store_api_key, write_private_config
 from .toml_compat import tomllib
 from .models import DEFAULT_MODEL_ALIAS
+from .languages import normalize_languages, resolve_languages, summary_language
 from .platform_defaults import default_asr_backend, default_library_storage
 from .runtime_defaults import DEFAULT_CLOUD_MAX_TOKENS, DEFAULT_CLOUD_TIMEOUT_SECONDS
 
@@ -25,6 +26,18 @@ class AtotLocalConfig:
     asr_model: str = DEFAULT_MODEL_ALIAS
     asr_profile: str = DEFAULT_PROFILE
     backend: str = field(default_factory=default_asr_backend)
+    language: str = "auto"
+    languages: list[str] | None = None
+
+    @property
+    def requested_languages(self) -> list[str]:
+        return normalize_languages(
+            self.languages if self.languages is not None else [self.language]
+        )
+
+
+@dataclass(frozen=True)
+class AtotSummaryConfig:
     language: str = "zh"
 
 
@@ -77,6 +90,7 @@ class AtotConfig:
     path: Path
     local: AtotLocalConfig = field(default_factory=AtotLocalConfig)
     cloud: AtotCloudConfig = field(default_factory=AtotCloudConfig)
+    summary: AtotSummaryConfig = field(default_factory=AtotSummaryConfig)
     translation: AtotTranslationConfig = field(default_factory=AtotTranslationConfig)
     workflow: AtotWorkflowConfig = field(default_factory=AtotWorkflowConfig)
     library: AtotLibraryConfig = field(default_factory=AtotLibraryConfig)
@@ -86,7 +100,16 @@ class AtotConfig:
 
 
 CONFIG_KEY_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)*$")
-CONFIG_TOP_LEVEL_KEYS = {"local", "cloud", "translation", "workflow", "library", "ui", "profiles"}
+CONFIG_TOP_LEVEL_KEYS = {
+    "local",
+    "cloud",
+    "summary",
+    "translation",
+    "workflow",
+    "library",
+    "ui",
+    "profiles",
+}
 
 
 def load_atot_config(
@@ -105,13 +128,21 @@ def load_atot_config(
     if key_override is not None and not isinstance(key_override, str):
         raise ValueError("cloud.api_key override must be a string.")
     api_key = (
-        (key_override if isinstance(key_override, str) else resolve_api_key(resolved_path, cloud_payload))
-        if include_api_key else ""
+        (
+            key_override
+            if isinstance(key_override, str)
+            else resolve_api_key(resolved_path, cloud_payload)
+        )
+        if include_api_key
+        else ""
     )
     for key, value in parsed_overrides:
+        if key == "local.language":
+            key, value = "local.languages", normalize_languages([value])
         _set_nested(payload, key.split("."), value)
     local = _dict(payload.get("local"))
     cloud = _dict(payload.get("cloud"))
+    summary = _dict(payload.get("summary"))
     translation = _dict(payload.get("translation"))
     workflow = _dict(payload.get("workflow"))
     library = _dict(payload.get("library"))
@@ -123,8 +154,12 @@ def load_atot_config(
             asr_model=_str(local.get("asr_model"), DEFAULT_MODEL_ALIAS),
             asr_profile=_str(local.get("asr_profile"), DEFAULT_PROFILE),
             backend=_str(local.get("backend"), default_asr_backend()),
-            language=_str(local.get("language"), "zh"),
+            language=resolve_languages(local["languages"])[0] or "auto"
+            if "languages" in local
+            else _str(local.get("language"), "auto"),
+            languages=normalize_languages(local["languages"]) if "languages" in local else None,
         ),
+        summary=AtotSummaryConfig(language=summary_language(summary.get("language", "zh"))),
         cloud=AtotCloudConfig(
             api_base=_str(cloud.get("api_base"), ""),
             api_key=api_key,
@@ -221,6 +256,12 @@ def read_config_value(key_path: str, *, path: Path | None = None) -> Any:
     config = load_atot_config(path)
     if key_path == "cloud.api_key":
         return "***" if config.cloud.api_key else ""
+    if key_path == "local.languages":
+        return config.local.requested_languages
+    if key_path == "local.language":
+        return resolve_languages(config.local.requested_languages)[0] or "auto"
+    if key_path == "summary.language":
+        return config.summary.language
     current: Any = config.raw
     for part in key_path.split("."):
         if not isinstance(current, dict) or part not in current:
@@ -231,6 +272,12 @@ def read_config_value(key_path: str, *, path: Path | None = None) -> Any:
 
 def set_config_value(key_path: str, value: Any, *, path: Path | None = None) -> Path:
     key_path = validate_config_key(key_path, require_nested=True)
+    if key_path == "local.language":
+        key_path, value = "local.languages", normalize_languages([value])
+    elif key_path == "local.languages":
+        value = normalize_languages(value)
+    elif key_path == "summary.language":
+        value = summary_language(value)
     resolved_path = (path or config_path()).expanduser()
     if resolved_path.exists():
         document = tomlkit.parse(resolved_path.read_text(encoding="utf-8"))
@@ -260,6 +307,8 @@ def set_config_value(key_path: str, value: Any, *, path: Path | None = None) -> 
                 if part not in current:
                     current[part] = tomlkit.table()
                 current = current[part]
+    if key_path == "local.languages":
+        current.pop("language", None)
     current[parts[-1]] = value
     write_private_config(resolved_path, tomlkit.dumps(document))
     return resolved_path
@@ -268,8 +317,9 @@ def set_config_value(key_path: str, value: Any, *, path: Path | None = None) -> 
 def config_as_dict(config: AtotConfig) -> dict[str, Any]:
     return {
         "path": str(config.path),
-        "local": vars(config.local),
+        "local": {**vars(config.local), "languages": config.local.requested_languages},
         "cloud": {**vars(config.cloud), "api_key": "***" if config.cloud.api_key else ""},
+        "summary": vars(config.summary),
         "translation": vars(config.translation),
         "workflow": vars(config.workflow),
         "library": vars(config.library),
@@ -301,11 +351,11 @@ def inspect_config(path: Path | None = None) -> dict[str, Any]:
             "local.backend", config.local.backend, defaults.local.backend, raw, ["local.backend"]
         ),
         _entry(
-            "local.language",
-            config.local.language,
-            defaults.local.language,
+            "local.languages",
+            config.local.requested_languages,
+            defaults.local.requested_languages,
             raw,
-            ["local.language"],
+            ["local.languages", "local.language"],
         ),
         _entry(
             "cloud.api_base",
@@ -455,6 +505,13 @@ def inspect_config(path: Path | None = None) -> dict[str, Any]:
             raw,
             ["library.local_root"],
         ),
+        _entry(
+            "summary.language",
+            config.summary.language,
+            defaults.summary.language,
+            raw,
+            ["summary.language"],
+        ),
         _entry("ui.language", config.ui.language, defaults.ui.language, raw, ["ui.language"]),
         _entry("ui.theme", config.ui.theme, defaults.ui.theme, raw, ["ui.theme"]),
         _entry(
@@ -468,8 +525,9 @@ def inspect_config(path: Path | None = None) -> dict[str, Any]:
     return {
         "path": str(config.path),
         "effective": {
-            "local": vars(config.local),
+            "local": {**vars(config.local), "languages": config.local.requested_languages},
             "cloud": {**vars(config.cloud), "api_key": "***" if config.cloud.api_key else ""},
+            "summary": vars(config.summary),
             "translation": vars(config.translation),
             "workflow": vars(config.workflow),
             "library": vars(config.library),
@@ -536,6 +594,8 @@ def _set_nested(payload: dict[str, Any], parts: list[str], value: Any) -> None:
             child = {}
             current[part] = child
         current = child
+    if parts == ["local", "languages"]:
+        current.pop("language", None)
     current[parts[-1]] = value
 
 

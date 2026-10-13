@@ -194,3 +194,11 @@ add_test(NAME Audio2TextQtWorkspaceLayout
     COMMAND ${AUDIO2TEXTQT_QMLTESTRUNNER} -input "${CMAKE_CURRENT_SOURCE_DIR}/../../tests/qt_workspace")
 set_tests_properties(Audio2TextQtWorkspaceLayout PROPERTIES
     ENVIRONMENT "${AUDIO2TEXTQT_SMOKE_ENV}" TIMEOUT 45)
+
+qt_add_executable(Audio2TextQtLanguageSettingsTests
+    ../../tests/qt_settings/test_language_settings.cpp
+    src/SettingsController.cpp src/SettingsController.h
+    src/AppPaths.cpp src/AppPaths.h)
+target_include_directories(Audio2TextQtLanguageSettingsTests PRIVATE src)
+target_link_libraries(Audio2TextQtLanguageSettingsTests PRIVATE Qt6::Core)
+add_test(NAME Audio2TextQtLanguageSettings COMMAND Audio2TextQtLanguageSettingsTests)

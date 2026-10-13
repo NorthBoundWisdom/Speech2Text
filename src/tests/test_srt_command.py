@@ -80,8 +80,8 @@ def test_srt_writes_next_to_source_and_uses_cache(monkeypatch, tmp_path):
     assert not (data_root / "materials").exists()
     assert not (data_root / "work").exists()
     metadata = read_json(Path(seen[0].job_dir) / "srt_export.json")
-    assert metadata["requested_languages"] == ["zh"]
-    assert metadata["asr_language"] == "zh"
+    assert metadata["requested_languages"] == []
+    assert metadata["asr_language"] is None
 
 
 def test_srt_refuses_existing_output_without_overwrite(monkeypatch, tmp_path):
@@ -146,7 +146,7 @@ def test_srt_auto_language_enables_auto_detection(monkeypatch, tmp_path):
     assert rc == 0
     assert seen[0].language is None
     metadata = read_json(Path(seen[0].job_dir) / "srt_export.json")
-    assert metadata["requested_languages"] == ["auto"]
+    assert metadata["requested_languages"] == []
 
 
 def test_srt_jp_language_alias_passes_japanese_code(monkeypatch, tmp_path):
@@ -161,7 +161,7 @@ def test_srt_jp_language_alias_passes_japanese_code(monkeypatch, tmp_path):
     assert rc == 0
     assert seen[0].language == "ja"
     metadata = read_json(Path(seen[0].job_dir) / "srt_export.json")
-    assert metadata["requested_languages"] == ["jp"]
+    assert metadata["requested_languages"] == ["ja"]
     assert metadata["asr_language"] == "ja"
 
 

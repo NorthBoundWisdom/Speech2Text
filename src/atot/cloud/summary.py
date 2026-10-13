@@ -24,6 +24,7 @@ from .output_state import (
     _record_cloud_outputs,
 )
 from .publish import _strip_outer_markdown_fence
+from ..languages import output_language_instruction
 from ..progress import update_cloud_summary_state
 from ..utils import compact_ws, read_text, relative_posix_path, write_text_atomic
 
@@ -32,20 +33,15 @@ ChatCaller = Callable[..., str]
 StreamCaller = Callable[..., str]
 FINAL_CONTEXT_TEXT_LIMIT = 12_000
 FINAL_CONTEXT_ITEM_LIMIT = 12
-SUMMARY_TITLE_INSTRUCTION = (
-    "输出格式要求：第一行必须是 `# <具体中文总结标题>`，标题要基于本期内容生成。"
-    "不要把第一行写成“播客结构化总结”、“中文播客摘要”、“Summary”或目录名如 work。"
-    "第二行留空后再输出正文。"
-)
 GENERIC_SUMMARY_HEADING_MARKERS = ("播客结构化总结", "结构化总结", "中文播客摘要")
 SUMMARY_SECTION_MARKERS = ("主要内容", "核心观点", "关键要点", "重要名词", "结论", "金句")
 
 
 def _summary_prompt_with_title_instruction(prompt: str) -> str:
-    text = prompt.strip()
-    if "第一行必须" in text and "总结标题" in text:
-        return text
-    return f"{text}\n\n{SUMMARY_TITLE_INSTRUCTION}".strip()
+    return (
+        prompt.strip() + "\n\nThe first line must be '# <specific episode summary title>', "
+        "followed by a blank line and the Markdown body. Do not use a generic title such as Summary."
+    ).strip()
 
 
 @dataclass(frozen=True)
@@ -91,7 +87,7 @@ def _maybe_call_cloud(
     if prompt_transform:
         prompt = prompt_transform(prompt)
     return (call_chat or call_openai_compatible_chat)(
-        system_prompt=prompt,
+        system_prompt=prompt + "\n\n" + output_language_instruction(options.output_language),
         user_content=user_content,
         options=CloudClientOptions(),
         audit_path=_cloud_dir(options.output_dir.expanduser().resolve()) / audit_name,
@@ -99,11 +95,19 @@ def _maybe_call_cloud(
 
 
 def _summary_prompt_for_direct_readable(options: CloudOutputOptions) -> str:
-    if options.prompt_file:
-        return _summary_prompt_with_title_instruction(read_prompt_template(options.prompt_file))
-    return _summary_prompt_with_title_instruction(
-        "请只基于输入的中文播客转写稿生成结构化 Markdown 总结。不要补充外部事实。"
-        "直接输出最终 Markdown，不要输出思考过程。"
+    prompt = (
+        read_prompt_template(options.prompt_file)
+        if options.prompt_file
+        else (
+            "Summarize only the supplied transcript as structured Markdown. Cover main ideas, evidence, "
+            "key points, unfamiliar terms, conclusions, and memorable quotes. Do not add external facts "
+            "or output a reasoning trace."
+        )
+    )
+    return (
+        _summary_prompt_with_title_instruction(prompt)
+        + "\n\n"
+        + output_language_instruction(options.output_language)
     )
 
 
@@ -146,11 +150,24 @@ def _summary_heading_title(output_dir: Path, summary_text: str) -> str:
     return content_title or episode_title
 
 
-def _normalize_summary_heading(output_dir: Path, summary_text: str) -> str:
+def _normalize_summary_heading(
+    output_dir: Path, summary_text: str, *, output_language: str = "zh"
+) -> str:
     text = summary_text.strip()
     if not text:
         return ""
     lines = text.splitlines()
+    if output_language != "zh":
+        first = lines[0].strip()
+        if (
+            not first.startswith("# ")
+            or _summary_heading_is_generic(first)
+            or _heading_text(first).casefold() == "summary"
+        ):
+            raise ValueError(
+                "Summary must begin with a specific Markdown title in the output language."
+            )
+        return text
     for index, line in enumerate(lines):
         if not line.strip():
             continue
@@ -166,7 +183,11 @@ def _normalize_summary_heading(output_dir: Path, summary_text: str) -> str:
 
 
 def _short_title_options(options: CloudOutputOptions) -> CloudOutputOptions:
-    return CloudOutputOptions(output_dir=options.output_dir, call_api=options.call_api)
+    return CloudOutputOptions(
+        output_dir=options.output_dir,
+        call_api=options.call_api,
+        output_language=options.output_language,
+    )
 
 
 def _json_section(title: str, payload: dict[str, Any]) -> str:
@@ -385,12 +406,14 @@ def _write_direct_readable_summary(
             prompt_transform=_summary_prompt_with_title_instruction,
         )
     summary_text = _normalize_summary_heading(
-        output_dir, _strip_outer_markdown_fence(cloud_text or "")
+        output_dir,
+        _strip_outer_markdown_fence(cloud_text or ""),
+        output_language=options.output_language,
     )
     write_text_atomic(summary_path, summary_text + ("\n" if summary_text else ""))
     outputs = ["summary.md"]
     if options.call_api and summary_text:
-        title_result = dependencies.write_short_title(_short_title_options(options), force=False)
+        title_result = dependencies.write_short_title(_short_title_options(options), force=True)
         outputs.extend(str(item) for item in title_result.get("outputs", []))
     _record_cloud_outputs(
         output_dir,
@@ -470,7 +493,8 @@ def write_cloud_summary(
                 update_cloud_summary_state(output_dir, "running", summary_stage="episode_summary")
                 cloud_text = _maybe_call_cloud(
                     options,
-                    default_prompt="请基于输入的中文播客文本生成摘要、章节和 shownotes。不要添加外部事实。",
+                    default_prompt="Summarize the supplied podcast content as structured Markdown with a specific title, key points, evidence, conclusions and uncertainty. Do not add external facts.",
+                    prefer_fallback_prompt=False,
                     fallback_prompt=Path("doc/cloud_prompts/summarize.zh.md"),
                     user_content=dependencies.episode_input_from_chunk_summaries(output_dir)
                     if options.call_api
@@ -483,7 +507,9 @@ def write_cloud_summary(
                     raise RuntimeError("Cloud episode summary produced no content.")
             if cloud_text is not None:
                 cloud_text = _normalize_summary_heading(
-                    output_dir, _strip_outer_markdown_fence(cloud_text)
+                    output_dir,
+                    _strip_outer_markdown_fence(cloud_text),
+                    output_language=options.output_language,
                 )
                 write_text_atomic(cloud / "summary.md", cloud_text)
                 dependencies.write_chapter_outputs(cloud, chapters, cloud_text)
@@ -493,7 +519,7 @@ def write_cloud_summary(
                 title_outputs: list[str] = []
                 if options.call_api and cloud_text:
                     title_result = dependencies.write_short_title(
-                        _short_title_options(options), force=False
+                        _short_title_options(options), force=True
                     )
                     title_outputs = [str(item) for item in title_result.get("outputs", [])]
                 outputs = [

@@ -155,3 +155,12 @@ def test_agent_read_rejects_stale_version_and_invalid_ranges(summary_service):
     for params in ({"offset": -1}, {"max_chars": 0}, {"max_chars": 12001}, {"offset": 100000}):
         with pytest.raises(ValueError):
             summary_service.read_document("test-episode", **params)
+
+
+def test_agent_summary_exposes_configured_language_without_changing_versions(summary_service):
+    service = AgentSummaryService(summary_service.store, output_language="en")
+    episode = service.get_episode("test-episode")
+    assert episode["output_language"] == "en"
+    assert "English (en)" in episode["instructions"]
+    assert "write a Chinese" not in episode["instructions"]
+    assert versions(service) == versions(summary_service)

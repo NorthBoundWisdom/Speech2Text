@@ -19,6 +19,8 @@ struct CloudConfigFile: Equatable {
     var modelOptions: [String] = defaultModelOptions
     var localASRModel: String = LocalASRModel.defaultAlias
     var localASRProfile: String = LocalASRProfile.defaultName
+    var transcriptionLanguages: [String] = []
+    var summaryLanguage: String = "zh"
     var summaryPrompt: String = AppSettings.defaultSummaryPrompt
     var titlePrompt: String = AppSettings.defaultTitlePrompt
     var cloudTimeout: String = defaultCloudTimeout
@@ -94,6 +96,8 @@ struct CloudConfigFile: Equatable {
     static func parse(_ text: String) throws -> CloudConfigFile {
         var file = CloudConfigFile()
         var section = ""
+        var legacyLanguage: String?
+        var hasLanguages = false
 
         for rawLine in text.components(separatedBy: .newlines) {
             let line = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -112,12 +116,25 @@ struct CloudConfigFile: Equatable {
 
             if section == "local" {
                 switch key {
+                case "languages":
+                    file.transcriptionLanguages = try LanguageOption.normalize(parseQuotedTOMLStringArray(valueText))
+                    hasLanguages = true
+                case "language":
+                    legacyLanguage = try parseQuotedTOMLString(valueText)
                 case "asr_model":
                     file.localASRModel = try parseQuotedTOMLString(valueText)
                 case "asr_profile":
                     file.localASRProfile = try parseQuotedTOMLString(valueText)
                 default:
                     break
+                }
+            } else if section == "summary" {
+                if key == "language" {
+                    let codes = try LanguageOption.normalize([parseQuotedTOMLString(valueText)])
+                    guard let code = codes.first else {
+                        throw AppError.invalidImportOutput("Summary output requires a specific language.")
+                    }
+                    file.summaryLanguage = code
                 }
             } else if section == "cloud" {
                 switch key {
@@ -201,6 +218,11 @@ struct CloudConfigFile: Equatable {
             }
         }
 
+        if !hasLanguages, let legacyLanguage {
+            file.transcriptionLanguages = try LanguageOption.normalize([legacyLanguage])
+        }
+        if file.summaryPrompt == AppSettings.legacySummaryPrompt { file.summaryPrompt = AppSettings.defaultSummaryPrompt }
+        if file.titlePrompt == AppSettings.legacyTitlePrompt { file.titlePrompt = AppSettings.defaultTitlePrompt }
         if file.model.isEmpty {
             file.model = defaultModel
         }
@@ -251,17 +273,27 @@ struct CloudConfigFile: Equatable {
                credentials: any CloudCredentialStore = KeychainCloudCredentialStore()) throws {
         let url = Self.configURL(dataRoot: dataRoot)
         try fileManager.createDirectory(at: dataRoot, withIntermediateDirectories: true)
-        let text = try serialized()
+        let generated = try serialized()
+        let existing = fileManager.fileExists(atPath: url.path) ? try String(contentsOf: url, encoding: .utf8) : ""
+        let text = Self.merge(existing: existing, generated: generated)
         try credentials.save(apiKey, account: url.standardizedFileURL.resolvingSymlinksInPath().path)
         try text.write(to: url, atomically: true, encoding: .utf8)
         try fileManager.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
     }
 
     func serialized() throws -> String {
-        try [
+        let languages = try LanguageOption.normalize(transcriptionLanguages)
+        guard let outputLanguage = try LanguageOption.normalize([summaryLanguage]).first else {
+            throw AppError.invalidImportOutput("Summary output requires a specific language.")
+        }
+        return try [
             "[local]",
             "asr_model = \(quotedTOMLString(localASRModel))",
             "asr_profile = \(quotedTOMLString(localASRProfile))",
+            "languages = \(quotedTOMLStringArray(languages))",
+            "",
+            "[summary]",
+            "language = \(quotedTOMLString(outputLanguage))",
             "",
             "[cloud]",
             "api_base = \(quotedTOMLString(baseURL))",
@@ -305,6 +337,46 @@ struct CloudConfigFile: Equatable {
             "",
         ]
         .joined(separator: "\n")
+    }
+
+    static func merge(existing: String, generated: String) -> String {
+        var updates: [String: [String: String]] = [:]
+        var section = ""
+        for line in generated.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("[") && trimmed.hasSuffix("]") { section = trimmed }
+            else if let separator = trimmed.firstIndex(of: "="), !trimmed.hasPrefix("#") {
+                let key = trimmed[..<separator].trimmingCharacters(in: .whitespaces)
+                updates[section, default: [:]][key] = line
+            }
+        }
+        var result: [String] = []
+        section = ""
+        func flush() {
+            if let pending = updates.removeValue(forKey: section) {
+                result.append(contentsOf: pending.keys.sorted().compactMap { pending[$0] })
+            }
+        }
+        for line in existing.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("[") && trimmed.hasSuffix("]") {
+                flush()
+                section = trimmed
+                result.append(line)
+            } else if let separator = trimmed.firstIndex(of: "="), !trimmed.hasPrefix("#") {
+                let key = trimmed[..<separator].trimmingCharacters(in: .whitespaces)
+                if section == "[local]" && key == "language" { continue }
+                if let replacement = updates[section]?.removeValue(forKey: key) { result.append(replacement) }
+                else { result.append(line) }
+            } else { result.append(line) }
+        }
+        flush()
+        for name in updates.keys.sorted() {
+            result.append(name)
+            result.append(contentsOf: updates[name]!.keys.sorted().compactMap { updates[name]?[$0] })
+            result.append("")
+        }
+        return result.joined(separator: "\n")
     }
 
     static func template() -> String {

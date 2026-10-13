@@ -39,6 +39,19 @@ If documents change during reading, writes fail and the agent must reread. Repla
 nonempty summary requires your explicit regeneration request; the agent must not overwrite it on
 its own.
 
+## Output language
+
+Choose **Summary Output Language** in **Settings > Local ASR**, or run:
+
+```bash
+atot config set summary.language en
+```
+
+`get_episode` returns the current `output_language` and language-aware instructions. The default is
+Chinese (`zh`); the agent should use that setting unless you explicitly request another language in
+the conversation. This setting requires no API key and never replaces existing summaries by itself.
+The copied Codex write-back instructions also include the selected language.
+
 ## Data boundaries
 
 Agent-read text enters its conversation and follows the client's account policies. Local stdio does
