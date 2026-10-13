@@ -99,8 +99,8 @@ final class AppStore: ObservableObject {
         }
     }
 
-    static func makeLive() -> AppStore {
-        AppStore()
+    static func makeLive(runsStartupCloudPreflight: Bool = true) -> AppStore {
+        AppStore(runsStartupCloudPreflight: runsStartupCloudPreflight)
     }
 
     var selectedLibraryItem: ProcessLibraryItem? {

@@ -6,6 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var instanceLock: ApplicationInstanceLock?
 
     func applicationWillFinishLaunching(_: Notification) {
+        if CommandLine.arguments.contains("--startup-smoke") { return }
         do {
             if let lock = try ApplicationInstanceLock.acquire() {
                 instanceLock = lock
@@ -22,6 +23,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.regular)
         NSApp.applicationIconImage = AppIconFactory.image()
         NSApp.activate(ignoringOtherApps: true)
+        if CommandLine.arguments.contains("--startup-smoke") {
+            let deadline = Date().addingTimeInterval(25)
+            Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+                if let window = NSApp.windows.first(where: { $0.isVisible && $0.contentView != nil }),
+                   let view = window.contentView, view.bounds.width > 0, view.bounds.height > 0 {
+                    view.displayIfNeeded()
+                    let marker = "{\"type\":\"sonafolio.native_startup\",\"version\":1,\"client\":\"swift\",\"first_frame\":true}\n"
+                    FileHandle.standardError.write(Data(marker.utf8))
+                    timer.invalidate()
+                    Darwin.exit(0)
+                } else if Date() > deadline {
+                    FileHandle.standardError.write(Data("Native startup smoke timed out before displaying a window.\n".utf8))
+                    Darwin.exit(2)
+                }
+            }
+        }
     }
 
     func applicationWillTerminate(_: Notification) {
@@ -43,7 +60,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 @main
 struct Audio2TextApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @StateObject private var store = AppStore.makeLive()
+    @StateObject private var store = AppStore.makeLive(
+        runsStartupCloudPreflight: !CommandLine.arguments.contains("--startup-smoke")
+    )
 
     init() {
         if let exitCode = Audio2TextCliLauncher.runIfRequested() {

@@ -237,6 +237,12 @@ if(WIN32)
             --qmlimport "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/Controls"
             --qmlimport "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/AppShell"
             "$<TARGET_FILE:Audio2TextQtWorkspaceTests>"
+        COMMAND "${AUDIO2TEXTQT_WINDEPLOYQT_EXECUTABLE}"
+            --verbose 0 --no-compiler-runtime --no-opengl-sw --no-system-d3d-compiler
+            --qmldir "${CMAKE_CURRENT_SOURCE_DIR}/qml"
+            --qmlimport "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/Controls"
+            --qmlimport "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/AppShell"
+            "$<TARGET_FILE:Audio2TextQtWorkspaceTests>"
         COMMAND "${CMAKE_COMMAND}" -E make_directory
             "$<TARGET_FILE_DIR:Audio2TextQtWorkspaceTests>/platforms"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different

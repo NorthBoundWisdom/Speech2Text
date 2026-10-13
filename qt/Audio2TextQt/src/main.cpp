@@ -8,6 +8,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
+#include <QtCore/QSettings>
+#include <QtCore/QTemporaryDir>
 #include <QtCore/QTimer>
 #include <cstdio>
 #include <QtGui/QFontDatabase>
@@ -16,6 +18,7 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQml/QQmlContext>
 #include <QtQuickControls2/QQuickStyle>
+#include <QtQuick/QQuickWindow>
 
 namespace
 {
@@ -120,6 +123,7 @@ QFont applicationFont()
 int main(int argc, char *argv[])
 {
     const bool rawSmokeQuit = hasRawArgument(argc, argv, "--smoke-quit") || hasRawArgument(argc, argv, "-s");
+    const bool rawStartupSmoke = hasRawArgument(argc, argv, "--startup-smoke");
     const bool rawLibraryProbe = hasRawArgument(argc, argv, "--library-probe");
     const QString rawDataRoot = rawOptionValue(argc, argv, "--data-root");
     const QString rawLibraryRoot = rawOptionValue(argc, argv, "--library-root");
@@ -143,12 +147,21 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOption({{"s", "smoke-quit"}, "Load QML, refresh once, and quit."});
+    parser.addOption({"startup-smoke", "Present a native window frame, report startup evidence, and quit."});
     parser.addOption({"library-probe", "Scan the configured library once, print a summary, and quit."});
     parser.addOption({"data-root", "Override the SonaFolio data root for this run.", "path"});
     parser.addOption({"library-root", "Override the Audio2TextLibrary root for this run.", "path"});
     parser.addOption({"atot", "Path to atot, atot.exe, or Audio2TextCli.", "path"});
     parser.addOption({"vcpkg-root", "Path to a local vcpkg root for ffmpeg discovery.", "path"});
     parser.process(app);
+
+    QTemporaryDir smokePreferences;
+    if (rawSmokeQuit || rawStartupSmoke)
+    {
+        if (!smokePreferences.isValid()) return 2;
+        QSettings::setDefaultFormat(QSettings::IniFormat);
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, smokePreferences.path());
+    }
 
     SettingsController settings;
     applyCommandLine(settings, parser);
@@ -170,7 +183,8 @@ int main(int argc, char *argv[])
     }
     LibraryController library(&settings);
     JobController jobs(&settings, &library);
-    const bool smokeQuit = rawSmokeQuit || parser.isSet("smoke-quit");
+    const bool startupSmoke = rawStartupSmoke || parser.isSet("startup-smoke");
+    const bool smokeQuit = startupSmoke || rawSmokeQuit || parser.isSet("smoke-quit");
     const bool libraryProbe = rawLibraryProbe || parser.isSet("library-probe");
 
     if (libraryProbe)
@@ -212,7 +226,28 @@ int main(int argc, char *argv[])
     {
         QTimer::singleShot(0, &library, &LibraryController::refresh);
     }
-    if (smokeQuit)
+    if (startupSmoke)
+    {
+        const QString platform = QGuiApplication::platformName();
+        if (platform == "offscreen" || platform == "minimal")
+        {
+            qCritical("Native startup smoke requires a desktop platform plugin.");
+            return 2;
+        }
+        auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
+        if (!window) return 2;
+        QObject::connect(window, &QQuickWindow::frameSwapped, &app, [&app, window]() {
+            if (!window->isVisible() || !window->isExposed()) return;
+            std::fprintf(stderr, "{\"type\":\"sonafolio.native_startup\",\"version\":1,\"client\":\"qt\",\"first_frame\":true}\n");
+            std::fflush(stderr);
+            app.exit(0);
+        }, Qt::QueuedConnection);
+        QTimer::singleShot(25000, &app, [&app]() {
+            qCritical("Native startup smoke timed out before presenting a frame.");
+            app.exit(2);
+        });
+    }
+    else if (smokeQuit)
     {
         std::fprintf(stderr, "SonaFolio Qt: QML smoke loaded.\n");
         std::fflush(stderr);

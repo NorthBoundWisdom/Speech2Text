@@ -43,6 +43,24 @@ For a build-only trial, run **Native release** with `workflow_dispatch` on main 
 Manual runs upload a verified artifact set but do not create a tag or publish a GitHub Release.
 This lets contributors exercise Windows and Linux packaging before publishing a version.
 
+## Final package startup gate
+
+Following Ravo's separate-runner package checks, `package-smoke` downloads the final EXE,
+AppImage and both DMGs on fresh runners without Qt SDKs, source roots or compiler caches.
+Windows silently installs the final EXE; macOS mounts the DMG read-only and copies its app
+outside the checkout; Linux launches the final AppImage payload under Xvfb and a D-Bus session.
+The AppImage extraction mode avoids depending on privileged FUSE mounts in CI.
+
+Each client must load its native platform plugin and display a window frame through
+`--startup-smoke`. An offscreen launch or a zero exit code without a matching first-frame
+marker cannot pass. The verifier clears developer library/QML search paths and uses an
+isolated data root; it does not transcribe, download models or test a cloud API.
+Swift startup smoke skips cloud preflight. All checks must pass before release publication.
+
+Checks retain loader/installer logs and per-package evidence JSON, including the package hash,
+source commit, success and first-frame status. They verify startup on the selected CI operating
+systems, not every target machine, GPU driver or optional ASR runtime.
+
 ## Runtime boundary
 
 Qt CI and tag builds materialize the exact GeoControls revision from
