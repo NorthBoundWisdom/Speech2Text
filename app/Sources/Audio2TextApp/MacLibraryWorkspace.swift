@@ -135,7 +135,7 @@ final class LibrarySplitViewController: NSSplitViewController {
             splitView.layoutSubtreeIfNeeded()
         }
         if !splitViewItems[1].isCollapsed {
-            let origin = splitViewItems[0].isCollapsed ? 0 : sourceHost.view.frame.width + splitView.dividerThickness
+            let origin = splitViewItems[0].isCollapsed ? 0 : columnFrame(at: 0).width + splitView.dividerThickness
             splitView.setPosition(origin + listWidth, ofDividerAt: 1)
         }
         isApplyingLayout = false
@@ -148,16 +148,22 @@ final class LibrarySplitViewController: NSSplitViewController {
         detailHost.rootView = detail
     }
 
+    func columnFrame(at index: Int) -> CGRect {
+        // AppKit may wrap hosted content with sidebar material and safe-area insets.
+        // Persist the pane allocation, not the smaller content controller's frame.
+        splitView.arrangedSubviews[index].frame
+    }
+
     func applyCollapseState(source: Bool, list: Bool) {
         _ = view
         guard splitViewItems[0].isCollapsed != source || splitViewItems[1].isCollapsed != list else { return }
         isApplyingLayout = true
         let sourceWidth = splitViewItems[0].isCollapsed
             ? preferredWidth(key: Self.sourceWidthKey, defaultValue: 270, range: 180...460)
-            : sourceHost.view.frame.width
+            : columnFrame(at: 0).width
         let listWidth = splitViewItems[1].isCollapsed
             ? preferredWidth(key: Self.listWidthKey, defaultValue: 340, range: 240...700)
-            : listHost.view.frame.width
+            : columnFrame(at: 1).width
         if splitViewItems[0].isCollapsed != source { splitViewItems[0].isCollapsed = source }
         if splitViewItems[1].isCollapsed != list { splitViewItems[1].isCollapsed = list }
         if hasPlacedColumns {
@@ -167,7 +173,7 @@ final class LibrarySplitViewController: NSSplitViewController {
                 splitView.layoutSubtreeIfNeeded()
             }
             if !list {
-                let origin = source ? 0 : sourceHost.view.frame.width + splitView.dividerThickness
+                let origin = source ? 0 : columnFrame(at: 0).width + splitView.dividerThickness
                 splitView.setPosition(origin + listWidth, ofDividerAt: 1)
             }
         }
@@ -184,7 +190,7 @@ final class LibrarySplitViewController: NSSplitViewController {
         guard hasPlacedColumns, !isApplyingLayout else { return }
         for (index, key) in [(0, Self.sourceWidthKey), (1, Self.listWidthKey)] {
             let item = splitViewItems[index]
-            let width = item.viewController.view.frame.width
+            let width = columnFrame(at: index).width
             if !item.isCollapsed, width >= item.minimumThickness {
                 preferences.set(Double(width), forKey: key)
             }

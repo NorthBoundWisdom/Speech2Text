@@ -40,17 +40,17 @@ final class MacLibrarySplitViewTests: XCTestCase {
         defer { fixture.close() }
         let controller = fixture.controller
         let split = controller.splitView
-        XCTAssertEqual(controller.sourceHost.view.frame.width, 270, accuracy: 2)
-        XCTAssertEqual(controller.listHost.view.frame.width, 340, accuracy: 2)
+        XCTAssertEqual(controller.columnFrame(at: 0).width, 270, accuracy: 2)
+        XCTAssertEqual(controller.columnFrame(at: 1).width, 340, accuracy: 2)
         split.setPosition(320, ofDividerAt: 0)
         fixture.settle()
         split.setPosition(320 + split.dividerThickness + 410, ofDividerAt: 1)
         fixture.settle()
-        XCTAssertEqual(controller.sourceHost.view.frame.width, 320, accuracy: 2)
-        XCTAssertEqual(controller.listHost.view.frame.width, 410, accuracy: 2)
+        XCTAssertEqual(controller.columnFrame(at: 0).width, 320, accuracy: 2)
+        XCTAssertEqual(controller.columnFrame(at: 1).width, 410, accuracy: 2)
         XCTAssertEqual(fixture.preferences.double(forKey: LibrarySplitViewController.sourceWidthKey), 320, accuracy: 2)
         XCTAssertEqual(fixture.preferences.double(forKey: LibrarySplitViewController.listWidthKey), 410, accuracy: 2)
-        XCTAssertGreaterThanOrEqual(controller.detailHost.view.frame.width, 320)
+        XCTAssertGreaterThanOrEqual(controller.columnFrame(at: 2).width, 320)
     }
 
     @MainActor
@@ -67,11 +67,11 @@ final class MacLibrarySplitViewTests: XCTestCase {
         controller.applyCollapseState(source: true, list: true)
         fixture.settle()
         XCTAssertTrue(controller.splitViewItems[1].isCollapsed)
-        XCTAssertEqual(controller.detailHost.view.frame.width, controller.splitView.bounds.width, accuracy: 2)
+        XCTAssertEqual(controller.columnFrame(at: 2).width, controller.splitView.bounds.width, accuracy: 2)
         controller.applyCollapseState(source: false, list: false)
         fixture.settle()
-        XCTAssertEqual(controller.sourceHost.view.frame.width, 310, accuracy: 2)
-        XCTAssertEqual(controller.listHost.view.frame.width, 380, accuracy: 2)
+        XCTAssertEqual(controller.columnFrame(at: 0).width, 310, accuracy: 2)
+        XCTAssertEqual(controller.columnFrame(at: 1).width, 380, accuracy: 2)
     }
 
     @MainActor
@@ -81,8 +81,8 @@ final class MacLibrarySplitViewTests: XCTestCase {
         XCTAssertTrue(fixture.controller.splitViewItems[0].isCollapsed)
         fixture.controller.applyCollapseState(source: false, list: false)
         fixture.settle()
-        XCTAssertEqual(fixture.controller.sourceHost.view.frame.width, 325, accuracy: 2)
-        XCTAssertEqual(fixture.controller.listHost.view.frame.width, 390, accuracy: 2)
+        XCTAssertEqual(fixture.controller.columnFrame(at: 0).width, 325, accuracy: 2)
+        XCTAssertEqual(fixture.controller.columnFrame(at: 1).width, 390, accuracy: 2)
     }
 
     @MainActor
@@ -102,10 +102,10 @@ final class MacLibrarySplitViewTests: XCTestCase {
         fixture.window.setContentSize(NSSize(width: 980, height: 680))
         fixture.settle()
         let controller = fixture.controller
-        XCTAssertGreaterThanOrEqual(controller.sourceHost.view.frame.width, 180)
-        XCTAssertGreaterThanOrEqual(controller.listHost.view.frame.width, 240)
-        XCTAssertGreaterThanOrEqual(controller.detailHost.view.frame.width, 320)
-        XCTAssertLessThanOrEqual(controller.detailHost.view.frame.maxX, controller.splitView.bounds.width + 1)
+        XCTAssertGreaterThanOrEqual(controller.columnFrame(at: 0).width, 180)
+        XCTAssertGreaterThanOrEqual(controller.columnFrame(at: 1).width, 240)
+        XCTAssertGreaterThanOrEqual(controller.columnFrame(at: 2).width, 320)
+        XCTAssertLessThanOrEqual(controller.columnFrame(at: 2).maxX, controller.splitView.bounds.width + 1)
     }
 }
 
