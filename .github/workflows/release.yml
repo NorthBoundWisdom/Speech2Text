@@ -109,6 +109,9 @@ jobs:
       - name: Build, deploy, verify and package Qt client
         shell: bash
         run: python -u configs/ci_release.py qt --qt-prefix "$QT_ROOT_DIR"
+      - name: Report QML interaction results
+        if: always()
+        run: python -c "from pathlib import Path; p = Path('build/ci-qt/qt-workspace-results.txt'); print(p.read_text(encoding='utf-8') if p.exists() else 'No QML test report was generated.')"
       - name: Verify installed Windows package
         if: runner.os == 'Windows'
         shell: pwsh

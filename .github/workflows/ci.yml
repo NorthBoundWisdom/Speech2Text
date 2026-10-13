@@ -89,6 +89,9 @@ jobs:
           cache: true
       - run: python configs/qt_workflow.py build --generator Ninja --configuration Release
       - run: ctest --test-dir build/Audio2TextQt -C Release --output-on-failure
+      - name: Report QML interaction results
+        if: always()
+        run: python -c "from pathlib import Path; p = Path('build/Audio2TextQt/qt-workspace-results.txt'); print(p.read_text(encoding='utf-8') if p.exists() else 'No QML test report was generated.')"
   swift:
     runs-on: macos-26
     timeout-minutes: 30

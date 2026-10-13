@@ -218,13 +218,15 @@ qt_add_executable(Audio2TextQtWorkspaceTests ../../tests/qt_workspace/runner.cpp
     src/AtotServiceClient.cpp src/AtotServiceClient.h)
 set_target_properties(Audio2TextQtWorkspaceTests PROPERTIES QT_QML_MODULE_NO_IMPORT_SCAN ON)
 set_target_properties(Audio2TextQtWorkspaceTests PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test-bin")
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test-bin"
+    WIN32_EXECUTABLE FALSE)
 target_include_directories(Audio2TextQtWorkspaceTests PRIVATE src)
 target_link_libraries(Audio2TextQtWorkspaceTests PRIVATE Qt6::QuickTest GeoControls::AppShell)
 target_compile_definitions(Audio2TextQtWorkspaceTests PRIVATE
     QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../../tests/qt_workspace")
 add_test(NAME Audio2TextQtWorkspaceLayout
-    COMMAND Audio2TextQtWorkspaceTests)
+    COMMAND Audio2TextQtWorkspaceTests -o -,txt
+        -o "${CMAKE_CURRENT_BINARY_DIR}/qt-workspace-results.txt,txt")
 set_tests_properties(Audio2TextQtWorkspaceLayout PROPERTIES
     ENVIRONMENT "${AUDIO2TEXTQT_SMOKE_ENV}" TIMEOUT 45)
 if(WIN32)
@@ -251,7 +253,8 @@ qt_add_executable(Audio2TextQtLanguageSettingsTests
 target_include_directories(Audio2TextQtLanguageSettingsTests PRIVATE src)
 target_link_libraries(Audio2TextQtLanguageSettingsTests PRIVATE Qt6::Core)
 set_target_properties(Audio2TextQtLanguageSettingsTests PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test-bin")
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test-bin"
+    WIN32_EXECUTABLE FALSE)
 add_test(NAME Audio2TextQtLanguageSettings COMMAND Audio2TextQtLanguageSettingsTests)
 if(WIN32)
     add_custom_command(TARGET Audio2TextQtLanguageSettingsTests POST_BUILD
