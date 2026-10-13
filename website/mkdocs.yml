@@ -8,8 +8,8 @@ site_dir: ../build/website
 strict: true
 use_directory_urls: true
 hooks:
-  - hooks/build_metadata.py
-  - hooks/screenshots.py
+- hooks/build_metadata.py
+- hooks/screenshots.py
 theme:
   name: material
   language: zh
@@ -17,67 +17,127 @@ theme:
   logo: assets/icon.png
   favicon: assets/icon.png
   features:
-    - navigation.tabs
-    - navigation.sections
-    - navigation.top
-    - toc.follow
-    - search.highlight
-    - search.suggest
-    - content.code.copy
+  - navigation.tabs
+  - navigation.sections
+  - navigation.top
+  - toc.follow
+  - search.highlight
+  - search.suggest
+  - content.code.copy
   palette:
-    - media: '(prefers-color-scheme: light)'
-      scheme: default
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-night
-        name: 切换深色模式
-    - media: '(prefers-color-scheme: dark)'
-      scheme: slate
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-sunny
-        name: 切换浅色模式
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: custom
+    accent: custom
+    toggle:
+      icon: material/weather-night
+      name: 切换深色模式
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: custom
+    accent: custom
+    toggle:
+      icon: material/weather-sunny
+      name: 切换浅色模式
+  custom_dir: overrides
 plugins:
-  - search:
-      lang: [zh, en]
+- i18n:
+    docs_structure: suffix
+    fallback_to_default: false
+    languages:
+    - locale: zh
+      default: true
+      name: 中文
+      build: true
+    - locale: en
+      name: English
+      build: true
+      site_description: Too many podcasts. Read the highlights. Local transcription,
+        Codex summaries, and a portable knowledge library.
+      theme:
+        language: en
+        palette:
+        - media: '(prefers-color-scheme: light)'
+          scheme: default
+          primary: custom
+          accent: custom
+          toggle:
+            icon: material/weather-night
+            name: Switch to dark mode
+        - media: '(prefers-color-scheme: dark)'
+          scheme: slate
+          primary: custom
+          accent: custom
+          toggle:
+            icon: material/weather-sunny
+            name: Switch to light mode
+      nav_translations:
+        官网: Home
+        开始使用: Get started
+        下载与安装: Download and install
+        模型与媒体工具: Models and media tools
+        第一次中文转写: Your first Chinese transcript
+        中文手册: Handbook
+        手册导航: Handbook overview
+        桌面工作区: Desktop workspace
+        导入来源: Import sources
+        中文本地转写: Chinese transcription
+        语言设置: Language settings
+        字幕与翻译: Subtitles and translation
+        资料库与订阅: Library and subscriptions
+        Codex 与 MCP 回写: Codex and MCP write-back
+        可选云 API 总结: Optional cloud summaries
+        设置与配置: Settings
+        iPhone 与 iPad 阅读: iPhone and iPad reader
+        存储与备份: Storage and backups
+        QA 与修复: QA and repair
+        CLI 与自动化: CLI and automation
+        故障排查: Troubleshooting
+        隐私与数据: Privacy and data
+        常见问题: Common questions
+        项目: Project
+        命名与兼容: Naming and compatibility
+        开发与参与: Development
+- search:
+    lang:
+    - zh
+    - en
 extra_css:
-  - stylesheets/sonafolio.css
+- stylesheets/sonafolio.css
 markdown_extensions:
-  - admonition
-  - attr_list
-  - md_in_html
-  - tables
-  - toc:
-      permalink: true
-  - pymdownx.details
-  - pymdownx.highlight
-  - pymdownx.superfences
+- admonition
+- attr_list
+- md_in_html
+- tables
+- toc:
+    permalink: true
+- pymdownx.details
+- pymdownx.highlight
+- pymdownx.superfences
 nav:
-  - 官网: index.md
-  - 开始使用:
-      - 下载与安装: install.md
-      - 模型与媒体工具: models.md
-      - 第一次中文转写: quick-start.md
-  - 中文手册:
-      - 手册导航: handbook.md
-      - 桌面工作区: guides/workspace.md
-      - 导入来源: guides/import.md
-      - 中文本地转写: guides/transcription.md
-      - 语言设置: guides/languages.md
-      - 字幕与翻译: guides/subtitles.md
-      - 资料库与订阅: guides/library.md
-      - Codex 与 MCP 回写: guides/agent-summary.md
-      - 可选云 API 总结: guides/cloud-summary.md
-      - 设置与配置: guides/settings.md
-      - iPhone 与 iPad 阅读: guides/ios.md
-      - 存储与备份: guides/storage.md
-      - QA 与修复: guides/quality.md
-      - CLI 与自动化: guides/cli.md
-      - 故障排查: guides/troubleshooting.md
-      - 隐私与数据: guides/privacy.md
-      - 常见问题: faq.md
-  - 项目:
-      - 命名与兼容: naming.md
-      - 开发与参与: development.md
+- 官网: index.md
+- 开始使用:
+  - 下载与安装: install.md
+  - 模型与媒体工具: models.md
+  - 第一次中文转写: quick-start.md
+- 中文手册:
+  - 手册导航: handbook.md
+  - 桌面工作区: guides/workspace.md
+  - 导入来源: guides/import.md
+  - 中文本地转写: guides/transcription.md
+  - 语言设置: guides/languages.md
+  - 字幕与翻译: guides/subtitles.md
+  - 资料库与订阅: guides/library.md
+  - Codex 与 MCP 回写: guides/agent-summary.md
+  - 可选云 API 总结: guides/cloud-summary.md
+  - 设置与配置: guides/settings.md
+  - iPhone 与 iPad 阅读: guides/ios.md
+  - 存储与备份: guides/storage.md
+  - QA 与修复: guides/quality.md
+  - CLI 与自动化: guides/cli.md
+  - 故障排查: guides/troubleshooting.md
+  - 隐私与数据: guides/privacy.md
+  - 常见问题: faq.md
+- 项目:
+  - 命名与兼容: naming.md
+  - 开发与参与: development.md

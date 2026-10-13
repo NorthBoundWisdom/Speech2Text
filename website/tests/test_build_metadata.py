@@ -45,3 +45,19 @@ def test_homepage_requires_one_metadata_marker():
         metadata.on_page_markdown("no marker", page, None, None)
     with pytest.raises(ValueError, match="exactly one"):
         metadata.on_page_markdown(metadata.MARKER * 2, page, None, None)
+
+
+@pytest.mark.parametrize("locale", ["zh", "en"])
+def test_homepage_metadata_uses_the_current_locale(monkeypatch, locale):
+    monkeypatch.setattr(metadata.subprocess, "check_output", lambda *args, **kwargs: "a" * 40)
+    page = SimpleNamespace(file=SimpleNamespace(src_uri="index.md" if locale == "zh" else "index.en.md"))
+    config = SimpleNamespace(theme={"language": locale})
+    output = metadata.on_page_markdown(metadata.MARKER, page, config, None)
+    labels = metadata.json.loads((metadata.ROOT / f"website/locales/{locale}.json").read_text(encoding="utf-8"))
+    assert labels["build_aria"] in output
+    assert labels["source_label"] in output
+
+
+def test_build_metadata_rejects_unknown_locale():
+    with pytest.raises(ValueError, match="locale"):
+        metadata.metadata_html("unknown")

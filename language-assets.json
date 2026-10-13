@@ -1332,6 +1332,20 @@
         "ee37f58929b1abe98df810cd7944c8ab4b2e722ad0f7c3fe0288f825f2ae4157",
         "fa058efbe5823388604035270c16ef7e961de303846948f6a241029325f9ca3b"
       ]
+    },
+    "README.en.md": {
+      "reason": "Chinese display label for the bilingual website entry in the English README",
+      "line_hashes": [
+        "c113d33066c64e874a4e7cd56b1f09c704996149afa85a19ba3637805a34c727"
+      ]
+    },
+    "website/tests/test_bilingual_site.py": {
+      "reason": "Bilingual interface labels and assertions for owner-requested Chinese/English website localization",
+      "line_hashes": [
+        "aaee9aa7b215944fa0f22d9c640bbd42c7b9c3953fe14817a6527c2997cf63d8",
+        "e06129b122c2c88e00a7267ca8de28f3500544f2df992ec6432b9ef2f5202efa",
+        "e73ef786634fbf52b769ede09befef17ca57ca1f2ef3dcdd4801104f0c61855c"
+      ]
     }
   }
 }

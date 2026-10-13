@@ -10,6 +10,9 @@ its dependencies, optional model weights, downloaded media, or externally suppli
 - **Python dependencies**: installed separately by the package manager. Their distribution metadata,
   licenses and notices remain in each installed package. A wheel of SonaFolio does not contain
   these dependencies. A release that embeds Python and its dependencies must inventory them.
+- **Website localization**: mkdocs-static-i18n is MIT-licensed and installed as a website build
+  dependency. It is not bundled into the ASR runtime or native client installers. Its upstream
+  source and license are at https://github.com/ultrabug/mkdocs-static-i18n.
 - **Qt**: the license depends on the selected modules and build. Open-source Qt can contain LGPL,
   GPL and other third-party code. See https://doc.qt.io/qt-6/licensing.html and
   https://doc.qt.io/qt-6/licenses-used-in-qt.html. The release inventory must describe the actual

@@ -24,6 +24,13 @@ def validate() -> list[str]:
     errors: list[str] = []
     screenshots = json.loads((ROOT / "website/screenshots.json").read_text(encoding="utf-8"))
     virtual_assets = { (ROOT / "website/docs" / target).resolve(): ROOT / source for target, source in screenshots.items() }
+    for page in (ROOT / "website/docs").rglob("*.md"):
+        if page.name.endswith(".en.md"):
+            counterpart = page.with_name(page.name.removesuffix(".en.md") + ".md")
+        else:
+            counterpart = page.with_name(page.stem + ".en.md")
+        if not counterpart.is_file():
+            errors.append(f"Missing bilingual page: {counterpart.relative_to(ROOT)}")
     for path in current_documents():
         if not path.is_file():
             errors.append(f"Missing document: {path.relative_to(ROOT)}")

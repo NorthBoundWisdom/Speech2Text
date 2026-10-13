@@ -162,6 +162,8 @@ summary path. Replacing a nonempty summary requires an explicit regeneration req
 
 ## Repository Language
 
+- Provide paired Chinese/English website and handbook pages with a visible top-header switch.
+  Keep Chinese as the default and use /en/ for English. Keep translations in sync.
 - Default the public website, user handbook, and main README to Chinese, following the verified
   Chinese podcast workflow. Keep source prose, UI labels, diagnostics, comments, and configuration
   identifiers in English. English engineering references and original research measurements may remain.

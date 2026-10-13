@@ -4,7 +4,7 @@
 
 ## 中文官网与使用手册
 
-### [打开 SonaFolio 官网](https://northboundwisdom.github.io/sonafolio/) · [完整中文手册](https://northboundwisdom.github.io/sonafolio/handbook/)
+### [中文官网](https://northboundwisdom.github.io/sonafolio/) · [English website](https://northboundwisdom.github.io/sonafolio/en/) · [完整中文手册](https://northboundwisdom.github.io/sonafolio/handbook/)
 
 [下载与安装](https://northboundwisdom.github.io/sonafolio/install/) · [第一次中文转写](https://northboundwisdom.github.io/sonafolio/quick-start/) · [Codex 总结回写](https://northboundwisdom.github.io/sonafolio/guides/agent-summary/) · [故障排查](https://northboundwisdom.github.io/sonafolio/guides/troubleshooting/) · [English README](README.en.md)
 

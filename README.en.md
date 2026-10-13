@@ -2,7 +2,7 @@
 
 Local-first podcast transcription and knowledge library for macOS, iOS, and Windows.
 
-[Chinese website and handbook](https://northboundwisdom.github.io/sonafolio/) · [Releases](https://github.com/NorthBoundWisdom/sonafolio/releases) · [Documentation](doc/README.md)
+[English website and handbook](https://northboundwisdom.github.io/sonafolio/en/) · [中文官网](https://northboundwisdom.github.io/sonafolio/) · [Releases](https://github.com/NorthBoundWisdom/sonafolio/releases) · [Documentation](doc/README.md)
 
 SonaFolio turns podcasts and audio/video files into readable transcripts, subtitles, and a local
 knowledge library. Work through a podcast backlog by reading transcripts directly or asking Codex

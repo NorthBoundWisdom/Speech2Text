@@ -1,0 +1,8 @@
+<nav class="sf-language-switch" aria-label="{{ lang.t('select.language') }}">
+  {% for alternate in config.extra.alternate %}
+    <a href="{{ alternate.link | url }}" hreflang="{{ alternate.lang }}" lang="{{ alternate.lang }}"
+       {% if alternate.lang == config.theme.language %}aria-current="true"{% endif %}>
+      {{ alternate.name }}
+    </a>
+  {% endfor %}
+</nav>

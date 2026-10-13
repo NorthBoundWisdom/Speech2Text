@@ -13,7 +13,9 @@ ROOT = Path(__file__).resolve().parents[2]
 MARKER = "<!-- SONAFOLIO_BUILD -->"
 
 
-def metadata_html() -> str:
+def metadata_html(locale: str = "zh") -> str:
+    if locale not in {"zh", "en"}:
+        raise ValueError("Unsupported website locale.")
     sha = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
     ).strip()
@@ -28,7 +30,7 @@ def metadata_html() -> str:
         raise ValueError("Website build time must include a timezone.")
     label = built_at.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     url = f"https://github.com/NorthBoundWisdom/sonafolio/commit/{sha}"
-    labels = json.loads((ROOT / "website/locales/zh.json").read_text(encoding="utf-8"))
+    labels = json.loads((ROOT / f"website/locales/{locale}.json").read_text(encoding="utf-8"))
     return (
         f'<aside class="build-provenance" aria-label="{escape(labels["build_aria"])}">'
         f'<span>{escape(labels["build_label"])} · {escape(label)}</span> '
@@ -38,8 +40,9 @@ def metadata_html() -> str:
 
 
 def on_page_markdown(markdown: str, page, config, files) -> str:
-    if page.file.src_uri != "index.md":
+    if page.file.src_uri not in {"index.md", "index.en.md", "en/index.md"}:
         return markdown
     if markdown.count(MARKER) != 1:
         raise ValueError("Home page must contain exactly one build metadata marker.")
-    return markdown.replace(MARKER, metadata_html())
+    locale = config.theme.get("language", "zh") if config is not None else "zh"
+    return markdown.replace(MARKER, metadata_html(locale))
