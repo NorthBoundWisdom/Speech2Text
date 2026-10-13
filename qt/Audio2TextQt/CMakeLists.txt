@@ -65,7 +65,9 @@ qt_add_qml_module(Audio2TextQt
     RESOURCE_PREFIX "/"
     OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml/Audio2TextQt"
     NO_CACHEGEN
-    NO_IMPORT_SCAN
+    IMPORT_PATH
+        "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/Controls"
+        "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/AppShell"
     DEPENDENCIES GeoControls GeoControls.AppShell
     QML_FILES
         qml/Main.qml
@@ -82,6 +84,9 @@ qt_add_qml_module(Audio2TextQt
 )
 
 set_target_properties(Audio2TextQt PROPERTIES OUTPUT_NAME "SonaFolioQt")
+# Static GeoControls modules are registered in GeoControlsSetup.cpp. Suppress
+# only Qt's static-plugin linker finalizer, retaining the deployment import scan.
+set_property(TARGET Audio2TextQt PROPERTY _QT_QML_PLUGINS_IMPORTED TRUE)
 
 target_include_directories(Audio2TextQt PRIVATE src)
 
@@ -124,6 +129,8 @@ if(WIN32)
             --no-opengl-sw
             --no-system-d3d-compiler
             --qmldir "${CMAKE_CURRENT_SOURCE_DIR}/qml"
+            --qmlimport "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/Controls"
+            --qmlimport "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/AppShell"
             "$<TARGET_FILE:Audio2TextQt>"
         COMMAND "${CMAKE_COMMAND}" -E make_directory
             "$<TARGET_FILE_DIR:Audio2TextQt>/platforms"
@@ -225,7 +232,15 @@ if(WIN32)
         COMMAND "${AUDIO2TEXTQT_WINDEPLOYQT_EXECUTABLE}"
             --verbose 0 --no-compiler-runtime --no-opengl-sw --no-system-d3d-compiler
             --qmldir "${CMAKE_CURRENT_SOURCE_DIR}/../../tests/qt_workspace"
+            --qmlimport "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/Controls"
+            --qmlimport "${CMAKE_CURRENT_BINARY_DIR}/_deps/geocontrols/AppShell"
             "$<TARGET_FILE:Audio2TextQtWorkspaceTests>"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory
+            "$<TARGET_FILE_DIR:Audio2TextQtWorkspaceTests>/platforms"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+            "${AUDIO2TEXTQT_QT_PREFIX_DIR}/plugins/platforms/qoffscreen.dll"
+            "${AUDIO2TEXTQT_QT_PREFIX_DIR}/plugins/platforms/qminimal.dll"
+            "$<TARGET_FILE_DIR:Audio2TextQtWorkspaceTests>/platforms"
         VERBATIM)
 endif()
 

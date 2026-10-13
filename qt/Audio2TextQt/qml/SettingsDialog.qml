@@ -57,12 +57,37 @@ CustomDialog {
         tools = settingsController.detectTools();
     }
 
+    function summaryLanguageIndex() {
+        let options = settingsController.languageOptions;
+        for (let i = 0; i < options.length; i++)
+            if (options[i].code === settingsController.summaryLanguage)
+                return i;
+        return -1;
+    }
+
+    function syncLocalControls() {
+        cloudChunkSpin.realValue = settingsController.cloudChunkMinutes;
+        workflowSwitch.currentIndex = settingsController.localOnly ? 0 : 1;
+        summaryLanguageCombo.currentIndex = summaryLanguageIndex();
+    }
+
+    Connections {
+        target: settingsController
+        function onSettingsChanged() {
+            root.syncLocalControls();
+        }
+    }
+
     onOpened: {
         tools = settingsController.detectTools();
         loadCloudDrafts();
+        syncLocalControls();
     }
 
-    Component.onCompleted: loadCloudDrafts()
+    Component.onCompleted: {
+        loadCloudDrafts();
+        syncLocalControls();
+    }
 
     background: Rectangle {
         color: root.surface
@@ -350,6 +375,7 @@ CustomDialog {
                             color: Theme.textColor
                         }
                         CustomSpinBox {
+                            id: cloudChunkSpin
                             objectName: "cloudChunkMinutes"
                             decimals: 0
                             realFrom: 1
@@ -369,6 +395,7 @@ CustomDialog {
                             color: Theme.textColor
                         }
                         CustomSwitch {
+                            id: workflowSwitch
                             objectName: "processingWorkflow"
                             model: ["Local only", "Cloud enabled"]
                             currentIndex: settingsController.localOnly ? 0 : 1
@@ -415,16 +442,12 @@ CustomDialog {
                         subtitle: "Controls summaries, headings, short titles, and MCP instructions. Overrides conflicting custom prompt language requirements. No API key required to save."
                     }
                     CustomComboBox {
+                        id: summaryLanguageCombo
                         objectName: "summaryOutputLanguage"
                         model: settingsController.languageOptions
                         textRole: "label"
                         valueRole: "code"
-                        currentIndex: {
-                            for (let i = 0; i < model.length; i++)
-                                if (model[i].code === settingsController.summaryLanguage)
-                                    return i;
-                            return -1;
-                        }
+                        currentIndex: root.summaryLanguageIndex()
                         onActivated: settingsController.summaryLanguage = currentValue
                         Layout.preferredWidth: 240
                     }
