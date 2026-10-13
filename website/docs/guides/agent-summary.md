@@ -1,6 +1,6 @@
 # Codex 总结与 MCP 回写
 
-此路径使用当前 Codex 会话的模型写笔记。`atot mcp` 提供标准 MCP stdio 接口，只负责受限的资料库读取与版本化发布，不调用模型 API，也不需要 SonaFolio 的模型 Key。
+播客太多、希望先了解重点时，让 Codex 代你读取全文，再从总结开始阅读。此路径使用当前 Codex 会话的模型写笔记。`atot mcp` 提供标准 MCP stdio 接口，只负责受限的资料库读取与版本化发布，不调用模型 API，也不需要 SonaFolio 的模型 Key。
 
 agent 读到的转写与 QA 会进入其会话，遵循 MCP 客户端账户的数据策略。本地 stdio 不代表 agent 模型在本地运行。
 

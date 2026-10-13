@@ -1,5 +1,5 @@
 site_name: SonaFolio
-site_description: 面向中文播客的本地转写与知识资料库，支持可读转写、字幕、Codex 总结回写与跨设备阅读。
+site_description: 播客太多，先读重点。中文播客本地转写与知识资料库，支持直接读原文、Codex 总结回写和跨设备阅读。
 site_url: https://northboundwisdom.github.io/sonafolio/
 repo_url: https://github.com/NorthBoundWisdom/sonafolio
 repo_name: NorthBoundWisdom/sonafolio

@@ -1,6 +1,6 @@
 ---
-title: SonaFolio · 把听到的内容留下来
-description: 面向中文播客的本地转写与知识资料库。保存原始来源，生成可读转写、字幕和总结，并通过 Codex 与 MCP 将笔记回写到资料库。
+title: SonaFolio · 播客太多，先读重点
+description: 把来不及听的中文播客转成文字，直接读转写或先看总结，再选择值得深入的内容。保留来源与时间戳，通过 Codex 和 MCP 将笔记写回资料库。
 hide:
   - navigation
   - toc
@@ -10,11 +10,11 @@ hide:
 <div class="sf-hero" markdown>
 <div class="sf-hero-copy" markdown>
 
-<p class="sf-eyebrow">让听过的内容，成为可以回看的资料</p>
+<p class="sf-eyebrow">把播客积压，变成可以阅读的资料</p>
 
-# 听过一次。<br>值得再读。
+# 播客太多，<br>先读重点。
 
-<p class="sf-lead">把中文播客、音频与视频整理成自己的资料库：保留原始来源，在电脑上完成转写，再用 Codex 或自选模型整理观点、证据与笔记。</p>
+<p class="sf-lead">把中文播客转成文字，直接阅读完整转写，或先看 Codex 总结了解观点与重点，再选择值得深入阅读或收听的片段。原始来源和时间戳一并保留。</p>
 
 <div class="sf-actions" markdown>
 [下载 SonaFolio](install.md){ .md-button .md-button--primary }
@@ -33,9 +33,9 @@ hide:
 <div class="sf-principles" markdown>
 <div markdown>
 
-### 把声音变成可以核对的文字
+### 把长节目变成可以直接读的文字
 
-本地 ASR 生成可读 Markdown、带时间戳的转写与字幕。QA 标出值得复听的位置，纠正记录保留程序修改过的内容。重要结论仍可回到原音频核对。
+本地 ASR 生成完整转写、可读 Markdown 与带时间戳的字幕。你可以直接阅读关心的段落；QA 与纠正记录提供核对线索，需要时按时间回到原音频。
 
 [了解转写与核对 →](guides/transcription.md)
 </div>
@@ -43,7 +43,7 @@ hide:
 
 ### 给播客收藏一个明确的归处
 
-导入文件与单集，订阅 RSS，按分组、收藏和阅读状态整理。来源链接、音频、转写与总结保持关联，方便之后继续阅读与引用。
+订阅 RSS、导入单集，把来不及听的节目放进待处理队列。来源、转写与总结保持关联，按分组、收藏和阅读状态整理，逐步消化自己的播客积压。
 
 [管理资料库与订阅 →](guides/library.md)
 </div>
@@ -51,7 +51,7 @@ hide:
 
 ### 让 Codex 帮你写回总结
 
-通过 MCP 让 Codex 读取完整转写与 QA，用当前会话模型整理笔记，再按文档版本回写。此路径不需要 SonaFolio 的模型 API Key。
+通过 MCP 让 Codex 替你读取完整转写与 QA，整理观点、证据和结论并回写。你可以从总结开始阅读，再决定哪里值得深入。此路径不需要 SonaFolio 的模型 API Key。
 
 [配置 Codex 总结回写 →](guides/agent-summary.md)
 </div>
@@ -88,7 +88,7 @@ hide:
 </div>
 
 <div class="sf-section" markdown>
-<p class="sf-eyebrow">从单集到自己的笔记</p>
+<p class="sf-eyebrow">从播客积压到重点笔记</p>
 
 ## 三步完成，原始材料始终保留。
 
@@ -103,17 +103,17 @@ hide:
 </div>
 <div markdown>
 
-### 02 / 本地转写与核对
+### 02 / 本地转成完整文字
 
-准备好模型和媒体工具，选择中文语言提示，运行本地转写并查看 QA。复核人名、术语和数字；需要时先生成修复计划，再重跑有问题的音频窗口。
+准备模型和媒体工具，选择中文语言提示，让本地 ASR 生成完整转写与 QA。全文可直接阅读，也可交给 Codex 整理重点；关键人名、术语和数字保留核对入口。
 
 [准备模型 →](models.md) · [查看 QA 与修复 →](guides/quality.md)
 </div>
 <div markdown>
 
-### 03 / 总结与继续阅读
+### 03 / 先看总结，再选择深入
 
-让 Codex 完整阅读转写、保留有用时间戳，并将总结写回同一资料库。桌面端阅读；可选通过 iCloud Drive 把 JSON/Markdown 资料库交给 iPhone、iPad 阅读端。
+让 Codex 读完转写，生成带来源时间戳的总结并回写。先了解本集重点，再打开相关原文或音频；也可通过 iCloud Drive 在 iPhone、iPad 继续阅读。
 
 [MCP 总结回写 →](guides/agent-summary.md) · [iOS 阅读 →](guides/ios.md)
 </div>
@@ -127,7 +127,7 @@ hide:
 
 | 你的需要 | SonaFolio 的产物 | 操作说明 |
 | --- | --- | --- |
-| 回看一段访谈 | 可读 Markdown 与带时间戳的转写 | [本地转写](guides/transcription.md) |
+| 直接阅读一段访谈 | 可读 Markdown 与带时间戳的转写 | [本地转写](guides/transcription.md) |
 | 给播放器或剪辑工具提供字幕 | SRT 导出；转写工作目录也保留 VTT | [字幕与翻译](guides/subtitles.md) |
 | 整理观点与证据 | Codex/agent 总结或显式调用的云 API 总结 | [选择总结路径](handbook.md#choose-a-summary-path) |
 | 找到值得复听的位置 | QA、纠正记录、术语审阅与修复计划 | [质量检查](guides/quality.md) |
@@ -169,17 +169,17 @@ hide:
 </div>
 <div markdown>
 
-### 处理订阅积压
+### 播客太多，没时间逐集听完
 
-分清刷新、下载与处理；筛选待处理单集，明确选择批次，再整理处理结果和阅读状态。
+筛选想了解的节目，批量转写，再按需要直接读原文或生成总结。先掌握重点，把收听时间留给真正感兴趣的片段。
 
 [订阅与队列 →](guides/library.md)
 </div>
 <div markdown>
 
-### 请 Codex 写笔记
+### 先看总结，快速判断是否值得深入
 
-连接 MCP，完整读取原文，使用当前版本信息安全回写。已有总结只有在明确要求重新生成时才替换。
+连接 MCP，让 Codex 读取全文并生成重点笔记。你从总结开始，再沿时间戳查看原文；已有总结只有在明确要求重新生成时才替换。
 
 [连接与回写 →](guides/agent-summary.md)
 </div>

@@ -5,7 +5,8 @@ Local-first podcast transcription and knowledge library for macOS, iOS, and Wind
 [Chinese website and handbook](https://northboundwisdom.github.io/sonafolio/) · [Releases](https://github.com/NorthBoundWisdom/sonafolio/releases) · [Documentation](doc/README.md)
 
 SonaFolio turns podcasts and audio/video files into readable transcripts, subtitles, and a local
-knowledge library. The CLI remains `atot`. Existing data, package names, and application identities
+knowledge library. Work through a podcast backlog by reading transcripts directly or asking Codex
+to summarize first, then choose the passages worth reading or listening to in depth. The CLI remains `atot`. Existing data, package names, and application identities
 are preserved; see [branding and compatibility](doc/BRANDING.md).
 
 | Platform | Current support |
