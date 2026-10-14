@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-set(AUDIO2TEXTQT_RELEASE_VERSION "0.9.2" CACHE STRING "Numeric release version")
+set(AUDIO2TEXTQT_RELEASE_VERSION "0.9.3" CACHE STRING "Numeric release version")
 project(Audio2TextQt
     VERSION ${AUDIO2TEXTQT_RELEASE_VERSION}
     DESCRIPTION "SonaFolio Qt/QML client"

@@ -214,7 +214,7 @@ def test_qt_workflow_finds_macos_app_bundle_from_executable(tmp_path) -> None:
 
 
 def test_qt_project_version_matches_cmake_project() -> None:
-    assert qt_workflow._qt_project_version() == "0.9.2"
+    assert qt_workflow._qt_project_version() == "0.9.3"
 
 
 def test_qt_stage_runtime_excludes_debug_sidecars(tmp_path) -> None:
