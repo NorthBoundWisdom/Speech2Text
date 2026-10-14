@@ -2,6 +2,9 @@
 #include "LibraryController.h"
 #include "SettingsController.h"
 
+#include <cstdio>
+#include <cstdlib>
+
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
@@ -14,7 +17,11 @@ namespace
 {
 void require(bool condition, const char *message)
 {
-    if (!condition) qFatal("%s", message);
+    if (!condition)
+    {
+        std::fprintf(stderr, "Shared runtime test failed: %s\n", message);
+        std::exit(EXIT_FAILURE);
+    }
 }
 
 void write(const QString &path, const QByteArray &contents)
@@ -33,7 +40,7 @@ int main(int argc, char **argv)
     require(directory.isValid(), "Cannot isolate shared runtime tests");
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, directory.path());
-    const QString dataRoot = directory.filePath("data");
+    const QString dataRoot = AppPaths::cleanPath(directory.filePath("data"));
     const QString config = QDir(dataRoot).filePath("config.toml");
     QSettings preferences("Audio2Text", "Audio2TextQt");
     preferences.setValue("dataRoot", dataRoot);
@@ -81,10 +88,11 @@ int main(int argc, char **argv)
     library.refresh();
     require(library.items().isEmpty() && library.statusMessage().contains("Invalid library.storage"), "Invalid storage was hidden");
 
-    settings.applyRuntimePaths(directory.filePath("probe-data"), sharedRoot, "probe-atot", "probe-vcpkg");
+    const QString probeDataRoot = AppPaths::cleanPath(directory.filePath("probe-data"));
+    settings.applyRuntimePaths(probeDataRoot, sharedRoot, "probe-atot", "probe-vcpkg");
     settings.setLocalOnly(false); // Saving another preference must not persist runtime paths.
     require(settings.resolvedLibraryRoot() == sharedRoot, "Explicit library override did not win");
-    require(settings.processEnvironment().value("ATOT_DATA_ROOT") == directory.filePath("probe-data"), "Runtime data override ignored");
+    require(settings.processEnvironment().value("ATOT_DATA_ROOT") == probeDataRoot, "Runtime data override ignored");
     SettingsController nextLaunch;
     require(nextLaunch.dataRoot() == dataRoot && nextLaunch.libraryRootOverride().isEmpty()
         && nextLaunch.atotPath().isEmpty() && nextLaunch.vcpkgRoot() != "probe-vcpkg", "Runtime paths polluted saved preferences");

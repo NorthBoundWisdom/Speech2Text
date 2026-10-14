@@ -260,7 +260,8 @@ See the [Swift guide](app/README.md), [Qt guide](qt/Audio2TextQt/README.md), and
 
 ## CI and releases
 
-GitHub Actions checks Python, Swift, and Qt on macOS, Windows, and Linux. Push a version tag to build
+Routine GitHub Actions CI runs code checks and Python tests once on Ubuntu. Native compilation
+and platform checks run during releases. Push a version tag to build
 Windows Qt EXE, Linux Qt AppImage, macOS Qt DMG, and macOS Swift DMG installers. All four packages
 must pass provenance, licensing, and hash checks before GitHub Release publication:
 

@@ -1,8 +1,10 @@
 # CI and tag releases
 
 GitHub Actions runs `.github/workflows/ci.yml` for main pushes, pull requests and manual dispatch.
-Python checks cover Linux (3.10 and 3.13), Windows and macOS; Qt builds/QML smoke checks cover all
-three desktop platforms; Swift tests and Release compilation run on Apple Silicon macOS.
+Routine CI has one Ubuntu/Python 3.13 job for dependency validation, lint, type checks, public-path
+and language policies, model inventory validation, and the complete Python test suite. Native Qt
+and Swift compilation runs only in the release workflow, including manual build-only releases.
+The website workflow runs on website/documentation changes or manual dispatch.
 Tests use synthetic credentials and fake ASR inputs; they do not download model weights or call a
 cloud model API. Actions are pinned to reviewed commit SHAs, checkout credentials are not retained,
 and normal build jobs have read-only repository permissions.
@@ -99,7 +101,7 @@ The Windows runner additionally silently installs its generated setup and launch
 client; Linux launches the resulting AppImage using extraction mode, so CI does not depend on
 FUSE. macOS apps are signed again after license resources have been added.
 
-When updating Qt, update the version/archives in both workflows and the vendor lock, review the
+When updating Qt, update the version/archives in the release workflow and the vendor lock, review the
 module licenses and upstream SPDX data, and run a build-only release. License and source material
 collection supports the selected QtBase/QtDeclarative/QtSvg runtime; adding a new deployed module
 requires adding its corresponding sources and notices. Hashes do not independently establish

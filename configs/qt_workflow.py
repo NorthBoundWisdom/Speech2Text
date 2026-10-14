@@ -361,10 +361,6 @@ def _build(args: argparse.Namespace, build_dir: Path, *, configure_if_missing: b
             build_dir,
             "--config",
             args.configuration,
-            "--target",
-            TARGET_NAME,
-            "Audio2TextQtLanguageSettingsTests",
-            "Audio2TextQtWorkspaceTests",
         ]
     )
 

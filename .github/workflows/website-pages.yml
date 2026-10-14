@@ -2,13 +2,26 @@ name: Website / GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - website/**
+      - doc/**
+      - README.md
+      - README.en.md
+      - configs/check_docs.py
+      - configs/check_repository_language.py
+      - language-assets.json
+      - src/scripts/check_public_paths.py
+      - .github/workflows/website-pages.yml
   pull_request:
     paths:
       - website/**
       - doc/**
       - README.md
+      - README.en.md
       - configs/check_docs.py
-      - website/tests/test_build_metadata.py
+      - configs/check_repository_language.py
+      - language-assets.json
+      - src/scripts/check_public_paths.py
       - .github/workflows/website-pages.yml
   workflow_dispatch:
 permissions:

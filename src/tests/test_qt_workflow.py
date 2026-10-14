@@ -1,10 +1,46 @@
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
 
 import pytest
 
 from configs import qt_workflow
+
+
+@pytest.mark.skipif(
+    not shutil.which("cmake") or not shutil.which("ctest"), reason="CMake tools unavailable"
+)
+def test_qt_build_includes_new_test_targets(tmp_path) -> None:
+    source = tmp_path / "source"
+    source.mkdir()
+    build = tmp_path / "build"
+    targets = [
+        "Audio2TextQt", "Audio2TextQtLanguageSettingsTests",
+        "Audio2TextQtWorkspaceTests", "Audio2TextQtSharedRuntimeTests",
+    ]
+    lines = [
+        "cmake_minimum_required(VERSION 3.24)", "project(BuildCoverage NONE)", "enable_testing()"
+    ]
+    for target in targets:
+        lines.append(
+            f'add_custom_target({target} ALL COMMAND "${{CMAKE_COMMAND}}" -E touch '
+            f'"${{CMAKE_BINARY_DIR}}/{target}.built")'
+        )
+    lines.append(
+        'add_test(NAME SharedRuntime COMMAND "${CMAKE_COMMAND}" -E compare_files '
+        '"${CMAKE_BINARY_DIR}/Audio2TextQtSharedRuntimeTests.built" '
+        '"${CMAKE_BINARY_DIR}/Audio2TextQt.built")'
+    )
+    (source / "CMakeLists.txt").write_text("\n".join(lines), encoding="utf-8")
+    subprocess.run(["cmake", "-S", str(source), "-B", str(build)], check=True, capture_output=True)
+    args = qt_workflow.parse_args(["build"])
+    qt_workflow._build(args, build, configure_if_missing=False)
+    subprocess.run(
+        ["ctest", "--test-dir", str(build), "-C", "Release", "--output-on-failure"],
+        check=True, capture_output=True,
+    )
 
 
 @pytest.mark.parametrize("configuration", ["Release", "Debug", "RelWithDebInfo"])
