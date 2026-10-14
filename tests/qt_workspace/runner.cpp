@@ -4,6 +4,8 @@
 #include "SettingsController.h"
 
 #include <QtCore/QSettings>
+#include <QtCore/QFile>
+#include <QtCore/QDir>
 #include <QtCore/QTemporaryDir>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlEngine>
@@ -25,16 +27,21 @@ public slots:
         QSettings preferences("Audio2Text", "Audio2TextQt");
         preferences.setValue("dataRoot", directory.path());
         preferences.sync();
+        QFile config(QDir(directory.path()).filePath("config.toml"));
+        if (!config.open(QIODevice::WriteOnly)
+            || config.write("[library]\nstorage = \"local\"\n") < 0)
+            qFatal("Cannot isolate the Qt test library.");
+        config.close();
         settings = new SettingsController(this);
         library = new LibraryController(settings, this);
         jobs = new JobController(settings, library, this);
     }
     void qmlEngineAvailable(QQmlEngine *engine)
     {
-        configureGeoControlsEngine(engine);
         engine->rootContext()->setContextProperty("settingsController", settings);
         engine->rootContext()->setContextProperty("libraryController", library);
         engine->rootContext()->setContextProperty("jobController", jobs);
+        configureGeoControlsEngine(engine);
         engine->rootContext()->setContextProperty("captureDirectory", qEnvironmentVariable("ATOT_QT_TEST_CAPTURE_DIR"));
     }
 private:

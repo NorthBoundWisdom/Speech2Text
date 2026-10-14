@@ -6,8 +6,10 @@ import QtQuick.Layouts
 CustomPane {
     id: root
     padding: 0
+    property var library: libraryController
+    property var jobs: jobController
     background: Rectangle {
-        color: Theme.baseColor
+        color: Theme.pageSurfaceColor
     }
 
     signal importRequested
@@ -15,8 +17,8 @@ CustomPane {
     signal logsRequested
 
     function sourceById(sourceId) {
-        for (var i = 0; i < libraryController.sources.length; ++i) {
-            var source = libraryController.sources[i];
+        for (var i = 0; i < root.library.sources.length; ++i) {
+            var source = root.library.sources[i];
             if (source.id === sourceId)
                 return source;
         }
@@ -25,8 +27,8 @@ CustomPane {
 
     function groupSources() {
         var groups = [];
-        for (var i = 0; i < libraryController.sources.length; ++i) {
-            var source = libraryController.sources[i];
+        for (var i = 0; i < root.library.sources.length; ++i) {
+            var source = root.library.sources[i];
             if (source.kind === "group")
                 groups.push(source);
         }
@@ -34,12 +36,12 @@ CustomPane {
     }
 
     function isSelected(source) {
-        return source && libraryController.selectedSource === source.id;
+        return source && root.library.selectedSource === source.id;
     }
 
     function selectSource(source) {
         if (source)
-            libraryController.selectedSource = source.id;
+            root.library.selectedSource = source.id;
     }
 
     ColumnLayout {
@@ -50,8 +52,8 @@ CustomPane {
             Layout.fillWidth: true
             Layout.leftMargin: 12
             Layout.rightMargin: 10
-            Layout.topMargin: 12
-            Layout.bottomMargin: 12
+            Layout.topMargin: 8
+            Layout.bottomMargin: 8
             spacing: 8
 
             CustomToolButton {
@@ -79,7 +81,7 @@ CustomPane {
                     Layout.fillWidth: true
                 }
                 CustomLabel {
-                    text: libraryController.items.length + " episodes"
+                    text: root.library.items.length + " episodes"
                     font.pixelSize: 11
                     color: Theme.placeholderTextColor
                     elide: Text.ElideRight
@@ -114,11 +116,11 @@ CustomPane {
             ApplicationStatusPanel {
                 id: sourceStatus
                 width: statusArea.availableWidth
-                running: jobController.running
-                stage: jobController.stage
-                errorText: jobController.lastError
-                queuedCount: jobController.queuedJobCount
-                libraryMessage: libraryController.statusMessage
+                running: root.jobs.running
+                stage: root.jobs.stage
+                errorText: root.jobs.lastError
+                queuedCount: root.jobs.queuedJobCount
+                libraryMessage: root.library.statusMessage
                 textColor: Theme.textColor
                 mutedColor: Theme.placeholderTextColor
                 errorColor: Theme.errorColor
@@ -143,197 +145,127 @@ CustomPane {
 
             ColumnLayout {
                 width: sourceScroll.availableWidth
-                spacing: 14
+                spacing: 2
 
-                Item {
-                    Layout.fillWidth: true
-                    height: 6
+                Item { Layout.fillWidth: true; implicitHeight: 10 }
+                SourceRow {
+                    source: root.sourceById("subscriptions")
+                    symbol: "subscriptions"
+                    tint: Theme.appearance === 1 ? "#da82f5" : "#a226cf"
+                }
+                SourceRow {
+                    source: root.sourceById("smart:today")
+                    symbol: "today"
+                    tint: Theme.appearance === 1 ? "#ffb54f" : "#ba6500"
+                }
+                SourceRow {
+                    source: root.sourceById("smart:unprocessed")
+                    symbol: "unprocessed"
+                    tint: Theme.appearance === 1 ? "#40b6ff" : "#0077c8"
+                }
+                SourceRow {
+                    source: root.sourceById("smart:processed")
+                    symbol: "processed"
+                    tint: Theme.successColor
+                }
+                SourceRow {
+                    source: root.sourceById("smart:starred")
+                    symbol: "starred"
+                    tint: Theme.appearance === 1 ? "#ffd84a" : "#b57900"
+                }
+                SourceRow {
+                    source: root.sourceById("smart:archive")
+                    symbol: "archive"
                 }
 
-                ColumnLayout {
+                CustomLabel {
+                    text: "Folders"
+                    color: Theme.placeholderTextColor
+                    font.pixelSize: 12
+                    font.weight: Font.DemiBold
                     Layout.fillWidth: true
-                    spacing: 4
-
-                    SectionHeader {
-                        title: "Library"
-                    }
-                    SourceRow {
-                        source: root.sourceById("library")
-                        badge: "LIB"
-                        tint: Theme.placeholderTextColor
-                    }
-                    SourceRow {
-                        source: root.sourceById("subscriptions")
-                        badge: "RSS"
-                        tint: "#7c3aed"
+                    Layout.leftMargin: 16
+                    Layout.rightMargin: 16
+                    Layout.topMargin: 14
+                    Layout.bottomMargin: 4
+                }
+                SourceRow {
+                    source: root.sourceById("library")
+                    symbol: "library"
+                }
+                Repeater {
+                    model: root.groupSources()
+                    delegate: SourceRow {
+                        source: modelData
+                        symbol: "folder"
                     }
                 }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 4
-
-                    SectionHeader {
-                        title: "Smart Feeds"
-                    }
-                    SourceRow {
-                        source: root.sourceById("smart:today")
-                        badge: "DAY"
-                        tint: "#c26a00"
-                    }
-                    SourceRow {
-                        source: root.sourceById("smart:unprocessed")
-                        badge: "NEW"
-                        tint: Theme.highlightColor
-                    }
-                    SourceRow {
-                        source: root.sourceById("smart:processed")
-                        badge: "OK"
-                        tint: Theme.successColor
-                    }
-                    SourceRow {
-                        source: root.sourceById("smart:starred")
-                        badge: "*"
-                        tint: "#b77900"
-                    }
-                    SourceRow {
-                        source: root.sourceById("smart:archive")
-                        badge: "ARC"
-                        tint: Theme.placeholderTextColor
-                    }
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 4
-
-                    SectionHeader {
-                        title: "Folders"
-                    }
-                    Repeater {
-                        model: root.groupSources()
-                        delegate: SourceRow {
-                            source: modelData
-                            badge: "#"
-                            tint: Theme.placeholderTextColor
-                            dimWhenEmpty: true
-                        }
-                    }
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                    height: 14
-                }
+                Item { Layout.fillWidth: true; implicitHeight: 10 }
             }
         }
     }
 
-    component SectionHeader: CustomLabel {
-        property string title: ""
-        text: title
-        color: Theme.placeholderTextColor
-        font.pixelSize: 11
-        font.weight: Font.DemiBold
-        Layout.fillWidth: true
-        Layout.leftMargin: 14
-        Layout.rightMargin: 12
-        Layout.topMargin: 6
-        Layout.bottomMargin: 4
-    }
-
-    component SourceRow: Item {
+    component SourceRow: CustomItemDelegate {
         id: row
         property var source
-        property string badge: ""
+        property string symbol: "folder"
         property color tint: Theme.placeholderTextColor
-        property bool dimWhenEmpty: false
-        property bool selected: root.isSelected(source)
-        property bool empty: source && source.count === 0
-        property bool hovered: mouse.containsMouse
-
+        readonly property bool selected: root.isSelected(source)
+        objectName: "sourceRow_" + (source ? source.id : "")
         visible: source !== null
         Layout.fillWidth: true
-        Layout.preferredHeight: visible ? 34 : 0
-        implicitHeight: visible ? 34 : 0
+        Layout.leftMargin: 10
+        Layout.rightMargin: 10
+        Layout.preferredHeight: visible ? 32 : 0
+        implicitHeight: visible ? 32 : 0
+        leftPadding: 8
+        rightPadding: 10
+        topPadding: 0
+        bottomPadding: 0
+        focusPolicy: Qt.StrongFocus
+        Accessible.name: source ? source.title : ""
+        Accessible.selected: selected
+        onClicked: root.selectSource(source)
 
-        Rectangle {
-            id: rowBackground
-            color: row.selected ? "#eaf2ff" : (row.hovered ? "#f7faff" : "transparent")
+        background: Rectangle {
             radius: 8
-            anchors.fill: parent
-            anchors.leftMargin: 10
-            anchors.rightMargin: 12
-            anchors.topMargin: 2
-            anchors.bottomMargin: 2
+            color: row.selected ? Theme.highlightColor : row.down
+                ? Theme.buttonPressedColor : row.hovered ? Theme.alternateBaseColor : "transparent"
+            border.width: row.visualFocus ? 2 : 0
+            border.color: Theme.accentColor
+        }
 
-            Rectangle {
-                visible: row.selected
-                width: 3
-                radius: 2
-                color: Theme.highlightColor
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 6
-                anchors.bottomMargin: 6
+        contentItem: RowLayout {
+            spacing: 10
+            SidebarIcon {
+                objectName: "sidebarIcon_" + row.symbol
+                symbol: row.symbol
+                color: row.selected ? Theme.highlightedTextColor : row.tint
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
+                Layout.alignment: Qt.AlignVCenter
             }
-        }
-
-        CustomLabel {
-            id: badgeLabel
-            text: row.badge
-            color: row.selected ? Theme.highlightColor : row.tint
-            opacity: row.dimWhenEmpty && row.empty && !row.selected ? 0.58 : 1.0
-            font.pixelSize: row.badge.length > 1 ? 9 : 13
-            font.weight: Font.DemiBold
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 18
-            anchors.verticalCenter: parent.verticalCenter
-            width: 36
-            height: 24
-        }
-
-        CustomLabel {
-            id: titleLabel
-            text: row.source ? row.source.title : ""
-            color: row.selected ? Theme.highlightColor : Theme.textColor
-            opacity: row.dimWhenEmpty && row.empty && !row.selected ? 0.62 : 1.0
-            font.pixelSize: 14
-            font.weight: row.selected ? Font.DemiBold : Font.Normal
-            elide: Text.ElideRight
-            verticalAlignment: Text.AlignVCenter
-            anchors.left: badgeLabel.right
-            anchors.leftMargin: 12
-            anchors.right: countLabel.left
-            anchors.rightMargin: 14
-            anchors.verticalCenter: parent.verticalCenter
-            height: 24
-        }
-
-        CustomLabel {
-            id: countLabel
-            text: row.source && row.source.count > 0 ? row.source.count : ""
-            color: row.selected ? Theme.highlightColor : Theme.placeholderTextColor
-            font.pixelSize: 13
-            font.weight: row.selected ? Font.DemiBold : Font.Normal
-            horizontalAlignment: Text.AlignRight
-            verticalAlignment: Text.AlignVCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 18
-            anchors.verticalCenter: parent.verticalCenter
-            width: 64
-            height: 24
-        }
-
-        MouseArea {
-            id: mouse
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: root.selectSource(row.source)
+            CustomLabel {
+                objectName: "sidebarTitle_" + (row.source ? row.source.id : "")
+                text: row.source ? row.source.title : ""
+                color: row.selected ? Theme.highlightedTextColor : Theme.textColor
+                font.pixelSize: 14
+                font.weight: row.selected ? Font.DemiBold : Font.Medium
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+                Layout.fillWidth: true
+                Layout.minimumWidth: 0
+            }
+            CustomLabel {
+                objectName: "sidebarCount_" + (row.source ? row.source.id : "")
+                text: row.source && row.source.count > 0 ? row.source.count : ""
+                visible: text.length > 0
+                color: row.selected ? Theme.highlightedTextColor : Theme.placeholderTextColor
+                font.pixelSize: 13
+                font.weight: Font.DemiBold
+                horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignVCenter
+            }
         }
     }
 }

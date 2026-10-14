@@ -6,12 +6,16 @@ import QtQuick.Layouts
 CustomPane {
     id: root
     padding: 0
+    property var library: libraryController
+    property var jobs: jobController
+    readonly property bool narrow: width < 700
+    readonly property bool stackedStats: width < 420
     background: Rectangle {
         color: Theme.baseColor
     }
 
-    property var subscription: libraryController.selectedSubscription
-    property var episodes: libraryController.selectedSubscriptionItems
+    property var subscription: library.selectedSubscription
+    property var episodes: library.selectedSubscriptionItems
     property bool hasSubscription: subscription && subscription.id !== undefined && subscription.id !== ""
 
     function displayUrl(sub) {
@@ -32,14 +36,17 @@ CustomPane {
         anchors.fill: parent
         spacing: 0
 
-        RowLayout {
+        GridLayout {
+            columns: root.narrow ? 1 : 2
             Layout.fillWidth: true
             Layout.margins: 18
-            spacing: 10
+            columnSpacing: 10
+            rowSpacing: 10
 
             ColumnLayout {
                 spacing: 2
                 Layout.fillWidth: true
+                Layout.minimumWidth: 0
                 CustomLabel {
                     text: root.hasSubscription ? root.subscription.title : "Subscriptions"
                     color: Theme.textColor
@@ -49,32 +56,45 @@ CustomPane {
                     Layout.fillWidth: true
                 }
                 CustomLabel {
-                    text: root.hasSubscription ? root.subscription.count + " episodes · " + root.subscription.unprocessedCount + " unprocessed" : (libraryController.subscriptions.length === 0 ? "No subscriptions yet" : libraryController.subscriptions.length + " subscriptions")
+                    text: root.hasSubscription ? root.subscription.count + " episodes · " + root.subscription.unprocessedCount + " unprocessed" : (root.library.subscriptions.length === 0 ? "No subscriptions yet" : root.library.subscriptions.length + " subscriptions")
                     color: Theme.placeholderTextColor
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                 }
             }
 
-            CustomButton {
-                text: "Refresh"
-                enabled: root.hasSubscription && !jobController.running
-                onClicked: jobController.refreshSubscriptions(false, root.subscription.id, 20)
-            }
-            CustomButton {
-                text: "History"
-                enabled: root.hasSubscription && !jobController.running
-                onClicked: jobController.refreshSubscriptions(false, root.subscription.id, 0)
-            }
-            CustomButton {
-                text: "Remove"
-                enabled: root.hasSubscription && !jobController.running
-                onClicked: jobController.removeSubscription(root.subscription.id)
-            }
-            CustomButton {
-                text: "Refresh All"
-                enabled: libraryController.subscriptions.length > 0 && !jobController.running
-                onClicked: jobController.refreshSubscriptions(true, "", 20)
+            Flow {
+                spacing: 8
+                Layout.fillWidth: root.narrow
+                Layout.minimumWidth: 0
+                Layout.preferredWidth: refreshButton.implicitWidth + historyButton.implicitWidth
+                    + removeButton.implicitWidth + refreshAllButton.implicitWidth + spacing * 3
+                CustomButton {
+                    id: refreshButton
+                    objectName: "refreshSubscription"
+                    text: "Refresh"
+                    enabled: root.hasSubscription && !root.jobs.running
+                    onClicked: root.jobs.refreshSubscriptions(false, root.subscription.id, 20)
+                }
+                CustomButton {
+                    id: historyButton
+                    text: "History"
+                    enabled: root.hasSubscription && !root.jobs.running
+                    onClicked: root.jobs.refreshSubscriptions(false, root.subscription.id, 0)
+                }
+                CustomButton {
+                    id: removeButton
+                    text: "Remove"
+                    enabled: root.hasSubscription && !root.jobs.running
+                    onClicked: root.jobs.removeSubscription(root.subscription.id)
+                }
+                CustomButton {
+                    id: refreshAllButton
+                    objectName: "refreshAllSubscriptions"
+                    text: "Refresh All"
+                    enabled: root.library.subscriptions.length > 0 && !root.jobs.running
+                    onClicked: root.jobs.refreshSubscriptions(true, "", 20)
+                }
             }
         }
 
@@ -85,28 +105,40 @@ CustomPane {
         }
 
         CustomScrollView {
+            id: subscriptionScroll
+            objectName: "subscriptionScroll"
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
             padding: 22
+            contentWidth: availableWidth
+            contentHeight: subscriptionContent.implicitHeight
 
             ColumnLayout {
-                width: parent.width
+                id: subscriptionContent
+                objectName: "subscriptionContent"
+                width: subscriptionScroll.availableWidth
+                height: implicitHeight
                 spacing: 18
 
-                RowLayout {
+                GridLayout {
+                    objectName: "subscriptionStats"
+                    columns: root.stackedStats ? 1 : 3
                     visible: root.hasSubscription
                     Layout.fillWidth: true
-                    spacing: 12
+                    columnSpacing: 12
+                    rowSpacing: 12
 
                     Rectangle {
                         radius: 8
-                        color: "#f1f4f8"
+                        color: Theme.railSurfaceColor
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 84
+                        Layout.minimumWidth: 0
+                        Layout.preferredWidth: 1
+                        Layout.preferredHeight: root.stackedStats ? 64 : 84
                         ColumnLayout {
                             anchors.fill: parent
-                            anchors.margins: 12
+                            anchors.margins: root.stackedStats ? 8 : 12
                             CustomLabel {
                                 text: root.subscription.count
                                 color: Theme.textColor
@@ -117,20 +149,25 @@ CustomPane {
                                 text: "Episodes"
                                 color: Theme.placeholderTextColor
                                 font.pixelSize: 12
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 0
+                                wrapMode: Text.Wrap
                             }
                         }
                     }
                     Rectangle {
                         radius: 8
-                        color: "#eef5ff"
+                        color: Theme.actionButtonHoveredColor
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 84
+                        Layout.minimumWidth: 0
+                        Layout.preferredWidth: 1
+                        Layout.preferredHeight: root.stackedStats ? 64 : 84
                         ColumnLayout {
                             anchors.fill: parent
-                            anchors.margins: 12
+                            anchors.margins: root.stackedStats ? 8 : 12
                             CustomLabel {
                                 text: root.subscription.unprocessedCount
-                                color: Theme.highlightColor
+                                color: Theme.accentColor
                                 font.pixelSize: 24
                                 font.weight: Font.DemiBold
                             }
@@ -138,17 +175,22 @@ CustomPane {
                                 text: "Unprocessed"
                                 color: Theme.placeholderTextColor
                                 font.pixelSize: 12
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 0
+                                wrapMode: Text.Wrap
                             }
                         }
                     }
                     Rectangle {
                         radius: 8
-                        color: "#eef8f1"
+                        color: Theme.railSurfaceColor
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 84
+                        Layout.minimumWidth: 0
+                        Layout.preferredWidth: 1
+                        Layout.preferredHeight: root.stackedStats ? 64 : 84
                         ColumnLayout {
                             anchors.fill: parent
-                            anchors.margins: 12
+                            anchors.margins: root.stackedStats ? 8 : 12
                             CustomLabel {
                                 text: root.subscription.processedCount
                                 color: Theme.successColor
@@ -159,6 +201,9 @@ CustomPane {
                                 text: "Processed"
                                 color: Theme.placeholderTextColor
                                 font.pixelSize: 12
+                                Layout.fillWidth: true
+                                Layout.minimumWidth: 0
+                                wrapMode: Text.Wrap
                             }
                         }
                     }
@@ -180,11 +225,13 @@ CustomPane {
                         model: root.episodes
 
                         delegate: Rectangle {
+                            objectName: "subscriptionEpisode_" + modelData.id
                             radius: 8
-                            color: "#f7f8fa"
+                            color: Theme.railSurfaceColor
                             border.color: Theme.dividerColor
                             Layout.fillWidth: true
-                            height: 78
+                            Layout.preferredHeight: 78
+                            Layout.minimumWidth: 0
 
                             RowLayout {
                                 anchors.fill: parent
@@ -202,6 +249,7 @@ CustomPane {
                                 ColumnLayout {
                                     spacing: 3
                                     Layout.fillWidth: true
+                                    Layout.minimumWidth: 0
                                     CustomLabel {
                                         text: modelData.title
                                         color: Theme.textColor
@@ -226,10 +274,11 @@ CustomPane {
                                 }
 
                                 CustomButton {
+                                    objectName: "openSubscriptionEpisode_" + modelData.id
                                     text: "Open"
                                     onClicked: {
-                                        libraryController.selectedSource = "library";
-                                        libraryController.selectItem(modelData.id);
+                                        root.library.selectedSource = "library";
+                                        root.library.selectItem(modelData.id);
                                     }
                                 }
                             }
@@ -241,6 +290,7 @@ CustomPane {
                         text: "No episodes imported for this subscription yet."
                         color: Theme.placeholderTextColor
                         Layout.fillWidth: true
+                        wrapMode: Text.Wrap
                     }
                 }
 
@@ -326,14 +376,19 @@ CustomPane {
                         font.weight: Font.DemiBold
                     }
 
-                    RowLayout {
+                    GridLayout {
+                        objectName: "addSubscriptionForm"
+                        columns: root.narrow ? 2 : 4
                         Layout.fillWidth: true
-                        spacing: 8
+                        columnSpacing: 8
+                        rowSpacing: 8
                         CustomTextField {
                             id: subscriptionUrl
                             alignRightWhenFocused: false
                             placeholderText: "Xiaoyuzhou, Apple Podcast, or RSS URL"
                             Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            Layout.columnSpan: root.narrow ? 2 : 1
                         }
                         CustomTextField {
                             id: subscriptionGroup
@@ -341,9 +396,12 @@ CustomPane {
                             text: root.hasSubscription ? root.subscription.groupName : "Default"
                             placeholderText: "Group"
                             Layout.preferredWidth: 130
+                            Layout.fillWidth: root.narrow
+                            Layout.minimumWidth: 0
                         }
                         CustomSpinBox {
                             id: subscriptionLimit
+                            Layout.preferredWidth: 110
                             decimals: 0
                             realFrom: 0
                             realTo: 500
@@ -355,8 +413,11 @@ CustomPane {
                         }
                         CustomButton {
                             text: "Add"
-                            enabled: subscriptionUrl.text.trim().length > 0 && !jobController.running
-                            onClicked: jobController.addSubscription(subscriptionUrl.text, subscriptionGroup.text, subscriptionLimit.value)
+                            objectName: "addSubscriptionButton"
+                            Layout.columnSpan: root.narrow ? 2 : 1
+                            Layout.alignment: Qt.AlignRight
+                            enabled: subscriptionUrl.text.trim().length > 0 && !root.jobs.running
+                            onClicked: root.jobs.addSubscription(subscriptionUrl.text, subscriptionGroup.text, subscriptionLimit.value)
                         }
                     }
                 }

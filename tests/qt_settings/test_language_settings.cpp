@@ -21,6 +21,7 @@ int main(int argc, char **argv)
         return condition;
     };
     SettingsController defaults;
+    if (!require(defaults.appearanceMode() == "system", "Appearance must follow the system by default")) return 1;
     if (!require(defaults.transcriptionLanguages().isEmpty() && defaults.summaryLanguage() == "zh", "Invalid defaults")) return 1;
     QFile file(QDir(directory.path()).filePath("config.toml"));
     if (!file.open(QIODevice::WriteOnly)) return 1;
@@ -42,5 +43,16 @@ int main(int argc, char **argv)
     reloaded.reloadCloudConfig();
     if (!require(reloaded.transcriptionLanguages().isEmpty(), "Empty array did not mean auto")) return 1;
     if (!require(reloaded.languageOptions().size() == 16, "Language catalog incomplete")) return 1;
+    defaults.setAppearanceMode("dark");
+    SettingsController darkLaunch;
+    if (!require(darkLaunch.appearanceMode() == "dark", "Dark appearance was not saved")) return 1;
+    darkLaunch.setAppearanceMode("light");
+    SettingsController lightLaunch;
+    if (!require(lightLaunch.appearanceMode() == "light", "Light appearance was not saved")) return 1;
+    lightLaunch.setAppearanceMode("invalid");
+    if (!require(lightLaunch.appearanceMode() == "light", "Unsupported appearance was accepted")) return 1;
+    lightLaunch.setAppearanceMode("system");
+    SettingsController systemLaunch;
+    if (!require(systemLaunch.appearanceMode() == "system", "System appearance was not restored")) return 1;
     return 0;
 }

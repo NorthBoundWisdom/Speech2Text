@@ -278,10 +278,22 @@ void LibraryController::refresh()
     m_subscriptions.clear();
     m_statusMessage.clear();
 
+    if (m_libraryRoot.isEmpty())
+    {
+        m_statusMessage = "Invalid library.storage in config.toml: expected 'icloud' or 'local'.";
+        rebuildSources();
+        rebuildFilteredItems();
+        updateSelectionAfterRefresh();
+        emit libraryChanged();
+        return;
+    }
+
     const QDir episodeRoot(QDir(m_libraryRoot).filePath("episodes"));
     if (!episodeRoot.exists())
     {
         m_statusMessage = QString("Library episodes directory not found: %1").arg(episodeRoot.absolutePath());
+        loadGroups();
+        loadSubscriptions();
         rebuildSources();
         rebuildFilteredItems();
         updateSelectionAfterRefresh();

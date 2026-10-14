@@ -22,10 +22,10 @@ CustomScrollView {
 
     function inlineMarkdown(value) {
         var text = escapeHtml(value);
-        text = text.replace(/`([^`]+)`/g, "<span style=\"font-family: '" + codeFontFamily + "'; background-color: #eef2f6; color: #17202a;\">$1</span>");
+        text = text.replace(/`([^`]+)`/g, "<span style=\"font-family: '" + codeFontFamily + "'; background-color: " + Theme.railSurfaceColor + "; color: " + Theme.textColor + ";\">$1</span>");
         text = text.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
         text = text.replace(/\*([^*]+)\*/g, "<i>$1</i>");
-        text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href=\"$2\" style=\"color: #1f6feb; text-decoration: none;\">$1</a>");
+        text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href=\"$2\" style=\"color: " + Theme.helper.linkColor + "; text-decoration: none;\">$1</a>");
         return text;
     }
 
@@ -61,7 +61,7 @@ CustomScrollView {
             codeLines: []
         };
 
-        parts.push("<html><body style=\"margin: 0; color: #17202a; font-size: " + bodySize + "px;\">");
+        parts.push("<html><body style=\"margin: 0; color: " + Theme.textColor + "; font-size: " + bodySize + "px;\">");
 
         for (var i = 0; i < lines.length; ++i) {
             var raw = lines[i];
@@ -69,7 +69,7 @@ CustomScrollView {
 
             if (line.indexOf("```") === 0) {
                 if (state.code) {
-                    parts.push("<pre style=\"margin-top: 8px; margin-bottom: 14px; padding: 12px; background-color: #f4f6f8; border: 1px solid #d6dce4; color: #17202a; font-family: '" + codeFontFamily + "'; font-size: 13px; white-space: pre-wrap;\">" + escapeHtml(state.codeLines.join("\n")) + "</pre>");
+                    parts.push("<pre style=\"margin-top: 8px; margin-bottom: 14px; padding: 12px; background-color: " + Theme.railSurfaceColor + "; border: 1px solid " + Theme.dividerColor + "; color: " + Theme.textColor + "; font-family: '" + codeFontFamily + "'; font-size: 13px; white-space: pre-wrap;\">" + escapeHtml(state.codeLines.join("\n")) + "</pre>");
                     state.code = false;
                     state.codeLines = [];
                 } else {
@@ -92,7 +92,7 @@ CustomScrollView {
 
             if (/^[-*_]{3,}$/.test(line)) {
                 closeList(state, parts);
-                parts.push("<hr style=\"border: 0; border-top: 1px solid #d6dce4; margin-top: 20px; margin-bottom: 20px;\" />");
+                parts.push("<hr style=\"border: 0; border-top: 1px solid " + Theme.dividerColor + "; margin-top: 20px; margin-bottom: 20px;\" />");
                 continue;
             }
 
@@ -128,7 +128,7 @@ CustomScrollView {
 
             if (line.indexOf(">") === 0) {
                 closeList(state, parts);
-                parts.push("<blockquote style=\"margin: 8px 0 14px 0; padding-left: 14px; border-left: 3px solid #b9d3ff; color: #4c5968; line-height: 1.58;\">" + inlineMarkdown(line.replace(/^>\s?/, "")) + "</blockquote>");
+                parts.push("<blockquote style=\"margin: 8px 0 14px 0; padding-left: 14px; border-left: 3px solid " + Theme.accentColor + "; color: " + Theme.placeholderTextColor + "; line-height: 1.58;\">" + inlineMarkdown(line.replace(/^>\s?/, "")) + "</blockquote>");
                 continue;
             }
 
@@ -137,7 +137,7 @@ CustomScrollView {
         }
 
         if (state.code) {
-            parts.push("<pre style=\"margin-top: 8px; margin-bottom: 14px; padding: 12px; background-color: #f4f6f8; border: 1px solid #d6dce4; color: #17202a; font-family: '" + codeFontFamily + "'; font-size: 13px; white-space: pre-wrap;\">" + escapeHtml(state.codeLines.join("\n")) + "</pre>");
+            parts.push("<pre style=\"margin-top: 8px; margin-bottom: 14px; padding: 12px; background-color: " + Theme.railSurfaceColor + "; border: 1px solid " + Theme.dividerColor + "; color: " + Theme.textColor + "; font-family: '" + codeFontFamily + "'; font-size: 13px; white-space: pre-wrap;\">" + escapeHtml(state.codeLines.join("\n")) + "</pre>");
         }
         closeList(state, parts);
         parts.push("</body></html>");
@@ -145,23 +145,34 @@ CustomScrollView {
     }
 
     contentWidth: availableWidth
+    contentHeight: reader.implicitHeight
+    QQC.ScrollBar.horizontal.policy: QQC.ScrollBar.AlwaysOff
 
-    CustomTextArea {
-        id: reader
-        readOnly: true
-        selectByMouse: true
-        textFormat: TextEdit.RichText
-        wrapMode: TextEdit.Wrap
-        text: root.toHtml(root.markdown)
-        color: Theme.textColor
-        width: Math.min(root.availableWidth - 48, root.contentMaxWidth)
-        x: Math.max(24, (root.availableWidth - width) / 2)
-        topPadding: 22
-        bottomPadding: 28
-        leftPadding: 0
-        rightPadding: 0
-        background: Item {}
-        font.family: Qt.application.font.family
-        font.pixelSize: root.bodySize
+    // ScrollView auto-sizes a direct TextArea child to the viewport. Keep the
+    // reader inside a separate item so its margins and maximum width survive.
+    Item {
+        width: root.availableWidth
+        height: reader.implicitHeight
+
+        CustomTextArea {
+            id: reader
+            objectName: "markdownReader"
+            readOnly: true
+            selectByMouse: true
+            textFormat: TextEdit.RichText
+            wrapMode: TextEdit.Wrap
+            text: root.toHtml(root.markdown)
+            color: Theme.textColor
+            width: Math.max(0, Math.min(parent.width - 48, root.contentMaxWidth))
+            x: (parent.width - width) / 2
+            height: implicitHeight
+            topPadding: 22
+            bottomPadding: 28
+            leftPadding: 0
+            rightPadding: 0
+            background: Item {}
+            font.family: Qt.application.font.family
+            font.pixelSize: root.bodySize
+        }
     }
 }

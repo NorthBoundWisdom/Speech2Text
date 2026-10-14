@@ -69,11 +69,15 @@ CustomDialog {
         cloudChunkSpin.realValue = settingsController.cloudChunkMinutes;
         workflowSwitch.currentIndex = settingsController.localOnly ? 0 : 1;
         summaryLanguageCombo.currentIndex = summaryLanguageIndex();
+        appearanceCombo.currentIndex = ["system", "light", "dark"].indexOf(settingsController.appearanceMode);
     }
 
     Connections {
         target: settingsController
         function onSettingsChanged() {
+            root.syncLocalControls();
+        }
+        function onAppearanceModeChanged() {
             root.syncLocalControls();
         }
     }
@@ -212,8 +216,8 @@ CustomDialog {
 
                     background: Rectangle {
                         radius: 8
-                        color: highlighted ? "#eaf2ff" : (hovered ? "#ffffff" : "transparent")
-                        border.color: highlighted ? "#cfe0ff" : "transparent"
+                        color: highlighted ? Theme.actionButtonHoveredColor : (hovered ? Theme.contentSurfaceColor : "transparent")
+                        border.color: highlighted ? Theme.dividerColor : "transparent"
 
                         Rectangle {
                             width: 3
@@ -291,6 +295,34 @@ CustomDialog {
                         }
                     }
 
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 16
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 4
+                            CustomLabel {
+                                text: "Appearance"
+                                font.weight: Font.DemiBold
+                                color: Theme.textColor
+                            }
+                            CustomLabel {
+                                text: "Follow your system or choose a light or dark interface."
+                                color: Theme.placeholderTextColor
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+                        }
+                        CustomComboBox {
+                            id: appearanceCombo
+                            objectName: "appearanceMode"
+                            model: ["Follow System", "Light", "Dark"]
+                            Layout.preferredWidth: 160
+                            Accessible.name: "Appearance"
+                            onActivated: settingsController.appearanceMode = ["system", "light", "dark"][currentIndex]
+                        }
+                    }
+
                     GridLayout {
                         columns: 2
                         columnSpacing: 10
@@ -332,7 +364,7 @@ CustomDialog {
                         Layout.preferredHeight: visible ? 150 : 0
                         selectByMouse: true
                         background: Rectangle {
-                            color: "#f8fafc"
+                            color: Theme.railSurfaceColor
                             radius: 8
                             border.color: root.softBorder
                         }

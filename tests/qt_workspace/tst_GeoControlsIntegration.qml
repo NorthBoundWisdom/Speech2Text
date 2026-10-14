@@ -1,5 +1,6 @@
 import QtQuick
 import QtTest
+import QtQuick.Controls as QQC
 import GeoControls 1.0
 import "../../qt/Audio2TextQt/qml" as App
 
@@ -47,11 +48,13 @@ Item {
             settingsController.summaryLanguage = "zh";
             settingsController.cloudChunkMinutes = 10;
             settingsController.localOnly = true;
+            settingsController.appearanceMode = "system";
         }
         function cleanup() {
             importer.close();
             settings.close();
             boundField.visible = false;
+            settingsController.appearanceMode = "system";
         }
         function capture(item, name) {
             if (captureDirectory.length === 0)
@@ -72,6 +75,47 @@ Item {
             verify(waitForRendering(shell.contentItem));
             compare(shell.palette.window, Theme.windowColor);
             capture(findChild(shell, "workspaceBody"), "workspace");
+            shell.close();
+        }
+
+        function test_toolbar_icons_toggle_columns_and_open_status() {
+            let shell = createTemporaryObject(shellComponent, null);
+            verify(shell);
+            shell.visible = true;
+            verify(waitForRendering(shell.contentItem));
+            let workspace = findChild(shell, "desktopWorkspace");
+            let sources = findChild(shell, "toggleSourcesButton");
+            let episodes = findChild(shell, "toggleEpisodeListButton");
+            let status = findChild(shell, "applicationStatusButton");
+            let popup = findChild(shell, "applicationStatusPopup");
+            verify(workspace && sources && episodes && status && popup);
+            if (workspace.sourceCollapsed) workspace.toggleSources();
+            if (workspace.listCollapsed) workspace.toggleList();
+            compare(sources.display, QQC.AbstractButton.IconOnly);
+            compare(episodes.display, QQC.AbstractButton.IconOnly);
+            verify(sources.icon.source.toString().length > 0);
+            verify(episodes.icon.source.toString().length > 0);
+            verify(status.icon.source.toString().length > 0);
+            mouseClick(sources);
+            tryCompare(workspace, "sourceActualWidth", 0);
+            compare(sources.Accessible.name, "Show Sources");
+            sources.forceActiveFocus();
+            keyClick(Qt.Key_Space);
+            tryCompare(workspace, "sourceCollapsed", false);
+            verify(sources.checked);
+            workspace.toggleSources();
+            compare(sources.checked, false);
+            workspace.toggleSources();
+            mouseClick(episodes);
+            tryCompare(workspace, "listActualWidth", 0);
+            compare(episodes.Accessible.name, "Show Episode List");
+            mouseClick(episodes);
+            tryCompare(workspace, "listCollapsed", false);
+            mouseClick(status);
+            tryCompare(popup, "opened", true);
+            keyClick(Qt.Key_Escape);
+            tryCompare(popup, "opened", false);
+            capture(findChild(shell, "libraryToolBar"), "toolbar");
             shell.close();
         }
 
@@ -127,6 +171,28 @@ Item {
                 settings.selectedPage = index;
                 verify(waitForRendering(fixture));
             }
+        }
+        function test_appearance_setting_applies_immediately() {
+            settings.selectedPage = 0;
+            settings.open();
+            tryCompare(settings, "opened", true);
+            let appearance = findChild(settings.contentItem, "appearanceMode");
+            compare(appearance.currentIndex, 0);
+            appearance.currentIndex = 2;
+            appearance.activated(2);
+            compare(settingsController.appearanceMode, "dark");
+            compare(Theme.appearance, 1);
+            verify(waitForRendering(fixture));
+            capture(findChild(settings, "settingsDialogBody"), "settings-dark");
+            settings.close();
+            settings.open();
+            tryCompare(settings, "opened", true);
+            compare(appearance.currentIndex, 2);
+            settingsController.appearanceMode = "light";
+            compare(appearance.currentIndex, 1);
+            compare(Theme.appearance, 0);
+            settingsController.appearanceMode = "system";
+            compare(appearance.currentIndex, 0);
         }
         function test_external_settings_refresh_after_control_edits() {
             settings.selectedPage = 1;

@@ -18,49 +18,23 @@ ApplicationShell {
         anchors.fill: parent
         spacing: 0
 
-        CustomToolBar {
+        LibraryToolBar {
+            id: libraryToolBar
             Layout.fillWidth: true
-            RowLayout {
-                anchors.fill: parent
-                CustomToolButton {
-                    display: QQC.AbstractButton.TextOnly
-                    focusPolicy: Qt.StrongFocus
-                    defaultPadding: Fonts.size8
-                    text: "Sources"
-                    checkable: true
-                    checked: !workspace.sourceCollapsed
-                    Accessible.name: workspace.sourceCollapsed ? "Show Sources" : "Hide Sources"
-                    tooltip: Accessible.name
-                    onClicked: workspace.toggleSources()
-                }
-                CustomToolButton {
-                    display: QQC.AbstractButton.TextOnly
-                    focusPolicy: Qt.StrongFocus
-                    defaultPadding: Fonts.size8
-                    text: "Episode List"
-                    checkable: true
-                    checked: !workspace.listCollapsed
-                    Accessible.name: workspace.listCollapsed ? "Show Episode List" : "Hide Episode List"
-                    tooltip: Accessible.name
-                    onClicked: workspace.toggleList()
-                }
-                CustomToolButton {
-                    display: QQC.AbstractButton.TextOnly
-                    focusPolicy: Qt.StrongFocus
-                    defaultPadding: Fonts.size8
-                    text: "Status"
-                    Accessible.name: "Application Status"
-                    tooltip: "View processing and library status"
-                    onClicked: statusPopup.open()
-                }
-                Item {
-                    Layout.fillWidth: true
-                }
+            sourcesVisible: !workspace.sourceCollapsed
+            episodeListVisible: !workspace.listCollapsed
+            statusOpen: statusPopup.opened
+            onSourcesToggled: workspace.toggleSources()
+            onEpisodeListToggled: workspace.toggleList()
+            onStatusRequested: {
+                if (statusPopup.opened) statusPopup.close();
+                else statusPopup.open();
             }
         }
 
         DesktopWorkspace {
             id: workspace
+            objectName: "desktopWorkspace"
             Layout.fillWidth: true
             Layout.fillHeight: true
             sourceWidth: workspacePreferences.sourceWidth
@@ -90,9 +64,10 @@ ApplicationShell {
 
     CustomPopup {
         id: statusPopup
+        objectName: "applicationStatusPopup"
         parent: root.contentItem
-        x: 10
-        y: 42
+        x: Math.max(12, Math.min(libraryToolBar.x + libraryToolBar.statusButtonX, root.width - width - 12))
+        y: 58
         width: 360
         height: Math.min(440, statusDetails.implicitHeight + topPadding + bottomPadding)
         modal: false

@@ -1,10 +1,10 @@
 #include "GeoControlsSetup.h"
 
-#include <Controls/ThemeHelper.h>
 #include <QtCore/QResource>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlEngine>
+#include <QtQml/QQmlComponent>
 
 void qml_register_types_GeoControls();
 void qml_register_types_GeoControls_AppShell();
@@ -25,7 +25,11 @@ void configureGeoControlsEngine(QQmlEngine *engine)
 {
     engine->addImportPath(QStringLiteral("qrc:/"));
     auto *theme = engine->singletonInstance<QObject *>("GeoControls", "Theme");
-    auto *helper = new geocontrols::ThemeHelper(engine);
+    QQmlComponent palette(engine, QUrl("qrc:/Audio2TextQt/appearance-palette.qml"));
+    QObject *helper = palette.create();
+    if (!helper) qFatal("SonaFolio Qt: appearance palette could not be loaded: %s",
+                        qPrintable(palette.errorString()));
+    helper->setParent(engine);
     QFont font = QGuiApplication::font();
     QFont mono = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 #ifdef Q_OS_MACOS

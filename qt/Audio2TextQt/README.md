@@ -24,9 +24,12 @@ so the smoke test can run in CI-like shells.
 
 ## FreeCM
 
-FreeCM exposes Qt client variants on macOS and Windows. The `Run` action includes
-`Mac Qt Client` on macOS and `Windows Qt Client` on Windows; both call
-`configs/qt_workflow.py`, which configures/builds `qt/Audio2TextQt` and then
+FreeCM exposes Qt client variants on macOS and Windows. With `Local App Config`
+selected on macOS, use the arrow beside `Run` and choose `Mac Qt Client`. The same
+configuration also exposes Qt build, smoke-test and ZIP-package variants. The Swift
+app remains the default; selecting `Config: Mac Qt Client` makes the Qt variants
+the defaults for all four actions. On Windows, choose `Windows Qt Client`. Both run
+variants call `configs/qt_workflow.py`, which configures/builds `qt/Audio2TextQt` and then
 launches the build output. Set `AUDIO2TEXTQT_QT_PREFIX` or `CMAKE_PREFIX_PATH` to
 the Qt 6 prefix if Qt is not already discoverable from PATH or the existing CMake
 cache.
@@ -67,9 +70,18 @@ Windows library probe:
 build/Audio2TextQt/Release/SonaFolioQt.exe --library-probe --data-root path/to/SpeechToTextData
 ```
 
-`--data-root` accepts either a data root containing `Audio2TextLibrary/` or the
-library root itself. Runtime command execution also receives the same value via
-`ATOT_DATA_ROOT`.
+By default, Qt and the Swift macOS client share `~/Documents/SpeechToTextData/`,
+its `config.toml`, the local `model/` directory, and the same `Audio2TextLibrary`.
+Qt reads `[library].storage`, `icloud_root`, and `local_root` from that shared
+configuration. The default storage is iCloud on macOS and local on Windows,
+matching the CLI. Switching frontends does not copy episodes or model weights.
+Returning to Qt refreshes the shared configuration and library.
+
+`--data-root` selects another data root and its configuration; it also accepts the
+library root itself for browsing probes. Runtime command execution receives this
+value via `ATOT_DATA_ROOT`. `--library-root` takes precedence for browsing.
+Command-line path overrides apply only to the current run and do not change saved
+preferences.
 
 ## Runtime Options
 
@@ -92,6 +104,11 @@ a clean Windows Python runtime. Both paths require third-party license/source ma
 See [release workflow](../../doc/CI_RELEASES.md) and the [online installation guide](https://northboundwisdom.github.io/sonafolio/install/).
 
 ## Resizable and collapsible columns
+
+Settings > Overview > Appearance offers Follow System (default), Light and Dark.
+Changes apply immediately to the workspace, document reader, menus and settings,
+and the Qt client remembers the choice across launches. Document tabs use a rounded
+segmented strip and wrap onto another row when the reading pane is narrow.
 
 Drag the thin vertical separators to resize Sources and Episode List. The toolbar keeps both
 visibility buttons available when columns are hidden. `Ctrl+Shift+S` and `Ctrl+Shift+L` toggle the

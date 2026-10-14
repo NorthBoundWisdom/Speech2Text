@@ -7,7 +7,7 @@ CustomPane {
     id: root
     padding: 0
     background: Rectangle {
-        color: "#fafbfc"
+        color: Theme.pageSurfaceColor
     }
 
     function isUnprocessedItem(item) {
@@ -121,7 +121,7 @@ CustomPane {
                 onClicked: libraryController.selectItem(modelData.id)
 
                 background: Rectangle {
-                    color: row.highlighted ? "#eaf2ff" : (row.hovered ? "#f0f3f7" : "transparent")
+                    color: row.highlighted ? Theme.actionButtonHoveredColor : (row.hovered ? Theme.railSurfaceColor : "transparent")
                 }
 
                 contentItem: Loader {
@@ -189,8 +189,8 @@ CustomPane {
                         width: visible ? 10 : 0
                         height: 10
                         radius: 5
-                        color: "#dfe7f2"
-                        border.color: "#c8d4e3"
+                        color: Theme.alternateBaseColor
+                        border.color: Theme.dividerColor
                         Layout.alignment: Qt.AlignVCenter
 
                         CustomLabel {
@@ -207,8 +207,8 @@ CustomPane {
                         width: visible ? 10 : 0
                         height: 10
                         radius: 5
-                        color: "#dfe7f2"
-                        border.color: "#c8d4e3"
+                        color: Theme.alternateBaseColor
+                        border.color: Theme.dividerColor
                         Layout.alignment: Qt.AlignVCenter
 
                         CustomLabel {
@@ -283,7 +283,7 @@ CustomPane {
                 onClicked: libraryController.selectSubscription(modelData.id)
 
                 background: Rectangle {
-                    color: subscriptionRow.highlighted ? "#eaf2ff" : (subscriptionRow.hovered ? "#f0f3f7" : "transparent")
+                    color: subscriptionRow.highlighted ? Theme.actionButtonHoveredColor : (subscriptionRow.hovered ? Theme.railSurfaceColor : "transparent")
                 }
 
                 contentItem: ColumnLayout {

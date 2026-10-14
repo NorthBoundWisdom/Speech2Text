@@ -231,7 +231,7 @@ CustomPane {
                                 }
                             ]
 
-                            delegate: SegmentButton {
+                    delegate: QueueStatusButton {
                                 text: modelData.title
                                 selected: root.item.queueStatus === modelData.value
                                 implicitWidth: Math.max(72, contentItem.implicitWidth + 22)
@@ -404,23 +404,12 @@ CustomPane {
                 color: Theme.dividerColor
             }
 
-            RowLayout {
+            DocumentTabs {
                 Layout.fillWidth: true
                 Layout.margins: 10
-                spacing: 6
-
-                Repeater {
-                    model: root.availableTabs
-                    delegate: SegmentButton {
-                        text: modelData.title
-                        selected: root.currentTab === modelData.id
-                        onClicked: root.currentTab = modelData.id
-                    }
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
+                tabs: root.availableTabs
+                currentTab: root.currentTab
+                onTabSelected: function(tabId) { root.currentTab = tabId; }
             }
 
             MarkdownView {
@@ -431,14 +420,17 @@ CustomPane {
         }
     }
 
-    component SegmentButton: CustomButton {
+    component QueueStatusButton: CustomButton {
         property bool selected: false
         checkable: true
         checked: selected
-        defaultHeight: 34
-        defaultPadding: 14
-        font.pixelSize: 14
-        buttonTextColor: selected ? Theme.highlightedTextColor : Theme.textColor
+        defaultHeight: 32
+        defaultPadding: 12
+        defaultRadius: 8
+        borderWidth: 0
+        font.pixelSize: 13
+        buttonTextColor: Theme.textColor
+        highlightColor: Theme.actionButtonHoveredColor
     }
 
     component ActionMenuItem: CustomMenuItem {

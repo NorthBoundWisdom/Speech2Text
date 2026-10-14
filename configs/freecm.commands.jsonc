@@ -116,6 +116,7 @@
           "Release"
         ],
         "configurations": [
+          "local-app",
           "mac-qt-client"
         ]
       },
@@ -178,6 +179,7 @@
           "Release"
         ],
         "configurations": [
+          "local-app",
           "mac-qt-client"
         ]
       },
@@ -227,6 +229,7 @@
           "Release"
         ],
         "configurations": [
+          "local-app",
           "mac-qt-client"
         ]
       },
@@ -329,6 +332,7 @@
           "Release"
         ],
         "configurations": [
+          "local-app",
           "mac-qt-client"
         ]
       },

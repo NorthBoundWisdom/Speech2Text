@@ -97,11 +97,22 @@ QString tomlQuotedString(const QString &value)
 QString parseTomlString(const QString &value)
 {
     QString trimmed = value.trimmed();
-    const int comment = trimmed.indexOf(QStringLiteral(" #"));
-    if (comment >= 0)
+    QChar quote;
+    bool escaped = false;
+    for (int index = 0; index < trimmed.size(); ++index)
     {
-        trimmed = trimmed.left(comment).trimmed();
+        const QChar ch = trimmed.at(index);
+        if (escaped) { escaped = false; continue; }
+        if (quote == '"' && ch == '\\') { escaped = true; continue; }
+        if (!quote.isNull())
+        {
+            if (ch == quote) quote = QChar();
+        }
+        else if (ch == '"' || ch == '\'') quote = ch;
+        else if (ch == '#') { trimmed = trimmed.left(index).trimmed(); break; }
     }
+    if (trimmed.size() >= 2 && trimmed.front() == '\'' && trimmed.back() == '\'')
+        return trimmed.mid(1, trimmed.size() - 2);
     if (trimmed.size() < 2 || trimmed.front() != '"' || trimmed.back() != '"')
     {
         return trimmed;
@@ -349,6 +360,37 @@ SettingsController::SettingsController(QObject *parent)
     load();
 }
 
+QString SettingsController::appearanceMode() const
+{
+    return m_appearanceMode;
+}
+
+void SettingsController::setAppearanceMode(const QString &value)
+{
+    const QString mode = value.trimmed().toLower();
+    if (mode != "system" && mode != "light" && mode != "dark") return;
+    if (mode == m_appearanceMode) return;
+    m_appearanceMode = mode;
+    m_settings.setValue("appearanceMode", mode);
+    emit appearanceModeChanged();
+}
+
+void SettingsController::applyRuntimePaths(const QString &dataRoot, const QString &libraryRoot,
+                                         const QString &atot, const QString &vcpkgRoot)
+{
+    const auto apply = [this](const QString &key, QString &field, const QString &value) {
+        if (value.isEmpty()) return;
+        m_runtimePathKeys.insert(key);
+        field = AppPaths::cleanPath(value);
+    };
+    apply("dataRoot", m_dataRoot, dataRoot);
+    apply("libraryRootOverride", m_libraryRootOverride, libraryRoot);
+    apply("atotPath", m_atotPath, atot);
+    apply("vcpkgRoot", m_vcpkgRoot, vcpkgRoot);
+    loadCloudConfig();
+    emit settingsChanged();
+}
+
 QString SettingsController::dataRoot() const
 {
     return m_dataRoot;
@@ -379,7 +421,41 @@ void SettingsController::setLibraryRootOverride(const QString &value)
 
 QString SettingsController::resolvedLibraryRoot() const
 {
-    return AppPaths::resolveLibraryRoot(m_dataRoot, m_libraryRootOverride);
+    if (!m_libraryRootOverride.isEmpty())
+    {
+        return AppPaths::resolveLibraryRoot(m_dataRoot, m_libraryRootOverride);
+    }
+    // Keep the explicit library-as-data-root probe option working.
+    if (QDir(m_dataRoot).exists("episodes"))
+    {
+        return m_dataRoot;
+    }
+
+    const QString text = AppPaths::readTextFile(configPath());
+    QString storage = parseTomlString(readTomlValue(text, "library", "storage")).trimmed().toLower();
+    if (storage.isEmpty())
+    {
+#ifdef Q_OS_WIN
+        storage = "local";
+#else
+        storage = "icloud";
+#endif
+    }
+    if (storage == "local")
+    {
+        const QString root = parseTomlString(readTomlValue(text, "library", "local_root"));
+        return root.trimmed().isEmpty()
+            ? AppPaths::normalizeLibraryRoot(m_dataRoot)
+            : AppPaths::normalizeLibraryRoot(root);
+    }
+    if (storage == "icloud")
+    {
+        const QString root = parseTomlString(readTomlValue(text, "library", "icloud_root"));
+        return AppPaths::normalizeLibraryRoot(root.trimmed().isEmpty()
+            ? QDir::homePath() + "/Library/Mobile Documents/com~apple~CloudDocs/Audio2Text"
+            : root);
+    }
+    return {};
 }
 
 QString SettingsController::atotPath() const
@@ -663,6 +739,7 @@ void SettingsController::setAtotPathUrl(const QUrl &url)
 
 void SettingsController::resetDefaults()
 {
+    setAppearanceMode("system");
     m_dataRoot = AppPaths::defaultDataRoot();
     m_libraryRootOverride.clear();
     m_atotPath.clear();
@@ -832,6 +909,8 @@ QStringList SettingsController::extraToolDirectories() const
 
 void SettingsController::load()
 {
+    const QString appearance = m_settings.value("appearanceMode", "system").toString();
+    m_appearanceMode = appearance == "dark" || appearance == "light" ? appearance : "system";
     m_dataRoot = AppPaths::cleanPath(m_settings.value("dataRoot", AppPaths::defaultDataRoot()).toString());
     m_libraryRootOverride = AppPaths::cleanPath(m_settings.value("libraryRootOverride").toString());
     m_atotPath = AppPaths::cleanPath(m_settings.value("atotPath").toString());
@@ -848,10 +927,10 @@ void SettingsController::load()
 
 void SettingsController::save()
 {
-    m_settings.setValue("dataRoot", m_dataRoot);
-    m_settings.setValue("libraryRootOverride", m_libraryRootOverride);
-    m_settings.setValue("atotPath", m_atotPath);
-    m_settings.setValue("vcpkgRoot", m_vcpkgRoot);
+    if (!m_runtimePathKeys.contains("dataRoot")) m_settings.setValue("dataRoot", m_dataRoot);
+    if (!m_runtimePathKeys.contains("libraryRootOverride")) m_settings.setValue("libraryRootOverride", m_libraryRootOverride);
+    if (!m_runtimePathKeys.contains("atotPath")) m_settings.setValue("atotPath", m_atotPath);
+    if (!m_runtimePathKeys.contains("vcpkgRoot")) m_settings.setValue("vcpkgRoot", m_vcpkgRoot);
     m_settings.setValue("localOnly", m_localOnly);
     m_settings.setValue("cloudChunkMinutes", m_cloudChunkMinutes);
     m_settings.setValue("modelAlias", m_modelAlias);

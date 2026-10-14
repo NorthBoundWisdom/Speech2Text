@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/Audio2TextQt">
+        <file alias="appearance-palette.qml">qml/AppearancePalette.qml</file>
         <file>resources/app-icon.png</file>
+        <file>resources/icons/sidebar.svg</file>
+        <file>resources/icons/episode-list.svg</file>
+        <file>resources/icons/info.svg</file>
     </qresource>
 </RCC>

@@ -145,7 +145,7 @@ def test_freecm_macos_qt_run_variant_uses_qt_workflow() -> None:
         "--configuration",
         "Release",
     ]
-    assert mac_qt["configurations"] == ["mac-qt-client"]
+    assert mac_qt["configurations"] == ["local-app", "mac-qt-client"]
     assert _configuration(manifest, "mac-qt-client")["platforms"] == ["darwin"]
     assert "default" not in mac_qt
 
@@ -170,7 +170,7 @@ def test_freecm_macos_qt_package_variant_uses_qt_workflow() -> None:
         "--configuration",
         "Release",
     ]
-    assert mac_qt["configurations"] == ["mac-qt-client"]
+    assert mac_qt["configurations"] == ["local-app", "mac-qt-client"]
     assert _configuration(manifest, "mac-qt-client")["platforms"] == ["darwin"]
     assert "default" not in mac_qt
 

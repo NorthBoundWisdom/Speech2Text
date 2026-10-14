@@ -48,30 +48,6 @@ void messageHandler(QtMsgType type, const QMessageLogContext &, const QString &m
     std::fflush(stderr);
 }
 
-void applyCommandLine(SettingsController &settings, const QCommandLineParser &parser)
-{
-    const QString dataRoot = parser.value("data-root");
-    if (!dataRoot.isEmpty())
-    {
-        settings.setDataRoot(dataRoot);
-    }
-    const QString libraryRoot = parser.value("library-root");
-    if (!libraryRoot.isEmpty())
-    {
-        settings.setLibraryRootOverride(libraryRoot);
-    }
-    const QString atot = parser.value("atot");
-    if (!atot.isEmpty())
-    {
-        settings.setAtotPath(atot);
-    }
-    const QString vcpkgRoot = parser.value("vcpkg-root");
-    if (!vcpkgRoot.isEmpty())
-    {
-        settings.setVcpkgRoot(vcpkgRoot);
-    }
-}
-
 bool hasRawArgument(int argc, char *argv[], const QString &argument)
 {
     for (int index = 1; index < argc; ++index)
@@ -164,23 +140,11 @@ int main(int argc, char *argv[])
     }
 
     SettingsController settings;
-    applyCommandLine(settings, parser);
-    if (!rawDataRoot.isEmpty())
-    {
-        settings.setDataRoot(rawDataRoot);
-    }
-    if (!rawLibraryRoot.isEmpty())
-    {
-        settings.setLibraryRootOverride(rawLibraryRoot);
-    }
-    if (!rawAtot.isEmpty())
-    {
-        settings.setAtotPath(rawAtot);
-    }
-    if (!rawVcpkgRoot.isEmpty())
-    {
-        settings.setVcpkgRoot(rawVcpkgRoot);
-    }
+    settings.applyRuntimePaths(
+        rawDataRoot.isEmpty() ? parser.value("data-root") : rawDataRoot,
+        rawLibraryRoot.isEmpty() ? parser.value("library-root") : rawLibraryRoot,
+        rawAtot.isEmpty() ? parser.value("atot") : rawAtot,
+        rawVcpkgRoot.isEmpty() ? parser.value("vcpkg-root") : rawVcpkgRoot);
     LibraryController library(&settings);
     JobController jobs(&settings, &library);
     const bool startupSmoke = rawStartupSmoke || parser.isSet("startup-smoke");
@@ -202,7 +166,6 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
-    configureGeoControlsEngine(&engine);
     QObject::connect(&engine, &QQmlApplicationEngine::warnings, &engine, [](const QList<QQmlError> &warnings) {
         for (const QQmlError &warning : warnings)
         {
@@ -213,6 +176,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("settingsController", &settings);
     engine.rootContext()->setContextProperty("libraryController", &library);
     engine.rootContext()->setContextProperty("jobController", &jobs);
+    configureGeoControlsEngine(&engine);
     engine.load(QUrl("qrc:/Audio2TextQt/qml/Main.qml"));
 
     if (engine.rootObjects().isEmpty())
@@ -225,6 +189,10 @@ int main(int argc, char *argv[])
     if (!smokeQuit)
     {
         QTimer::singleShot(0, &library, &LibraryController::refresh);
+        QObject::connect(&app, &QGuiApplication::applicationStateChanged, &settings,
+                         [&settings](Qt::ApplicationState state) {
+            if (state == Qt::ApplicationActive) settings.reloadCloudConfig();
+        });
     }
     if (startupSmoke)
     {

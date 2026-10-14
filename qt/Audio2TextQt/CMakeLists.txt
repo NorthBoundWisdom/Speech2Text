@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-set(AUDIO2TEXTQT_RELEASE_VERSION "0.1.0" CACHE STRING "Numeric release version")
+set(AUDIO2TEXTQT_RELEASE_VERSION "0.9.2" CACHE STRING "Numeric release version")
 project(Audio2TextQt
     VERSION ${AUDIO2TEXTQT_RELEASE_VERSION}
     DESCRIPTION "SonaFolio Qt/QML client"
@@ -71,8 +71,11 @@ qt_add_qml_module(Audio2TextQt
     DEPENDENCIES GeoControls GeoControls.AppShell
     QML_FILES
         qml/Main.qml
+        qml/LibraryToolBar.qml
+        qml/DocumentTabs.qml
         qml/DesktopWorkspace.qml
         qml/SourceColumn.qml
+        qml/SidebarIcon.qml
         qml/ApplicationStatusPanel.qml
         qml/ItemListColumn.qml
         qml/DetailPane.qml
@@ -210,6 +213,7 @@ endif()
 set_tests_properties(Audio2TextQtQmlSmoke PROPERTIES ENVIRONMENT "${AUDIO2TEXTQT_SMOKE_ENV}" TIMEOUT 45)
 
 qt_add_executable(Audio2TextQtWorkspaceTests ../../tests/qt_workspace/runner.cpp
+    resource.qrc
     src/GeoControlsSetup.cpp src/GeoControlsSetup.h
     src/AppPaths.cpp src/AppPaths.h
     src/SettingsController.cpp src/SettingsController.h
@@ -262,10 +266,29 @@ set_target_properties(Audio2TextQtLanguageSettingsTests PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test-bin"
     WIN32_EXECUTABLE FALSE)
 add_test(NAME Audio2TextQtLanguageSettings COMMAND Audio2TextQtLanguageSettingsTests)
+qt_add_executable(Audio2TextQtSharedRuntimeTests
+    ../../tests/qt_settings/test_shared_runtime.cpp
+    src/SettingsController.cpp src/SettingsController.h
+    src/LibraryController.cpp src/LibraryController.h
+    src/AppPaths.cpp src/AppPaths.h)
+target_include_directories(Audio2TextQtSharedRuntimeTests PRIVATE src)
+target_link_libraries(Audio2TextQtSharedRuntimeTests PRIVATE Qt6::Core)
+set_target_properties(Audio2TextQtSharedRuntimeTests PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test-bin"
+    WIN32_EXECUTABLE FALSE)
+add_test(NAME Audio2TextQtSharedRuntime COMMAND Audio2TextQtSharedRuntimeTests)
 if(WIN32)
     add_custom_command(TARGET Audio2TextQtLanguageSettingsTests POST_BUILD
         COMMAND "${AUDIO2TEXTQT_WINDEPLOYQT_EXECUTABLE}"
             --verbose 0 --no-compiler-runtime --no-opengl-sw --no-system-d3d-compiler
             "$<TARGET_FILE:Audio2TextQtLanguageSettingsTests>"
+        VERBATIM)
+endif()
+
+if(WIN32)
+    add_custom_command(TARGET Audio2TextQtSharedRuntimeTests POST_BUILD
+        COMMAND "${AUDIO2TEXTQT_WINDEPLOYQT_EXECUTABLE}"
+            --verbose 0 --no-compiler-runtime --no-opengl-sw --no-system-d3d-compiler
+            "$<TARGET_FILE:Audio2TextQtSharedRuntimeTests>"
         VERBATIM)
 endif()

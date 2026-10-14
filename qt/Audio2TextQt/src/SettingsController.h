@@ -3,6 +3,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QProcessEnvironment>
 #include <QtCore/QSettings>
+#include <QtCore/QSet>
 #include <QtCore/QString>
 #include <QtCore/QVariantMap>
 #include <QtCore/QUrl>
@@ -32,9 +33,14 @@ class SettingsController : public QObject
     Q_PROPERTY(QString summaryPrompt READ summaryPrompt WRITE setSummaryPrompt NOTIFY settingsChanged)
     Q_PROPERTY(QString titlePrompt READ titlePrompt WRITE setTitlePrompt NOTIFY settingsChanged)
     Q_PROPERTY(bool cloudConfigured READ cloudConfigured NOTIFY settingsChanged)
+    Q_PROPERTY(QString appearanceMode READ appearanceMode WRITE setAppearanceMode NOTIFY appearanceModeChanged)
 
 public:
     explicit SettingsController(QObject *parent = nullptr);
+    QString appearanceMode() const;
+    void setAppearanceMode(const QString &value);
+    void applyRuntimePaths(const QString &dataRoot, const QString &libraryRoot,
+                           const QString &atot, const QString &vcpkgRoot);
 
     QString dataRoot() const;
     void setDataRoot(const QString &value);
@@ -111,6 +117,7 @@ public:
 
 signals:
     void settingsChanged();
+    void appearanceModeChanged();
 
 private:
     void load();
@@ -120,6 +127,8 @@ private:
     bool saveConfigFile() const;
 
     QSettings m_settings;
+    QString m_appearanceMode = "system";
+    QSet<QString> m_runtimePathKeys;
     QString m_dataRoot;
     QString m_libraryRootOverride;
     QString m_atotPath;
